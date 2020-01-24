@@ -1,40 +1,29 @@
-import React, { useState } from "react";
-import { BrowserRouter as Router, Link, Route } from "react-router-dom";
-import PrivateRoute from './PrivateRoute';
-import Home from './views/Home';
-import Admin from './views/Admin';
-import { AuthContext } from "./context/auth";
-import Login from "./views/Login";
-import Signup from './views/Signup';
+import React, { Component } from 'react'
+import Dashboard from './components/Dashboard'
+import Goals from './components/Goals'
+import Reflection from './components/Reflection'
+import Resources from './components/Resources'
+import Header from './components/Header'
+import { Switch, Route } from 'react-router-dom'
+import Login from './components/Login'
 
-function App(props) {
-  const [authTokens, setAuthTokens] = useState();
-
-  const setTokens = (data) => {
-    localStorage.setItem("tokens", JSON.stringify(data));
-    setAuthTokens(data);
-  }
-
-  return (
-    <AuthContext.Provider value={ { authTokens, setAuthTokens : setTokens } }>
-      <Router>
-        <div>
-          <ul>
-            <li>
-              <Link to="/">Home Page</Link>
-            </li>
-            <li>
-              <Link to="/admin">Admin Page</Link>
-            </li>
-          </ul>
-          <Route exact path="/" component={Home} />
-          <Route path="/login" component={Login} />
-          <Route path="/signup" component={Signup} />
-          <PrivateRoute path="/admin" component={Admin} />
+class App extends Component {
+  render() {
+    return (
+      <div className="center w85">
+        <Header />
+        <div className="ph3 pv1 background-gray">
+          <Switch>
+            <Route exact path="/dashboard" component={Dashboard} />
+            <Route exact path="/goals" component={Goals} />
+            <Route exact path="/reflection" component={Reflection} />
+            <Route exact path="/resources" component={Resources} />
+            <Route exact path="/login" component={Login} />
+          </Switch>
         </div>
-      </Router>
-     </AuthContext.Provider>
-  );
+      </div>
+    )
+  }
 }
 
-export default App;
+export default App
