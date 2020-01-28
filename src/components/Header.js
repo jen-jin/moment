@@ -8,7 +8,7 @@ class Header extends Component {
     const authToken = localStorage.getItem(AUTH_TOKEN);
 
     return (
-      <div className="flex pa1 justify-between nowrap orange">
+      <div className="flex nowrap">
         <div className="flex flex-fixed black">
           {authToken && ( // Show sidebar nav only if logged in
             <div className="flex">

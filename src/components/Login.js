@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import { AUTH_TOKEN } from "../constants";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
-import logo from '../img/logo.jpg'
+import logo from "../img/logo.jpg";
+import TextField from '@material-ui/core/TextField';
 
 const SIGNUP_MUTATION = gql`
   mutation SignupMutation($email: String!, $password: String!, $name: String!) {
@@ -41,35 +42,39 @@ class Login extends Component {
   render() {
     const { login, email, password, name } = this.state;
     return (
-      <div className="flex justify-between no-wrap">
-        <img src={logo} alt="Logo" />
-        <div>
-          <h4 className="mv3">{login ? "Login" : "Sign Up"}</h4>
-          <div className="flex flex-column">
-            {!login && (
-              <input
-                value={name}
-                onChange={e => this.setState({ name: e.target.value })}
-                type="text"
-                placeholder="Your name"
+      <div className="gridTwoColumns fullscreen">
+        <div className="twoColumnGridC1R1">
+          <img src={logo} alt="Logo" />
+        </div>
+        <div className="twoColumnGridC2R1">
+          <div>
+            <h4 className="display">{login ? "Log in" : "Sign Up"}</h4>
+            <div className="body">Email Address</div>
+            <div className="username">
+              <TextField 
+                id="standard-username-input"
+                inputProps={{
+                  style: {fontFamily: 'Open Sans', fontSize: 15, width: 300} 
+                }}
+                onChange= {e => this.setState({ email: e.target.value })}
+                placeholder="someone@example.com"
               />
-            )}
-            <input
-              value={email}
-              onChange={e => this.setState({ email: e.target.value })}
-              type="text"
-              placeholder="Your email address"
-            />
-            <input
-              value={password}
-              onChange={e => this.setState({ password: e.target.value })}
-              type="password"
-              placeholder="Choose a safe password"
-            />
-          </div>
-          <div className="flex mt3">
-            {/* TODO: Uncomment when server is ready */}
-            {/* <Mutation
+            </div>
+            <div className="body paddingTop30px">Password</div>
+            <div className="password">
+            <TextField 
+                id="standard-password-input"
+                type="password"
+                inputProps={{
+                  style: {fontFamily: 'Open Sans', fontSize: 15, width: 300} 
+                }}
+                onChange= {e => this.setState({ password: e.target.value })}
+                placeholder="Enter your password"
+              />
+            </div>
+            <div className="flex paddingTop30px">
+              {/* TODO: Uncomment when server is ready */}
+              {/* <Mutation
             mutation={login ? LOGIN_MUTATION : SIGNUP_MUTATION}
             variables={{ email, password, name }}
             onCompleted={data => this._confirm(data)}
@@ -80,14 +85,14 @@ class Login extends Component {
               </div>
             )}
           </Mutation>                     */}
-            {/* TODO: Remove div below when server is ready */}
-            <div className="pointer mr2 button" onClick={this.handleLogin}>
-              {login ? "login" : "create account"}
-            </div>
-            <div className="pointer button" onClick={this.handleLogin}>
-              {login
-                ? "need to create an account?"
-                : "already have an account?"}
+              {/* TODO: Remove div below when server is ready */}
+              <div
+                className="button borderRadius25px"
+                onClick={this.handleLogin}
+              >
+                {login ? "Log in" : "create account"}
+              </div>
+              {login && <div className="helper blue paddingTop10px">Forgot Password?</div>}
             </div>
           </div>
         </div>

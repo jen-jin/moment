@@ -10,9 +10,9 @@ import Login from './components/Login'
 class App extends Component {
   render() {
     return (
-      <div className="center w85">
+      <div className="center">
         <Header />
-        <div className="ph3 pv1 background-gray">
+        <div className="background-gray">
           <Switch>
             <Route exact path="/dashboard" component={Dashboard} />
             <Route exact path="/goals" component={Goals} />

@@ -1,6 +1,11 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans');
 @import url('https://fonts.googleapis.com/css?family=Lora');
 
+.fullscreen {
+  width: 100vw;
+  height: 100vh;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -9,8 +14,21 @@ body {
   font-size: 20px;
 }
 
-input {
-  max-width: 500px;
+/* Grid Layouts */
+.gridTwoColumns {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  align-items: center;
+}
+
+.twoColumnGridC1R1 {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.twoColumnGridC2R1 {
+  grid-column: 2;
+  grid-row: 1;
 }
 
 /* Colours */
@@ -62,7 +80,7 @@ input {
 
 .button {
   font-family: 'Open Sans';
-  font-size: 20px; /*TODO: Figure out*/
+  font-size: 15px;
   color: #FAFAFA;
   background-color: #1378C1;
   text-align: center;
@@ -71,7 +89,23 @@ input {
   border-style: outset;
   border-color: #1378C1;
   cursor: pointer;
-  max-width: 250px;
+  max-width: 100px;
+}
+
+.borderRadius25px {
+  border-radius: 25px;
+}
+
+.paddingTop10px {
+  padding-top: 10px;
+}
+
+.paddingTop30px {
+  padding-top: 30px;
+}
+
+.alignItemsCenter {
+  align-items: center;
 }
 
 code {
