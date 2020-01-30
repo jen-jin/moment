@@ -36,7 +36,7 @@ class Login extends Component {
 
   handleLogin() {
     this.setState({ login: !this.login });
-    this.props.history.push("/dashboard");
+    this.props.history.push("/reflection");
   }
 
   render() {

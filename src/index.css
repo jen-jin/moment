@@ -66,6 +66,10 @@ body {
   font-weight: 600; /*Semi-bold*/
 }
 
+.alignTextCenter {
+  text-align: center;
+}
+
 .helper {
   font-size: 14px;
   font-family: 'Open Sans';
@@ -100,12 +104,12 @@ body {
   padding-top: 10px;
 }
 
-.paddingTop30px {
-  padding-top: 30px;
+.paddingBottom10px {
+  padding-bottom: 10px;
 }
 
-.alignItemsCenter {
-  align-items: center;
+.paddingTop30px {
+  padding-top: 30px;
 }
 
 code {
