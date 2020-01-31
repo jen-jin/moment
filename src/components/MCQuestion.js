@@ -87,7 +87,7 @@ class MCQuestion extends Component {
           multiline
           rows="5"
           variant="outlined"
-          placeholder="Any additional comments"
+          placeholder="Add additional comments"
           inputProps={{
             style: { fontFamily: "Open Sans", fontSize: 15, width: 300 }
           }}

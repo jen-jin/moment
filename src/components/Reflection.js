@@ -1,9 +1,17 @@
 import React, { Component } from "react";
 import StandardQuestion from "./StandardQuestion";
-import MCQuestion from "./MCQuestion";
-import Grid from '@material-ui/core/Grid';
+import Grid from "@material-ui/core/Grid";
 
 class Reflection extends Component {
+  constructor(props) {
+    super(props);
+    this.handleNext = this.handleNext.bind(this);
+  }
+
+  handleNext() {
+    this.props.history.push("/reflection2");
+  }
+
   render() {
     return (
       <div className="reflectionPage">
@@ -14,23 +22,20 @@ class Reflection extends Component {
           alignItems="center"
           justify="center"
         >
-
           <Grid item xs={3}>
             <div className="header paddingTop30px">Reflection Page</div>
-            <StandardQuestion question = "What went well?" />
+            <StandardQuestion question="What went well?" />
+            <div
+              className="button borderRadius25px marginTop30px"
+              onClick={this.handleNext}
+            >
+              Next
+            </div>
           </Grid>
-          <Grid item xs={3}>
-            <MCQuestion question = "What didn't go well?" />
-          </Grid>     
-
-        </Grid>       
+        </Grid>
       </div>
     );
   }
 }
 
 export default Reflection;
-
-/* 
-
-*/

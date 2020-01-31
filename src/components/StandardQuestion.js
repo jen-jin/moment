@@ -12,7 +12,7 @@ class StandardQuestion extends Component {
                 multiline
                 rows="5"
                 variant="outlined"
-                placeholder="Add your answer here"
+                placeholder="Type your answer here"
                 inputProps={{
                   style: {fontFamily: 'Open Sans', fontSize: 15, width: 300} 
                 }}

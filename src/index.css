@@ -112,6 +112,10 @@ body {
   padding-top: 30px;
 }
 
+.marginTop30px {
+  margin-top: 30px;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
