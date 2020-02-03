@@ -17,7 +17,7 @@ class MCQuestion extends Component {
       op3: false,
       op4: false,
       op5: false
-    }
+    };
   }
 
   render() {
@@ -33,52 +33,58 @@ class MCQuestion extends Component {
               control={
                 <Checkbox
                   checked={op1}
-                  onChange= {e => this.setState({ op1: !op1 })}
-                  value="My child was not interested in device"
+                  onChange={e => this.setState({ op1: !op1 })}
+                  value={this.props.option1}
                 />
               }
-              label="My child was not interested in device"
+              label={this.props.option1}
             />
             <FormControlLabel
               control={
                 <Checkbox
                   checked={op2}
-                  onChange= {e => this.setState({ op2: !op2 })}
-                  value="My child did not interact with device"
+                  onChange={e => this.setState({ op2: !op2 })}
+                  value={this.props.option2}
                 />
               }
-              label="My child did not interact with device"
+              label={this.props.option2}
             />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={op3}
-                  onChange= {e => this.setState({ op3: !op3 })}
-                  value="My child did not..."
-                />
-              }
-              label="My child did not..."
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={op4}
-                  onChange= {e => this.setState({ op4: !op4 })}
-                  value="My child did not..."
-                />
-              }
-              label="My child did not..."
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={op5}
-                  onChange= {e => this.setState({ op5: !op5 })}
-                  value="My child did not..."
-                />
-              }
-              label="My child did not..."
-            />                        
+            {this.props.option3 && (
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={op3}
+                    onChange={e => this.setState({ op3: !op3 })}
+                    value={this.props.option3}
+                  />
+                }
+                label={this.props.option3}
+              />
+            )}
+            {this.props.option4 && (
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={op4}
+                    onChange={e => this.setState({ op4: !op4 })}
+                    value={this.props.option4}
+                  />
+                }
+                label={this.props.option4}
+              />
+            )}
+            {this.props.option5 && (
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={op5}
+                    onChange={e => this.setState({ op5: !op5 })}
+                    value={this.props.option5}
+                  />
+                }
+                label={this.props.option5}
+              />
+            )}
           </FormGroup>
         </FormControl>
         <div className="paddingTop10px" />
