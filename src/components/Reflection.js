@@ -2,8 +2,11 @@ import React, { Component } from "react";
 import StandardQuestion from "./StandardQuestion";
 import MCQuestion from "./MCQuestion";
 import Grid from "@material-ui/core/Grid";
+import { AuthContext } from "../context/AuthContext";
 
 class Reflection extends Component {
+  static contextType = AuthContext;
+  
   constructor(props) {
     super(props);
 
@@ -28,6 +31,8 @@ class Reflection extends Component {
 
   render() {
     var step = this.state.step;
+    const { userName, userId } = this.context;
+
     return (
       <div className="reflectionPage">
         {step !== 1 && (
@@ -46,7 +51,7 @@ class Reflection extends Component {
           justify="center"
         >
           <Grid item xs={3}>
-            <div className="header paddingTop30px">Reflection Page</div>
+        <div className="header paddingTop30px">Reflection Page</div>
         <div className="body paddingTop10px">Step {step} of 4</div>
             {step == 1 && (
               <MCQuestion
