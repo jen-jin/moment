@@ -1,7 +1,13 @@
-const rootAPI = "http://localhost:5000/api";
+const ROOT_API = "http://localhost:5000/api";
 
-export const AUTH_TOKEN = 'auth-token'
-export const GOALS_PATH = rootAPI + '/goals'
-export const REFLECTION_PATH = rootAPI + '/reflections'
-export const RESOURCES_PATH = rootAPI + "/resources";
-export const USERS_PATH = rootAPI +"/users";
+export const AUTH_TOKEN = "auth-token";
+export const GOALS_PATH = ROOT_API + "/goals";
+export const REFLECTION_PATH = ROOT_API + "/reflections";
+export const RESOURCES_PATH = ROOT_API + "/resources";
+export const USERS_PATH = ROOT_API + "/users";
+export const DEFAULT_HEADERS = {
+  "Content-Type": "application/json",
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Credentials": true
+};
+export const SUCCESS = "success";
