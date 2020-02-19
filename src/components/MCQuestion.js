@@ -95,7 +95,7 @@ class MCQuestion extends Component {
           variant="outlined"
           placeholder="Add additional comments"
           inputProps={{
-            style: { fontFamily: "Open Sans", fontSize: 15, width: 300 }
+            style: { fontFamily: "Open Sans", fontSize: 15, width: 500 }
           }}
         />
       </div>
