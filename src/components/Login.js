@@ -21,7 +21,7 @@ class Login extends Component {
 
   handleLogin() {
     this.setState({ login: !this.login });
-    this.context.changeUser(this.state.name, 1)
+    this.context.changeUser(this.state.name, 14) // This is temp
     this.props.history.push("/reflection");
   }
 

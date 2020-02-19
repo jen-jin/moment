@@ -1,4 +1,4 @@
-const rootAPI = "localhost:5000/api";
+const rootAPI = "http://localhost:5000/api";
 
 export const AUTH_TOKEN = 'auth-token'
 export const GOALS_PATH = rootAPI + '/goals'
