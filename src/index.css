@@ -120,6 +120,17 @@ body {
   margin-left: 30px;
 }
 
+.card {
+  max-width: 345px;
+}
+
+.searchBar {
+  width: 900px; /*TODO: This will need to be dynamic*/
+  align-items: center;
+  margin-bottom: 30px;
+  padding-left: 10px;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
