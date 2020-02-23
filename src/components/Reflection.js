@@ -64,6 +64,7 @@ class Reflection extends Component {
     this.setState({ step: this.state.step - 1 });
   }
 
+  // NOTE: You can use chips from material-ui for a different select
   render() {
     const { step, goals } = this.state;
     const numSteps = 4;
