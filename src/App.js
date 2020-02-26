@@ -6,6 +6,16 @@ import Resources from "./components/Resources";
 import { Switch, Route } from "react-router-dom";
 import Login from "./components/Login";
 import AuthContextProvider from "./context/AuthContext";
+import Sidebar from "./components/Sidebar"
+
+const NavRoute = ({exact, path, component: Component}) => (
+  <Route exact={exact} path={path} render={(props) => (
+    <div>
+      <Sidebar />
+      <Component {...props}/>
+    </div>
+  )}/>
+)
 
 class App extends Component {
   render() {
@@ -14,10 +24,10 @@ class App extends Component {
         <div className="App center">
           <div className="background-gray">
             <Switch>
-              <Route exact path="/dashboard" component={Dashboard} />
-              <Route exact path="/goals" component={Goals} />
-              <Route exact path="/reflection" component={Reflection} />
-              <Route exact path="/resources" component={Resources} />
+              <NavRoute exact path="/dashboard" component={Dashboard} />
+              <NavRoute exact path="/goals" component={Goals} />
+              <NavRoute exact path="/reflection" component={Reflection} />
+              <NavRoute exact path="/resources" component={Resources} />
               <Route exact path="/" component={Login} />
             </Switch>
           </div>
