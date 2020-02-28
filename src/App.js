@@ -7,10 +7,12 @@ import { Switch, Route } from "react-router-dom";
 import Login from "./components/Login";
 import AuthContextProvider from "./context/AuthContext";
 import Sidebar from "./components/Sidebar"
+import Appbar from "./components/Appbar"
 
 const NavRoute = ({exact, path, component: Component}) => (
   <Route exact={exact} path={path} render={(props) => (
     <div>
+      <Appbar />
       <Sidebar />
       <Component {...props}/>
     </div>
