@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Button from '@material-ui/core/Button';
+import { NavLink } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
@@ -24,7 +24,7 @@ class Appbar extends Component {
       <div className={classes.root}>
         <AppBar className={classes.appbar} position="static" color="transparent">
           <Toolbar>
-            <Button className={classes.logout} color="primary">Logout</Button>
+            <NavLink className={classes.logout} color="primary" to="/">Logout</NavLink>
           </Toolbar>
         </AppBar>
       </div>
