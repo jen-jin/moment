@@ -21,8 +21,8 @@ class Login extends Component {
 
   handleLogin() {
     this.setState({ login: !this.login });
-    this.context.changeUser(this.state.name, 14) // This is temp
-    this.props.history.push("/reflection");
+    this.context.changeUser(this.state.name, 14); // This is temp
+    this.props.history.push("/dashboard");
   }
 
   render() {
@@ -67,19 +67,19 @@ class Login extends Component {
                 onChange={e => this.setState({ password: e.target.value })}
                 placeholder="Enter your password"
               />
-            </div>
-            <div className="flex paddingTop30px">
-              <div
-                className="button borderRadius25px"
-                onClick={this.handleLogin}
-              >
-                {login ? "Log in" : "create account"}
-              </div>
-              {login && (
-                <div className="helper blue paddingTop10px">
-                  Forgot Password?
+              <div className="flex paddingTop30px paddingLeft85px">
+                <div
+                  className="button borderRadius25px"
+                  onClick={this.handleLogin}
+                >
+                  {login ? "Log in" : "create account"}
                 </div>
-              )}
+                {login && (
+                  <div className="helper blue paddingTop10px">
+                    Forgot Password?
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
