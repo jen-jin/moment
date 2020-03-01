@@ -22,6 +22,16 @@ class CreateReflection extends Component {
     this.state = {
       step: 1,
       goals: [],
+      moods: {
+        excited: false,
+        happy: false,
+        good: false,
+        meh: false,
+        worried: false,
+        sad: false,
+        stressed: false,
+        angry: false
+      },
       title: "Untitled Reflection",
       date: new Date().toLocaleTimeString("en-US", DATE_OPTIONS)
     };
@@ -30,6 +40,7 @@ class CreateReflection extends Component {
     this.moveForward = this.moveForward.bind(this);
     this.moveBackwards = this.moveBackwards.bind(this);
     this.changedTitle = this.changedTitle.bind(this);
+    this.handleMoodSelection = this.handleMoodSelection.bind(this);
   }
 
   componentDidMount() {
@@ -70,6 +81,14 @@ class CreateReflection extends Component {
     // Submit
   }
 
+  // MARK: - Handling Mood Question
+  async handleMoodSelection(newMoods) {
+    await this.setState({ // NOTE: Await is necessary here
+      moods: newMoods
+    })
+  }
+
+  // MARK: - Navigating Sections
   moveForward() {
     this.setState({ step: this.state.step + 1 });
   }
@@ -96,7 +115,7 @@ class CreateReflection extends Component {
             <div className="paddingTop30px" />
             <TextField
               id="standard-basic"
-              placeholder="Untitled Reflection"
+              placeholder={title}
               fullWidth="true"
               inputProps={{
                 style: { fontFamily: "Open Sans", fontSize: 24, width: 500 }
@@ -121,7 +140,9 @@ class CreateReflection extends Component {
                 option5={goals[4]}
               />
             )}
-            {step == 1 && <PictureQuestion />}
+            {step == 1 && (
+              <PictureQuestion onMoodChange={this.handleMoodSelection} />
+            )}
             {step == 2 && <StandardQuestion question="What went well?" />}
             {step == 3 && (
               <MCQuestion

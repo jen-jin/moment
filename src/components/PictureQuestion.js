@@ -8,23 +8,75 @@ import sadEmoji from "../img/emojis/sad.svg";
 import stressedEmoji from "../img/emojis/stressed.svg";
 import worriedEmoji from "../img/emojis/worried.svg";
 import Grid from "@material-ui/core/Grid";
-import Button from '@material-ui/core/Button';
-import Typography from "@material-ui/core/Typography";
 import Card from "@material-ui/core/Card";
 import CardActionArea from "@material-ui/core/CardActionArea";
-import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 
 class PictureQuestion extends Component {
   constructor(props) {
     super(props);
-    
+
+    this.state = {
+      excited: false,
+      happy: false,
+      good: false,
+      meh: false,
+      worried: false,
+      sad: false,
+      stressed: false,
+      angry: false
+    };
+
     this.clickedEmoji = this.clickedEmoji.bind(this);
   }
 
   clickedEmoji(title) {
-    this.props.onMoodChange(title)
+    switch (title) {
+      case "Excited":
+        this.setState({
+          excited: !this.state.excited
+        }, () => this.callBackMoodChanged());
+        break
+      case "Happy":
+        this.setState({
+          happy: !this.state.happy
+        }, () => this.callBackMoodChanged());
+        break
+      case "Good":
+        this.setState({
+          good: !this.state.good
+        }, () => this.callBackMoodChanged());
+        break
+      case "Meh":
+        this.setState({
+          meh: !this.state.meh
+        }, () => this.callBackMoodChanged());
+        break
+      case "Worried":
+        this.setState({
+          worried: !this.state.worried
+        }, () => this.callBackMoodChanged());
+        break
+      case "Sad":
+        this.setState({
+          sad: !this.state.sad
+        }, () => this.callBackMoodChanged());
+        break
+      case "Stressed":
+        this.setState({
+          stressed: !this.state.stressed
+        }, () => this.callBackMoodChanged());
+        break
+      case "Angry":
+        this.setState({
+          angry: !this.state.angry
+        }, () => this.callBackMoodChanged());
+    }    
+  }
+
+  async callBackMoodChanged() {
+    await this.props.onMoodChange(this.state)
   }
 
   render(props) {
@@ -45,9 +97,12 @@ class PictureQuestion extends Component {
           <Card
             className={"buttonWidth75px card-" + emoji.title}
             style={{ textAlign: "center" }}
-            variant="outlined"                        
+            variant="outlined"
           >
-            <CardActionArea onClick={() => this.clickedEmoji(emoji.title)} value="testing">
+            <CardActionArea
+              onClick={() => this.clickedEmoji(emoji.title)}
+              value="testing"
+            >
               <CardMedia>
                 <img src={emoji.photo} />
               </CardMedia>
