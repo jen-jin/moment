@@ -6,7 +6,7 @@ import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 
-// Other option, they type it in
+// TODO: May need to delete
 class MCQuestion extends Component {
   constructor(props) {
     super(props);

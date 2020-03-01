@@ -11,3 +11,5 @@ export const DEFAULT_HEADERS = {
   "Access-Control-Allow-Credentials": true
 };
 export const SUCCESS = "success";
+
+export const DATE_OPTIONS = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute:'2-digit'};

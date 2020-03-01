@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Dashboard from "./components/Dashboard";
 import Goals from "./components/Goals";
+import CreateReflection from "./components/CreateReflection";
 import Reflection from "./components/Reflection";
 import Resources from "./components/Resources";
 import { Switch, Route } from "react-router-dom";
@@ -29,6 +30,7 @@ class App extends Component {
               <NavRoute exact path="/dashboard" component={Dashboard} />
               <NavRoute exact path="/goals" component={Goals} />
               <NavRoute exact path="/reflection" component={Reflection} />
+              <NavRoute exact path="/reflection/createReflection" component={CreateReflection} />
               <NavRoute exact path="/resources" component={Resources} />
               <Route exact path="/" component={Login} />
             </Switch>
