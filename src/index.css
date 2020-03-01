@@ -14,6 +14,10 @@ body {
   font-size: 20px;
 }
 
+.bodyBold {
+  font-weight: 600;
+}
+
 /* Grid Layouts */
 .gridTwoColumns {
   display: grid;
@@ -124,8 +128,20 @@ body {
   border-width: 2px;
   border-style: outset;
   border-color: #1378C1;
-  cursor: pointer;
-  max-width: 100px;
+  cursor: pointer;  
+}
+
+.buttonWidth75px {
+  width: 75px;
+}
+
+
+.buttonWidth100px {
+  width: 100px;
+}
+
+.buttonWidth150px {
+  width: 150px;
 }
 
 .borderRadius25px {
@@ -154,6 +170,22 @@ body {
 
 .marginLeft30px {
   margin-left: 30px;
+}
+
+.marginLeft10px {
+  margin-left: 10px;
+}
+
+.marginBottom30px {
+  margin-bottom: 30px;
+}
+
+.width300px {
+  width: 300px;
+}
+
+.rightAlign {
+  float: right;
 }
 
 .card {

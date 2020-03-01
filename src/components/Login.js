@@ -82,7 +82,7 @@ class Login extends Component {
               />
               <div className="flex paddingTop30px paddingLeft150px">
                 <div
-                  className="button borderRadius25px"
+                  className="button buttonWidth100px borderRadius25px"
                   onClick={this.handleLogin}
                 >
                   {login ? "Log in" : "create account"}
