@@ -129,12 +129,11 @@ class CreateReflection extends Component {
           alignItems="center"
           justify="center"
         >
-          <Grid item>
+          <Grid item style={{ width: 950}}>
             <div className="paddingTop30px" />
             <TextField
               id="standard-basic"
               placeholder={title}
-              fullWidth="true"
               inputProps={{
                 style: { fontFamily: "Open Sans", fontSize: 24, width: 500 }
               }}

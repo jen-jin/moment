@@ -40,7 +40,7 @@ class DropDownChipQuestion extends Component {
           </div>
         </Grid>
         <Grid item xs={12}>
-          <FormControl className="drop-down-chip" style={{ width: 800 }}>
+          <FormControl className="drop-down-chip" style={{ width: 900 }}>
             <InputLabel id="demo-mutiple-chip-label">
               {this.props.placeholder}
             </InputLabel>
