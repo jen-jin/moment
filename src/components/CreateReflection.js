@@ -1,6 +1,6 @@
 import React, { Component } from "react";
+import { Prompt } from "react-router";
 import StandardQuestion from "./StandardQuestion";
-import MCQuestion from "./MCQuestion";
 import PictureQuestion from "./PictureQuestion";
 import DropDownChipQuestion from "./DropDownChipQuestion";
 import ChipQuestion from "./ChipQuestion";
@@ -39,7 +39,8 @@ class CreateReflection extends Component {
       selectedGoals: [],
       selectedActivities: [],
       title: "Untitled Reflection",
-      date: new Date().toLocaleTimeString("en-US", DATE_OPTIONS)
+      date: new Date().toLocaleTimeString("en-US", DATE_OPTIONS),
+      completedReflection: false
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -116,9 +117,11 @@ class CreateReflection extends Component {
     await this.setState({
       // NOTE: Await is necessary here
       selectedActivities: newActivities
-    })
-    
-    console.log("New Activities Count: " + this.state.selectedActivities.length)
+    });
+
+    console.log(
+      "New Activities Count: " + this.state.selectedActivities.length
+    );
   }
 
   // MARK: - Navigating Sections
@@ -132,62 +135,67 @@ class CreateReflection extends Component {
 
   // MARK: - Render
   render() {
-    const { step, goals, title, date } = this.state;
+    const { step, goals, title, date, completedReflection } = this.state;
     const numSteps = 4;
 
     console.log("Goals length " + goals.length);
 
     return (
-      <div className="createReflection">
-        <Grid
-          container
-          spacing={3}
-          direction="column"
-          alignItems="center"
-          justify="center"
-        >
-          <Grid item style={{ width: 950 }}>
-            <div className="paddingTop30px" />
-            <TextField
-              id="standard-basic"
-              placeholder={title}
-              inputProps={{
-                style: { fontFamily: "Open Sans", fontSize: 24, width: 500 }
-              }}
-              onChange={this.changedTitle}
-            />
-            <div className="helper paddingTop10px">{date}</div>
-          </Grid>
-          <Grid item>
-            <div className="helper paddingTop10px">
-              Let's get started! You're on section {step} of 4.
-            </div>
-          </Grid>
-          <Grid item>
-            {step == 1 && (
-              <PictureQuestion onMoodChange={this.handleMoodSelection} />
-            )}
-
-            {step == 2 && goals.length > 0 && (
-              <DropDownChipQuestion
-                question="2. Did you work on any of these goals today?"
-                helper="Choose as many as you like"
-                placeholder="Select goals"
-                content={goals}
-                key1="goal"
-                key2="goal"
-                onSelection={this.handleGoalSelection}
-                onUnSelection={this.handleGoalUnSelection}
+      <React.Fragment>
+        <Prompt
+          when={!completedReflection}
+          message="You have unsaved changes, are you sure you want to leave?"
+        />
+        <div className="createReflection">
+          <Grid
+            container
+            spacing={3}
+            direction="column"
+            alignItems="center"
+            justify="center"
+          >
+            <Grid item style={{ width: 950 }}>
+              <div className="paddingTop30px" />
+              <TextField
+                id="standard-basic"
+                placeholder={title}
+                inputProps={{
+                  style: { fontFamily: "Open Sans", fontSize: 24, width: 500 }
+                }}
+                onChange={this.changedTitle}
               />
-            )}
-            {step == 2 &&
-            goals.length == 0 && ( // In the case of network failure
-                <StandardQuestion
-                  question="2. What goals did you work on today?"
-                  placeholder="Type your answer here"
+              <div className="helper paddingTop10px">{date}</div>
+            </Grid>
+            <Grid item>
+              <div className="helper paddingTop10px">
+                Let's get started! You're on section {step} of 4.
+              </div>
+            </Grid>
+            <Grid item>
+              {step == 1 && (
+                <PictureQuestion onMoodChange={this.handleMoodSelection} />
+              )}
+
+              {step == 2 && goals.length > 0 && (
+                <DropDownChipQuestion
+                  question="2. Did you work on any of these goals today?"
+                  helper="Choose as many as you like"
+                  placeholder="Select goals"
+                  content={goals}
+                  key1="goal"
+                  key2="goal"
+                  onSelection={this.handleGoalSelection}
+                  onUnSelection={this.handleGoalUnSelection}
                 />
               )}
-            {/* {step == 2 && goals.length > 0 && ( // TODO: Once subgoals path is ready, finish question
+              {step == 2 &&
+              goals.length == 0 && ( // In the case of network failure
+                  <StandardQuestion
+                    question="2. What goals did you work on today?"
+                    placeholder="Type your answer here"
+                  />
+                )}
+              {/* {step == 2 && goals.length > 0 && ( // TODO: Once subgoals path is ready, finish question
               <DropDownChipQuestion
                 question="3. Did you work on any of these tasks today?"
                 helper="Choose as many as you like"
@@ -199,64 +207,67 @@ class CreateReflection extends Component {
               />
             )}             */}
 
-            {step == 3 && (
-              <ChipQuestion
-                question="3. What activities did you have with your child today?"
-                helper="Choose as many as you like"
-                options={ACTIVITY_OPTIONS}
-                onSelectionChange={this.handleActivitySelection}
-              />
-            )}
-            {step == 3 && <StandardQuestion placeholder="Add New Activities" />}
-
-            {step == 4 && (
-              <div>
-                <StandardQuestion question="What can be improved?" />
-              </div>
-            )}
-
-            <Grid
-              container
-              item
-              spacing={3}
-              direction="row"
-              alignItems="flex-end"
-              justify="flex-end"
-            >
-              {step !== 1 && (
-                <Grid item>
-                  <div
-                    className="buttonOutlined buttonWidth100px borderRadius25px marginTop30px"
-                    onClick={this.moveBackwards}
-                  >
-                    Back
-                  </div>
-                </Grid>
+              {step == 3 && (
+                <ChipQuestion
+                  question="3. What activities did you have with your child today?"
+                  helper="Choose as many as you like"
+                  options={ACTIVITY_OPTIONS}
+                  onSelectionChange={this.handleActivitySelection}
+                />
               )}
-              {step !== numSteps && (
-                <Grid item>
-                  <div
-                    className="button buttonWidth100px borderRadius25px marginTop30px"
-                    onClick={this.moveForward}
-                  >
-                    Next
-                  </div>
-                </Grid>
+              {step == 3 && (
+                <StandardQuestion placeholder="Add New Activities" />
               )}
+
               {step == 4 && (
-                <Grid item>
-                  <div
-                    className="button buttonWidth100px borderRadius25px marginTop30px"
-                    onClick={this.handleSubmit}
-                  >
-                    Submit
-                  </div>
-                </Grid>
+                <div>
+                  <StandardQuestion question="What can be improved?" />
+                </div>
               )}
+
+              <Grid
+                container
+                item
+                spacing={3}
+                direction="row"
+                alignItems="flex-end"
+                justify="flex-end"
+              >
+                {step !== 1 && (
+                  <Grid item>
+                    <div
+                      className="buttonOutlined buttonWidth100px borderRadius25px marginTop30px"
+                      onClick={this.moveBackwards}
+                    >
+                      Back
+                    </div>
+                  </Grid>
+                )}
+                {step !== numSteps && (
+                  <Grid item>
+                    <div
+                      className="button buttonWidth100px borderRadius25px marginTop30px"
+                      onClick={this.moveForward}
+                    >
+                      Next
+                    </div>
+                  </Grid>
+                )}
+                {step == 4 && (
+                  <Grid item>
+                    <div
+                      className="button buttonWidth100px borderRadius25px marginTop30px"
+                      onClick={this.handleSubmit}
+                    >
+                      Submit
+                    </div>
+                  </Grid>
+                )}
+              </Grid>
             </Grid>
           </Grid>
-        </Grid>
-      </div>
+        </div>
+      </React.Fragment>
     );
   }
 }
