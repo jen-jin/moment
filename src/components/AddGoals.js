@@ -20,10 +20,21 @@ class AddGoals extends Component {
       goal: "",
       goalType: "",
       tasks: [],
-      isHidden: false
+      isHidden: false,
+      date: ""
     };
     this.dismiss = this.dismiss.bind(this);
   }
+
+  componentDidMount() {
+    this.getDate();
+  }
+
+  getDate = () => {
+    var options = { year: 'numeric', month: 'short', day: 'numeric' };
+    var date = new Date().toLocaleDateString([], options);
+    this.setState({ date });
+  };
 
   dismiss() {
     this.props.dismiss();
@@ -95,7 +106,7 @@ class AddGoals extends Component {
                       </IconButton>
                     </div>
                     <div>
-                      <TextField id="task" label="Enter your task" name="task" value={task.des} onChange={this.handleTaskDesChange(idx)} />
+                      <TextField className={ classes.textfield } id="task" label="Enter your task" name="task" value={task.des} onChange={this.handleTaskDesChange(idx)} />
                     </div>
                   </div>
                 </div>
