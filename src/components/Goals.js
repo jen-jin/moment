@@ -26,13 +26,6 @@ class Goals extends Component {
     this.setState({ addGoal: false });
   }
 
-  showAddGoal() {
-    if (this.state.addGoal) {
-      return <AddGoals dismiss={ this.dismiss.bind(this) } />
-    }
-    return null;
-  }
-
   render() {
     return (
       <div className="goalsPage">
