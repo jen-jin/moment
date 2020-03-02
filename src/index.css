@@ -126,7 +126,20 @@ body {
   text-align: center;
   padding: 2px 6px 3px;
   border-width: 2px;
-  border-style: outset;
+  border-style: solid;
+  border-color: #1378C1;
+  cursor: pointer;  
+}
+
+.buttonOutlined {
+  font-family: 'Open Sans';
+  font-size: 15px;
+  color:  #1378C1;
+  background-color: #FAFAFA;
+  text-align: center;
+  padding: 2px 6px 3px;
+  border-width: 2px;
+  border-style: solid;
   border-color: #1378C1;
   cursor: pointer;  
 }
