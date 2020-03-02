@@ -79,24 +79,25 @@ class PictureQuestion extends Component {
     await this.props.onMoodChange(this.state)
   }
 
-  render(props) {
+  render() {
+    const activeEmojis = this.state
     const emojiArray = [
-      { photo: excitedEmoji, title: "Excited" },
-      { photo: happyEmoji, title: "Happy" },
-      { photo: goodEmoji, title: "Good" },
-      { photo: mehEmoji, title: "Meh" },
-      { photo: worriedEmoji, title: "Worried" },
-      { photo: sadEmoji, title: "Sad" },
-      { photo: stressedEmoji, title: "Stressed" },
-      { photo: angryEmoji, title: "Angry" }
+      { photo: excitedEmoji, title: "Excited", active: activeEmojis.excited },
+      { photo: happyEmoji, title: "Happy", active: activeEmojis.happy },
+      { photo: goodEmoji, title: "Good", active: activeEmojis.good },
+      { photo: mehEmoji, title: "Meh", active: activeEmojis.meh },
+      { photo: worriedEmoji, title: "Worried", active: activeEmojis.worried },
+      { photo: sadEmoji, title: "Sad", active: activeEmojis.sad },
+      { photo: stressedEmoji, title: "Stressed", active: activeEmojis.stressed },
+      { photo: angryEmoji, title: "Angry", active: activeEmojis.angry }
     ];
 
     const emojis = emojiArray.map(emoji => {
       return (
         <Grid item>
           <Card
-            className={"buttonWidth75px card-" + emoji.title}
-            style={{ textAlign: "center" }}
+            className={"buttonWidth75px paddingTop10px paddingBottom10px card-" + emoji.title}
+            style={{ textAlign: "center", backgroundColor: emoji.active ? '#e1f3fc' : '#FAFAFA'}}
             variant="outlined"
           >
             <CardActionArea
@@ -119,7 +120,7 @@ class PictureQuestion extends Component {
       <div className="paddingTop30px">
         <Grid item>
           <div className="body bodyBold">1. How are you feeling today?</div>
-          <div className="helper">Choose as many as you like</div>
+          <div className="helper paddingTop10px paddingBottom10px">Choose as many as you like</div>
         </Grid>
         <Grid item>
           <Grid

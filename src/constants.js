@@ -13,3 +13,19 @@ export const DEFAULT_HEADERS = {
 export const SUCCESS = "success";
 
 export const DATE_OPTIONS = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute:'2-digit'};
+export const ACTIVITY_OPTIONS = [
+  "Exploring AAC Device", 
+  "Teaching words",
+  "Having conversations",
+  "Having snacks", 
+  "Telling stories", 
+  "Playing games",
+  "Exercising",
+  "Watching movies",
+  "Dressing up",
+  "Cooking",
+  "Playing hide and seek",
+  "Taking pictures",
+  "Playing music and instruments",
+  "Science experiment"
+]
