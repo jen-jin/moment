@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { AUTH_TOKEN } from "../constants";
-import logo from "../img/logo.jpg";
+import logo from "../img/login-banner.png";
 import TextField from "@material-ui/core/TextField";
 import { AuthContext } from "../context/AuthContext";
 
@@ -32,12 +32,25 @@ class Login extends Component {
     return (
       <div className="gridTwoColumns fullscreen">
         <div className="twoColumnGridC1R1">
-          <img src={logo} alt="Logo" />
+          <img src={logo} alt="Logo" style={{ width: "100%" }} />
         </div>
-        <div className="twoColumnGridC2R1">
+        <div
+          className="twoColumnGridC2R1"
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh"
+          }}
+        >
           <div>
-            <h4 className="display">{login ? "Log in" : "Sign Up"}</h4>
-            <div className="body">Email Address</div>
+            <div className="display paddingBottom10px">
+              {login ? "Log in" : "Sign Up"}
+            </div>
+            <div className="helper darkGray">
+              Don't have an account? <span className="blue">Create Now</span>
+            </div>
+            <div className="body paddingTop30px">Email Address</div>
             <div className="username">
               <TextField
                 id="standard-username-input"
@@ -45,7 +58,7 @@ class Login extends Component {
                   style: {
                     fontFamily: "Open Sans",
                     fontSize: 15,
-                    width: 300
+                    width: 450
                   }
                 }}
                 onChange={e => this.setState({ email: e.target.value })}
@@ -61,13 +74,13 @@ class Login extends Component {
                   style: {
                     fontFamily: "Open Sans",
                     fontSize: 15,
-                    width: 300
+                    width: 450
                   }
                 }}
                 onChange={e => this.setState({ password: e.target.value })}
                 placeholder="Enter your password"
               />
-              <div className="flex paddingTop30px paddingLeft85px">
+              <div className="flex paddingTop30px paddingLeft150px">
                 <div
                   className="button borderRadius25px"
                   onClick={this.handleLogin}
