@@ -19,6 +19,7 @@ import {
 class CreateReflection extends Component {
   static contextType = AuthContext;
 
+  // MARK: - Constructor
   constructor(props) {
     super(props);
 
@@ -36,6 +37,7 @@ class CreateReflection extends Component {
         angry: false
       },
       selectedGoals: [],
+      selectedActivities: [],
       title: "Untitled Reflection",
       date: new Date().toLocaleTimeString("en-US", DATE_OPTIONS)
     };
@@ -47,8 +49,10 @@ class CreateReflection extends Component {
     this.handleMoodSelection = this.handleMoodSelection.bind(this);
     this.handleGoalSelection = this.handleGoalSelection.bind(this);
     this.handleGoalUnSelection = this.handleGoalUnSelection.bind(this);
+    this.handleActivitySelection = this.handleActivitySelection.bind(this);
   }
 
+  // MARK: - Lifecycle
   componentDidMount() {
     const { userId } = this.context;
 
@@ -73,6 +77,7 @@ class CreateReflection extends Component {
       );
   }
 
+  // MARK: - Reflection Changes
   changedTitle() {
     // handle changed title
   }
@@ -90,7 +95,7 @@ class CreateReflection extends Component {
   }
 
   // MARK: - Handling Goal Question
-  // TODO: Two issues
+  // TODO: Two issues --> see Chip Question for fix
   // 1. Second select for update ()
   // 2. Goals adding regardless if it is already there
   handleGoalSelection(newGoals) {
@@ -106,6 +111,16 @@ class CreateReflection extends Component {
     // Remove Goal
   }
 
+  // MARK: - Activity Selection
+  async handleActivitySelection(newActivities) {
+    await this.setState({
+      // NOTE: Await is necessary here
+      selectedActivities: newActivities
+    })
+    
+    console.log("New Activities Count: " + this.state.selectedActivities.length)
+  }
+
   // MARK: - Navigating Sections
   moveForward() {
     this.setState({ step: this.state.step + 1 });
@@ -115,6 +130,7 @@ class CreateReflection extends Component {
     this.setState({ step: this.state.step - 1 });
   }
 
+  // MARK: - Render
   render() {
     const { step, goals, title, date } = this.state;
     const numSteps = 4;
@@ -188,6 +204,7 @@ class CreateReflection extends Component {
                 question="3. What activities did you have with your child today?"
                 helper="Choose as many as you like"
                 options={ACTIVITY_OPTIONS}
+                onSelectionChange={this.handleActivitySelection}
               />
             )}
             {step == 3 && <StandardQuestion placeholder="Add New Activities" />}

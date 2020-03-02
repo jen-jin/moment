@@ -14,21 +14,24 @@ class ChipQuestion extends Component {
   }
 
   // Resource: https://www.robinwieruch.de/react-state-array-add-update-remove
-  handleSelection(event) {
-    const value = event.target.value;
-    if (!this.state.selectedChips.includes(value)) {
+  handleSelection(option) {
+    if (!this.state.selectedChips.includes(option)) {
       // Adding Chip
       this.setState({
-        selectedChips: [...this.state.selectedChip, event.target.value]
-      });
+        selectedChips: this.state.selectedChips.concat(option)
+      }, () => this.callBackSelectionChanged());
     } else {
       // Removing Chip
-      const newList = this.state.selectedChips.filter(i => i !== value);
-      console.log("Filtered List: " + newList);
+      const newList = this.state.selectedChips.filter(i => i !== option);
+
       this.setState({
         selectedChips: newList
-      });
+      }, () => this.callBackSelectionChanged());
     }
+  }
+
+  async callBackSelectionChanged() {
+    await this.props.onSelectionChange(this.state.selectedChips)
   }
 
   render() {
@@ -43,13 +46,13 @@ class ChipQuestion extends Component {
             {this.props.helper}
           </div>
         </Grid>
-        <Grid item xs={12} style={{ maxWidth: 900}}>
-          {optionList.map(option => (
+        <Grid item xs={12} style={{ width: 850}}> 
+          {optionList.map(option => ( // Note: Decreased width to stop resizing of grid with chip selection
             <Chip
               key={option}
               label={option}
               className={"chip-" + { option }}
-            //   onClick={this.handleSelection}
+              onClick={() => this.handleSelection(option)}
               variant={selectedChips.includes(option) ? "default" : "outlined"}  // TODO: selectedChips.includes(option) is dumb
               color="primary"
               clickable     
