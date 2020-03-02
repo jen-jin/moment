@@ -52,10 +52,11 @@ class CreateReflection extends Component {
   componentDidMount() {
     const { userId } = this.context;
 
-    console.log("User ID: "+ userId)
+    console.log("User ID: " + userId);
 
     axios
-      .get(GOALS_PATH + "/" + parseInt("14"), { // Temporarily changing it to 14 until we have the APIs sorted out
+      .get(GOALS_PATH + "/" + parseInt("14"), {
+        // Temporarily changing it to 14 until we have the APIs sorted out
         headers: DEFAULT_HEADERS
       })
       .then(
@@ -93,12 +94,12 @@ class CreateReflection extends Component {
   // 1. Second select for update ()
   // 2. Goals adding regardless if it is already there
   handleGoalSelection(newGoals) {
-    console.log("Selected goals before:" + this.state.selectedGoals)
-    this.setState({ 
-      selectedGoals: [...this.state.selectedGoals , newGoals]
-     });
+    console.log("Selected goals before:" + this.state.selectedGoals);
+    this.setState({
+      selectedGoals: [...this.state.selectedGoals, newGoals]
+    });
 
-     console.log("Selected goals after:" + this.state.selectedGoals)
+    console.log("Selected goals after:" + this.state.selectedGoals);
   }
 
   handleGoalUnSelection(goal) {
@@ -118,7 +119,7 @@ class CreateReflection extends Component {
     const { step, goals, title, date } = this.state;
     const numSteps = 4;
 
-    console.log("Goals length " + goals.length)
+    console.log("Goals length " + goals.length);
 
     return (
       <div className="createReflection">
@@ -129,7 +130,7 @@ class CreateReflection extends Component {
           alignItems="center"
           justify="center"
         >
-          <Grid item style={{ width: 950}}>
+          <Grid item style={{ width: 950 }}>
             <div className="paddingTop30px" />
             <TextField
               id="standard-basic"
@@ -150,6 +151,7 @@ class CreateReflection extends Component {
             {step == 1 && (
               <PictureQuestion onMoodChange={this.handleMoodSelection} />
             )}
+
             {step == 2 && goals.length > 0 && (
               <DropDownChipQuestion
                 question="2. Did you work on any of these goals today?"
@@ -162,6 +164,13 @@ class CreateReflection extends Component {
                 onUnSelection={this.handleGoalUnSelection}
               />
             )}
+            {step == 2 &&
+            goals.length == 0 && ( // In the case of network failure
+                <StandardQuestion
+                  question="2. What goals did you work on today?"
+                  placeholder="Type your answer here"
+                />
+              )}
             {/* {step == 2 && goals.length > 0 && ( // TODO: Once subgoals path is ready, finish question
               <DropDownChipQuestion
                 question="3. Did you work on any of these tasks today?"
@@ -173,42 +182,61 @@ class CreateReflection extends Component {
                 onUnSelection={this.handleGoalUnSelection}
               />
             )}             */}
+
             {step == 3 && (
               <ChipQuestion
                 question="3. What activities did you have with your child today?"
                 helper="Choose as many as you like"
                 options={ACTIVITY_OPTIONS}
-
               />
-            )}            
-            {step == 3 && <StandardQuestion question="What went well?" />}
+            )}
+            {step == 3 && <StandardQuestion placeholder="Add New Activities" />}
+
             {step == 4 && (
               <div>
                 <StandardQuestion question="What can be improved?" />
-                <div
-                  className="button buttonWidth100px borderRadius25px marginTop30px rightAlign"
-                  onClick={this.handleSubmit}
-                >
-                  Submit
-                </div>
               </div>
             )}
-            {step !== numSteps && (
-              <div
-                className="button buttonWidth100px borderRadius25px marginTop30px rightAlign"
-                onClick={this.moveForward}
-              >
-                Next
-              </div>
-            )}
-            {step !== 1 && (
-              <div
-                className="button buttonWidth100px borderRadius25px marginTop30px"
-                onClick={this.moveBackwards}
-              >
-                Back
-              </div>
-            )}
+
+            <Grid
+              container
+              item
+              spacing={3}
+              direction="row"
+              alignItems="flex-end"
+              justify="flex-end"
+            >
+              {step !== 1 && (
+                <Grid item>
+                  <div
+                    className="buttonOutlined buttonWidth100px borderRadius25px marginTop30px"
+                    onClick={this.moveBackwards}
+                  >
+                    Back
+                  </div>
+                </Grid>
+              )}
+              {step !== numSteps && (
+                <Grid item>
+                  <div
+                    className="button buttonWidth100px borderRadius25px marginTop30px"
+                    onClick={this.moveForward}
+                  >
+                    Next
+                  </div>
+                </Grid>
+              )}
+              {step == 4 && (
+                <Grid item>
+                  <div
+                    className="button buttonWidth100px borderRadius25px marginTop30px"
+                    onClick={this.handleSubmit}
+                  >
+                    Submit
+                  </div>
+                </Grid>
+              )}
+            </Grid>
           </Grid>
         </Grid>
       </div>
