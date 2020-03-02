@@ -50,9 +50,16 @@ class ChipQuestion extends Component {
               label={option}
               className={"chip-" + { option }}
             //   onClick={this.handleSelection}
-              variant={selectedChips.includes(option) ? "default" : "outlined"}
+              variant={selectedChips.includes(option) ? "default" : "outlined"}  // TODO: selectedChips.includes(option) is dumb
               color="primary"
-              clickable              
+              clickable     
+              style={{ 
+                  color: selectedChips.includes(option) ? '#FAFAFA' : '#1378C1' , 
+                  borderColor: '#1378C1',
+                  backgroundColor: selectedChips.includes(option) ? '#1378C1' : '#FAFAFA',
+                  marginBottom: 10,
+                  marginRight: 10
+                }}         
             />
           ))}
         </Grid>
