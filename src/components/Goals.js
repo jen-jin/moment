@@ -45,8 +45,8 @@ class Goals extends Component {
                 </Tabs>
               </Grid>
               <Grid item xs={4}>
-                <Button variant="contained" color="primary" style={{float: "right"}} onClick={this.handleAdd}>
-                    + Add Goal
+                <Button variant="contained" style={{float: "right"}} onClick={this.handleAdd}>
+                  + Add Goal
                 </Button>
               </Grid>
             </Grid>

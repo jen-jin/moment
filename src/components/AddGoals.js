@@ -115,7 +115,7 @@ class AddGoals extends Component {
             </div>
             <CardActions>
               <Button color="primary" onClick={this.dismiss}>Cancel</Button>
-              <Button color="primary" variant="contained" type="submit">Save</Button>
+              <Button variant="contained" type="submit">Save</Button>
             </CardActions>
           </Card>
         </form>

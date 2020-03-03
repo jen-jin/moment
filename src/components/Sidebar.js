@@ -23,8 +23,8 @@ const styles = theme => ({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    paddingTop: 8,
-    paddingBottom: 8
+    paddingTop: 30,
+    paddingBottom: 30
   }
 });
 
