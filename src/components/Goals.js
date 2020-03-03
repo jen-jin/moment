@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import AddGoals from "./AddGoals";
+import ViewGoals from "./ViewGoals";
 import Grid from "@material-ui/core/Grid";
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -27,7 +28,11 @@ class Goals extends Component {
   }
 
   render() {
-    return (
+    var goalForm = <ViewGoals />;
+    if (this.state.addGoal)
+      goalForm = <AddGoals dismiss={ this.dismiss.bind(this) } />;
+
+    return (      
       <div className="goalsPage">
         <Grid container direction="row" alignItems="center" justify="center">
           <Grid item xs={8}>
@@ -39,14 +44,14 @@ class Goals extends Component {
                   <Tab label="Completed Goals" />
                 </Tabs>
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={4}>
                 <Button variant="contained" color="primary" style={{float: "right"}} onClick={this.handleAdd}>
                     + Add Goal
                 </Button>
               </Grid>
             </Grid>
             <div>
-              { this.showAddGoal() }
+              { goalForm }
             </div>
           </Grid>
         </Grid>

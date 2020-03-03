@@ -9,6 +9,8 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Typography from '@material-ui/core/Typography';
+import Grid from "@material-ui/core/Grid";
+import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
@@ -34,7 +36,7 @@ class ViewGoals extends Component {
     this.state = {
       goals: {},
       tasks: [],
-      goalsExist: false
+      goalsExist: true
     };
   }
 
@@ -42,34 +44,34 @@ class ViewGoals extends Component {
     const { userId } = this.context;
 
     axios.get(GOALS_PATH + "/" + parseInt(userId), {headers: DEFAULT_HEADERS}).then(
-        response => {
-          if (response.data.status == SUCCESS && response.data.data.length != 0) {
-            this.setState({ goalsExist: true });
-            var tempGoals = [];
-            var tempTasks = [];
-            for (const data of response.data.data) {
-              tempGoals.push(data["goal"]);
-              tempTasks.push(data["subgoals"]);
-            }
-            this.setState({
-              goals: tempGoals,
-              tasks: tempTasks,
-            });
-            console.log(this.state.goals, this.state.tasks);
-            console.log(this.state.tasks[0][0]["subgoal"]);
-            console.log(this.state.tasks.length);
-          } else {
-            console.log('empty');
+      response => {
+        if (response.data.status == SUCCESS && response.data.data.length != 0) {
+          var tempGoals = [];
+          var tempTasks = [];
+          for (const data of response.data.data) {
+            tempGoals.push(data["goal"]);
+            tempTasks.push(data["subgoals"]);
           }
-        },
-        error => {
-          console.log(error);
+          this.setState({
+            goals: tempGoals,
+            tasks: tempTasks,
+          });
+          console.log(this.state.goals, this.state.tasks);
+          console.log(this.state.tasks[0][0]["subgoal"]);
+          console.log(this.state.tasks.length);
+        } else {
+          this.setState({ goalsExist: false });
+          console.log('empty');
         }
-      );
+      },
+      error => {
+        console.log(error);
+      }
+    );
   }
 
   createPanel() {
-    const { classes } = this.props;
+    const { classes } = this.props
     let panel =[]
     let summary = []
 
@@ -77,7 +79,21 @@ class ViewGoals extends Component {
       let details = []
       summary.push(
         <NewExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography className={ classes.text }>{ this.state.goals[i]["goal"] }</Typography>
+          <Grid item xs={8}>
+            <Typography className={ classes.text } variant="h6">
+              { this.state.goals[i]["goal"] }
+            </Typography>
+            <Typography className={ classes.text } variant="subtitle1">
+              Created on { this.state.goals[i]["timestamp"] }
+            </Typography>
+          </Grid>
+          <Grid item xs={4}>
+            <div style={{float: "right"}}>
+              <Button color="primary">Complete</Button>
+              <Button color="primary">Edit</Button>
+              <Button color="primary">Delete</Button>
+            </div>
+          </Grid>
         </NewExpansionPanelSummary>
       )
       for (let j = 0; j < this.state.tasks.length; j++){
@@ -93,7 +109,11 @@ class ViewGoals extends Component {
           </ExpansionPanelDetails>
         )
       }
-      panel.push(<ExpansionPanel className={ classes.panel }>{ summary }{ details }</ExpansionPanel>)
+      panel.push(
+        <ExpansionPanel className={ classes.panel }>
+          { summary }{ details }
+        </ExpansionPanel>
+      )
     }
     return panel
   }
@@ -102,10 +122,14 @@ class ViewGoals extends Component {
     return <div class="paragraph"><p><small>You haven't created any goal yet. Click + Add Goal button to create a new goal.</small></p></div>
   }
 
+  viewForm() {
+    return this.state.goalsExist ? this.createPanel() : this.default();
+  }
+
   render() {
     return (
       <div>
-        { this.state.goalsExist ? this.createPanel() : this.default() }
+        { this.viewForm() }
       </div>
     );
   }
