@@ -40,6 +40,7 @@ class CreateReflection extends Component {
         angry: false
       },
       selectedGoals: [],
+      networkFailGoals: "",
       selectedSubGoals: [],
       selectedActivities: [],
       additionalActivities: "",
@@ -81,6 +82,7 @@ class CreateReflection extends Component {
     this.handleCommunication = this.handleCommunication.bind(this);
     this.handleGoodLearnings = this.handleGoodLearnings.bind(this);
     this.handleBadLearnings = this.handleBadLearnings.bind(this);
+    this.handleNetworkFailGoals = this.handleNetworkFailGoals.bind(this);
   }
 
   // MARK: - Lifecycle
@@ -216,6 +218,13 @@ class CreateReflection extends Component {
     });
   }
 
+  async handleNetworkFailGoals(goals) {
+    await this.setState({
+      // NOTE: Await is necessary here
+      networkFailGoals: goals
+    });
+  }
+  
   // MARK: - Navigating Sections
   moveForward() {
     this.setState({ step: this.state.step + 1 });
@@ -234,6 +243,7 @@ class CreateReflection extends Component {
       completedReflection,
       moods,
       selectedGoals,
+      networkFailGoals,
       selectedSubGoals,
       selectedActivities,
       additionalActivities,
@@ -282,7 +292,7 @@ class CreateReflection extends Component {
             <Grid item>
               <div className="helper paddingTop10px">
                 {step == 1 && "Let's get started! "}
-                {step < numSteps && step > 1 && "Keeping going! "}
+                {step < numSteps && step > 1 && "Keep going! "}
                 {step == numSteps && "You're almost there! "}
                 You're on section {step} of {numSteps}.
               </div>
@@ -312,6 +322,8 @@ class CreateReflection extends Component {
                   <StandardQuestion
                     question="2. What goals did you work on today?"
                     placeholder="Type your answer here"
+                    content={networkFailGoals}
+                    onContentChange={this.handleNetworkFailGoals}
                   />
                 )}
               {/* {step == 2 && goals.length > 0 && ( // TODO: Once subgoals path is ready, finish question
@@ -327,12 +339,7 @@ class CreateReflection extends Component {
             )}             */}
 
               {step == 3 && (
-                <StandardQuestion
-                  question="3. PLACE HOLDER FOR SUBGOALS QUESTION"
-                  placeholder="Additional Activities"
-                  content={additionalActivities}
-                  onContentChange={this.handleAdditionalActivities}
-                />
+                <div>Place holder for sub goals question</div>
               )}
 
               {step == 4 && (
