@@ -17,15 +17,17 @@ class PictureQuestion extends Component {
   constructor(props) {
     super(props);
 
+    const moods = this.props.moods
+    
     this.state = {
-      excited: false,
-      happy: false,
-      good: false,
-      meh: false,
-      worried: false,
-      sad: false,
-      stressed: false,
-      angry: false
+      excited: moods.excited,
+      happy: moods.happy,
+      good: moods.good,
+      meh: moods.meh,
+      worried: moods.worried,
+      sad: moods.sad,
+      stressed: moods.stressed,
+      angry: moods.angry
     };
 
     this.clickedEmoji = this.clickedEmoji.bind(this);

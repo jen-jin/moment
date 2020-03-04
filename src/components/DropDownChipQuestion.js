@@ -10,18 +10,24 @@ import MenuItem from "@material-ui/core/MenuItem";
 class DropDownChipQuestion extends Component {
   constructor(props) {
     super(props);
+    
+    this.state = {
+      selected: this.props.selected
+    }
 
     this.handleSelection = this.handleSelection.bind(this);
-    this.handleUnselection = this.handleUnselection.bind(this);
   }
 
   handleSelection(event) {
-    this.props.onSelection(event.target.value);
+    const item = event.target.value
+
+    this.setState({
+      selected: item
+    }, () => this.callBackSelectionChanged())
   }
 
-  // TODO: Remove if not possible
-  handleUnselection(event) {
-      console.log("Deleting chip " + event)
+  async callBackSelectionChanged() {
+    await this.props.onSelectionChange(this.state.selected)
   }
 
   render() {
@@ -29,7 +35,7 @@ class DropDownChipQuestion extends Component {
     const key1 = this.props.key1;
     const key2 = this.props.key2;
 
-    console.log("Goal length" + this.props.content.length);
+    const selected = this.state.selected;
 
     return (
       <div className="paddingTop30px">
@@ -46,20 +52,17 @@ class DropDownChipQuestion extends Component {
             </InputLabel>
             <Select
               id="chip-type-select"
-              onChange={this.handleSelection}
               multiple
-              value={content}
-              displayEmpty
+              value={selected}
+              onChange={this.handleSelection}
               input={<Input id="select-multiple-chip" />}
               renderValue={selected => (
                 <div className="chips">
                   {selected.map(info => (
                     <Chip
-                      key={key2 !== null ? info[key1][key2]: info[key1]} // TODO: Unique key
-                      label={key2 !== null ? info[key1][key2]: info[key1]}
-                      className={"chip-" + key2 !== null ? info[key1][key2]: info[key1]}
-                      onDelete={this.handleUnselection} // TODO: Remove if not posssible
-                      clickable
+                      key={info}
+                      label={info}
+                      className={"chip-" + info}
                     />
                   ))}
                 </div>

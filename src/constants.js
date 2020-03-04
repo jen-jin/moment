@@ -13,19 +13,40 @@ export const DEFAULT_HEADERS = {
 export const SUCCESS = "success";
 
 export const DATE_OPTIONS = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute:'2-digit'};
+
+export const DEFAULT_REFLECTION_TITLE = "Untitled Reflection";
+
+export const DEFAULT_TEXTBOX_PLACEHOLDER = "Type your answer here";
+
 export const ACTIVITY_OPTIONS = [
-  "Exploring AAC Device", 
-  "Teaching words",
-  "Having conversations",
-  "Having snacks", 
-  "Telling stories", 
-  "Playing games",
+  "Playing music",
+  "Blowing bubbles",
+  "Playing toys",
+  "Colouring",
+  "Playing trampoline",
+  "Having snack",
+  "Playing blocks",
   "Exercising",
-  "Watching movies",
-  "Dressing up",
+  "Hide and Seek",
+  "Running",
   "Cooking",
-  "Playing hide and seek",
+  "Interacting with pets",
+  "Dressing up",
+  "Playing games",
+  "Watching movies",
+  "Riding cars",
+  "Reading books",
   "Taking pictures",
-  "Playing music and instruments",
-  "Science experiment"
+  "Science experiment"  
+]
+
+export const ACTIVITY_LOCATION_OPTIONS = [
+  "Living room",
+  "Bedroom",
+  "Kitchen",
+  "Home",
+  "School",
+  "Playground",
+  "Yard",
+  "Gym"
 ]
