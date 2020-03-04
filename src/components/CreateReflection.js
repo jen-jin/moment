@@ -13,7 +13,10 @@ import {
   GOALS_PATH,
   SUCCESS,
   DATE_OPTIONS,
-  ACTIVITY_OPTIONS
+  ACTIVITY_OPTIONS,
+  ACTIVITY_LOCATION_OPTIONS,
+  DEFAULT_REFLECTION_TITLE,
+  DEFAULT_TEXTBOX_PLACEHOLDER
 } from "../constants";
 
 class CreateReflection extends Component {
@@ -37,8 +40,17 @@ class CreateReflection extends Component {
         angry: false
       },
       selectedGoals: [],
+      selectedSubGoals: [],
       selectedActivities: [],
-      title: "Untitled Reflection",
+      additionalActivities: "",
+      selectedActivityLocations: [],
+      additionalActivityLocations: "",
+      activityCommunication: "",
+      intendedMessage: "",
+      communication: "",
+      learningsGood: "",
+      learningsBad: "",
+      title: DEFAULT_REFLECTION_TITLE,
       date: new Date().toLocaleTimeString("en-US", DATE_OPTIONS),
       completedReflection: false
     };
@@ -49,8 +61,25 @@ class CreateReflection extends Component {
     this.changedTitle = this.changedTitle.bind(this);
     this.handleMoodSelection = this.handleMoodSelection.bind(this);
     this.handleGoalSelection = this.handleGoalSelection.bind(this);
-    this.handleGoalUnSelection = this.handleGoalUnSelection.bind(this);
     this.handleActivitySelection = this.handleActivitySelection.bind(this);
+    this.handleAdditionalActivities = this.handleAdditionalActivities.bind(
+      this
+    );
+    this.handleActivityLocationSelection = this.handleActivityLocationSelection.bind(
+      this
+    );
+    this.handleAdditionalActivityLocations = this.handleAdditionalActivityLocations.bind(
+      this
+    );
+    this.handleActivityCommunication = this.handleActivityCommunication.bind(
+      this
+    );
+    this.handleIntendedMessageCommunication = this.handleIntendedMessageCommunication.bind(
+      this
+    );
+    this.handleCommunication = this.handleCommunication.bind(this);
+    this.handleGoodLearnings = this.handleGoodLearnings.bind(this);
+    this.handleBadLearnings = this.handleBadLearnings.bind(this);
   }
 
   // MARK: - Lifecycle
@@ -79,12 +108,21 @@ class CreateReflection extends Component {
   }
 
   // MARK: - Reflection Changes
-  changedTitle() {
-    // handle changed title
+  changedTitle(event) {
+    this.setState({
+      title: event.target.value
+    });
   }
 
   handleSubmit() {
-    // Submit
+    // TODO: Call API
+    this.setState({
+      completedReflection: true
+    }, () => this.navigateToReflection())
+  }
+
+  async navigateToReflection() {
+    await this.props.history.replace("/reflection");
   }
 
   // MARK: - Handling Mood Question
@@ -96,20 +134,11 @@ class CreateReflection extends Component {
   }
 
   // MARK: - Handling Goal Question
-  // TODO: Two issues --> see Chip Question for fix
-  // 1. Second select for update ()
-  // 2. Goals adding regardless if it is already there
-  handleGoalSelection(newGoals) {
-    console.log("Selected goals before:" + this.state.selectedGoals);
-    this.setState({
-      selectedGoals: [...this.state.selectedGoals, newGoals]
+  async handleGoalSelection(newGoals) {
+    await this.setState({
+      // NOTE: Await is necessary here
+      selectedGoals: newGoals
     });
-
-    console.log("Selected goals after:" + this.state.selectedGoals);
-  }
-
-  handleGoalUnSelection(goal) {
-    // Remove Goal
   }
 
   // MARK: - Activity Selection
@@ -118,10 +147,68 @@ class CreateReflection extends Component {
       // NOTE: Await is necessary here
       selectedActivities: newActivities
     });
+  }
 
-    console.log(
-      "New Activities Count: " + this.state.selectedActivities.length
-    );
+  async handleAdditionalActivities(additionalActivities) {
+    await this.setState({
+      // NOTE: Await is necessary here
+      additionalActivities: additionalActivities
+    });
+  }
+
+  // MARK: - Activity Location Selection
+  async handleActivityLocationSelection(newLocations) {
+    await this.setState({
+      // NOTE: Await is necessary here
+      selectedActivityLocations: newLocations
+    });
+  }
+
+  async handleAdditionalActivityLocations(additionalLocations) {
+    await this.setState({
+      // NOTE: Await is necessary here
+      additionalActivityLocations: additionalLocations
+    });
+  }
+
+  // MARK: - Communication During Activitiy
+  async handleActivityCommunication(communication) {
+    await this.setState({
+      // NOTE: Await is necessary here
+      activityCommunication: communication
+    });
+  }
+
+  // MARK: - Intended Message During Activity
+  async handleIntendedMessageCommunication(message) {
+    await this.setState({
+      // NOTE: Await is necessary here
+      intendedMessage: message
+    });
+  }
+
+  // MARK: - General Communication During Activity
+  async handleCommunication(message) {
+    await this.setState({
+      // NOTE: Await is necessary here
+      communication: message
+    });
+  }
+
+  // MARK: - Good Learnings
+  async handleGoodLearnings(learning) {
+    await this.setState({
+      // NOTE: Await is necessary here
+      learningsGood: learning
+    });
+  }
+
+  // MARK: - Bad Learnings
+  async handleBadLearnings(learning) {
+    await this.setState({
+      // NOTE: Await is necessary here
+      learningsBad: learning
+    });
   }
 
   // MARK: - Navigating Sections
@@ -135,10 +222,26 @@ class CreateReflection extends Component {
 
   // MARK: - Render
   render() {
-    const { step, goals, title, date, completedReflection } = this.state;
-    const numSteps = 4;
+    const {
+      step,
+      goals,
+      date,
+      completedReflection,
+      moods,
+      selectedGoals,
+      selectedSubGoals,
+      selectedActivities,
+      additionalActivities,
+      selectedActivityLocations,
+      additionalActivityLocations,
+      activityCommunication,
+      intendedMessage,
+      communication,
+      learningsGood,
+      learningsBad
+    } = this.state;
 
-    console.log("Goals length " + goals.length);
+    const numSteps = 5;
 
     return (
       <React.Fragment>
@@ -158,7 +261,7 @@ class CreateReflection extends Component {
               <div className="paddingTop30px" />
               <TextField
                 id="standard-basic"
-                placeholder={title}
+                placeholder={DEFAULT_REFLECTION_TITLE}
                 inputProps={{
                   style: { fontFamily: "Open Sans", fontSize: 24, width: 500 }
                 }}
@@ -168,12 +271,18 @@ class CreateReflection extends Component {
             </Grid>
             <Grid item>
               <div className="helper paddingTop10px">
-                Let's get started! You're on section {step} of 4.
+                {step == 1 && "Let's get started! "}
+                {step < numSteps && step > 1 && "Keeping going! "}
+                {step == numSteps && "You're almost there! "}                
+                You're on section {step} of {numSteps}.
               </div>
             </Grid>
             <Grid item>
               {step == 1 && (
-                <PictureQuestion onMoodChange={this.handleMoodSelection} />
+                <PictureQuestion
+                  onMoodChange={this.handleMoodSelection}
+                  moods={moods}
+                />
               )}
 
               {step == 2 && goals.length > 0 && (
@@ -184,8 +293,8 @@ class CreateReflection extends Component {
                   content={goals}
                   key1="goal"
                   key2="goal"
-                  onSelection={this.handleGoalSelection}
-                  onUnSelection={this.handleGoalUnSelection}
+                  onSelectionChange={this.handleGoalSelection}
+                  selected={selectedGoals}
                 />
               )}
               {step == 2 &&
@@ -208,23 +317,93 @@ class CreateReflection extends Component {
             )}             */}
 
               {step == 3 && (
-                <ChipQuestion
-                  question="3. What activities did you have with your child today?"
-                  helper="Choose as many as you like"
-                  options={ACTIVITY_OPTIONS}
-                  onSelectionChange={this.handleActivitySelection}
+                <StandardQuestion
+                  question="3. PLACE HOLDER FOR SUBGOALS QUESTION"
+                  placeholder="Additional Activities"
+                  content={additionalActivities}
+                  onContentChange={this.handleAdditionalActivities}
                 />
-              )}
-              {step == 3 && (
-                <StandardQuestion placeholder="Add New Activities" />
               )}
 
               {step == 4 && (
-                <div>
-                  <StandardQuestion question="What can be improved?" />
-                </div>
+                <ChipQuestion
+                  question={
+                    selectedSubGoals.length == 0
+                      ? "4. What activities did you have with your child today?"
+                      : "4. What activity did you do with your child when you were working on the selected tasks?"
+                  }
+                  helper="Choose as many as you like"
+                  options={ACTIVITY_OPTIONS}
+                  selectedOptions={selectedActivities}
+                  onSelectionChange={this.handleActivitySelection}
+                />
+              )}
+              {step == 4 && (
+                <StandardQuestion
+                  placeholder="Additional Activities"
+                  content={additionalActivities}
+                  onContentChange={this.handleAdditionalActivities}
+                />
+              )}
+              {step == 4 && (
+                <ChipQuestion
+                  question="5. Where did you have the activity today?"
+                  helper="Choose as many as you like"
+                  options={ACTIVITY_LOCATION_OPTIONS}
+                  selectedOptions={selectedActivityLocations}
+                  onSelectionChange={this.handleActivityLocationSelection}
+                />
+              )}
+              {step == 4 && (
+                <StandardQuestion
+                  placeholder="Additional Activity Locations"
+                  content={additionalActivityLocations}
+                  onContentChange={this.handleAdditionalActivityLocations}
+                />
+              )}
+              {step == 4 && (
+                <StandardQuestion
+                  question="6. How did your child communicate during the activity?"
+                  placeholder={DEFAULT_TEXTBOX_PLACEHOLDER}
+                  content={activityCommunication}
+                  onContentChange={this.handleActivityCommunication}
+                />
+              )}
+              {step == 4 && (
+                <StandardQuestion
+                  question="7. What was the intended message from your child?"
+                  placeholder={DEFAULT_TEXTBOX_PLACEHOLDER}
+                  content={intendedMessage}
+                  onContentChange={this.handleIntendedMessageCommunication}
+                />
+              )}
+              {step == 4 && (
+                <StandardQuestion
+                  question="8. How did you communicate with your child?"
+                  placeholder={DEFAULT_TEXTBOX_PLACEHOLDER}
+                  content={communication}
+                  onContentChange={this.handleCommunication}
+                />
               )}
 
+              {step == 5 && (
+                <StandardQuestion
+                  question="9. What went well during the activity today?"
+                  helper="Take a moment to reflect on the activity that went well, how do you know it went well and what you should keep doing in the next session?"
+                  placeholder={DEFAULT_TEXTBOX_PLACEHOLDER}
+                  content={learningsGood}
+                  onContentChange={this.handleGoodLearnings}
+                />
+              )}
+              {step == 5 && (
+                <StandardQuestion
+                  question="10. What didn't go well during the activity today?"
+                  helper="Take a moment and reflect on the time you ran into an obstacle during the activity. What was that obstacle? How did it occur? What are the possible actions you could do to prevent it from happening again in the future?"
+                  placeholder={DEFAULT_TEXTBOX_PLACEHOLDER}
+                  content={learningsBad}
+                  onContentChange={this.handleBadLearnings}
+                />
+              )}
               <Grid
                 container
                 item
@@ -253,7 +432,7 @@ class CreateReflection extends Component {
                     </div>
                   </Grid>
                 )}
-                {step == 4 && (
+                {step == numSteps && (
                   <Grid item>
                     <div
                       className="button buttonWidth100px borderRadius25px marginTop30px"

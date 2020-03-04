@@ -7,7 +7,7 @@ class ChipQuestion extends Component {
     super(props);
 
     this.state = {
-      selectedChips: []
+      selectedChips: this.props.selectedOptions
     };
 
     this.handleSelection = this.handleSelection.bind(this);
