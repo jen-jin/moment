@@ -92,7 +92,7 @@ class CreateReflection extends Component {
     console.log("User ID: " + userId);
 
     axios
-      .get(GOALS_PATH + "/" + parseInt("14"), {
+      .get(GOALS_PATH + "/" + parseInt("14") + "/incomplete", {
         // Temporarily changing it to 14 until we have the APIs sorted out
         headers: DEFAULT_HEADERS
       })
