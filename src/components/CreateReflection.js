@@ -52,7 +52,8 @@ class CreateReflection extends Component {
       learningsBad: "",
       title: DEFAULT_REFLECTION_TITLE,
       date: new Date().toLocaleTimeString("en-US", DATE_OPTIONS),
-      completedReflection: false
+      completedReflection: false,
+      displayPrompt: false
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -116,9 +117,13 @@ class CreateReflection extends Component {
 
   handleSubmit() {
     // TODO: Call API
-    this.setState({
-      completedReflection: true
-    }, () => this.navigateToReflection())
+    this.setState(
+      {
+        completedReflection: true,
+        displayPrompt: true
+      },
+      () => this.navigateToReflection()
+    );
   }
 
   async navigateToReflection() {
@@ -238,7 +243,8 @@ class CreateReflection extends Component {
       intendedMessage,
       communication,
       learningsGood,
-      learningsBad
+      learningsBad,
+      displayPrompt
     } = this.state;
 
     const numSteps = 5;
@@ -249,6 +255,10 @@ class CreateReflection extends Component {
           when={!completedReflection}
           message="You have unsaved changes, are you sure you want to leave?"
         />
+        <Prompt
+          when={displayPrompt}
+          message="Are you sure you want to submit?"
+        />        
         <div className="createReflection">
           <Grid
             container
@@ -273,7 +283,7 @@ class CreateReflection extends Component {
               <div className="helper paddingTop10px">
                 {step == 1 && "Let's get started! "}
                 {step < numSteps && step > 1 && "Keeping going! "}
-                {step == numSteps && "You're almost there! "}                
+                {step == numSteps && "You're almost there! "}
                 You're on section {step} of {numSteps}.
               </div>
             </Grid>
