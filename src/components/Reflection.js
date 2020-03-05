@@ -21,13 +21,15 @@ class Reflection extends Component {
     this.state = {
       reflections: [],
       page: 0,
-      rowsPerPage: 10
+      rows: [],
+      rowsPerPage: 10,
     };
 
     this.createReflection = this.createReflection.bind(this);
     this.handleChangePage = this.handleChangePage.bind(this);
     this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this);
     this.createTableData = this.createTableData.bind(this);
+    this.createReflectionData = this.createReflectionData.bind(this);
   }
 
   // MARK: - Lifecycle
@@ -44,10 +46,10 @@ class Reflection extends Component {
       })
       .then(
         response => {
-          if (response.data.status == SUCCESS && response.data.data != []) {
+          if (response.data.status == SUCCESS) {
             this.setState({
               reflections: response.data.data
-            });
+            }, () => this.createTableData());
           }
         },
         error => {
@@ -69,14 +71,21 @@ class Reflection extends Component {
     })
   }
   
-  createTableData(reflection) {
-    const title = reflection.reflection;
-    const dateCreated = reflection.timestamp;
-    const dateModified = reflection.timestamp;
+  async createTableData() {
+    await this.state.reflections.map(reflection => {
+      this.setState({
+        rows: this.state.rows.concat(this.createReflectionData(reflection))
+      })
+    })
+  }
 
-    console.log("Row Title: " + title + "Row Date: " + dateCreated);
+  createReflectionData(reflection) {
+    const title = reflection.title;
+    const dateCreated = reflection.date_created;
+    const lastModified = reflection.last_modified;
+    const actions = "View Delete"
 
-    return { title, dateCreated, dateModified };
+    return { title, dateCreated, lastModified, actions };
   }
 
   createReflection() {
@@ -84,7 +93,7 @@ class Reflection extends Component {
   }
 
   render() {
-    const { reflections, page, rowsPerPage } = this.state;
+    const { reflections, page, rowsPerPage, rows } = this.state;
     
     const columns = [
       { id: "title", label: "Name", minWidth: 170 },
@@ -92,31 +101,21 @@ class Reflection extends Component {
         id: "dateCreated",
         label: "Date Created",
         minWidth: 170,
-        align: "right"
+        align: "center"
       },
       {
         id: "lastModified",
         label: "Last Modified",
         minWidth: 170,
-        align: "right"
+        align: "center"
       },
       {
         id: "actions",
         label: "Actions",
         minWidth: 170,
-        align: "right"
+        align: "center"
       }
     ];
-
-    // TODO: Issues is in initializing the rows
-    const rows = [];
-
-    reflections.map((reflection, index) => {
-      console.log("Reflection " + index);
-      rows.concat(this.createTableData(reflection));
-    });
-
-    console.log("Rows: " + rows.length)
     
     return (
       <div className="reflectionLog">
@@ -179,10 +178,12 @@ class Reflection extends Component {
                             >
                               {columns.map(column => {
                                 const value = row[column.id];
+                                console.log("Values: " + value)
                                 return (
                                   <TableCell
                                     key={column.id}
                                     align={column.align}
+                                    style={ column.id == "actions" ? { color: '#1378C1' } : { color: '#2A2A2A'}}
                                   >
                                     {value}
                                   </TableCell>
