@@ -35,7 +35,7 @@ const NewExpansionPanelSummary = withStyles({
 
 const options = { year: 'numeric', month: 'short', day: 'numeric' };
 
-class ViewGoals extends Component {
+class ViewCompletedGoals extends Component {
   static contextType = AuthContext;
 
   constructor(props) {
@@ -45,7 +45,6 @@ class ViewGoals extends Component {
       tasks: [],
       checked: false,
       goalsExist: true,
-      isEdit: false,
       goalId: null,
       status: false
     };
@@ -53,7 +52,7 @@ class ViewGoals extends Component {
 
   componentDidMount() {
     const { userId } = this.context;
-    axios.get(GOALS_PATH + "/" + parseInt(userId) + "/incomplete", {headers: DEFAULT_HEADERS}).then(
+    axios.get(GOALS_PATH + "/" + parseInt(userId) + "/complete", {headers: DEFAULT_HEADERS}).then(
       response => {
         if (response.data.status == SUCCESS && response.data.data.length != 0) {
           var tempGoals = [];
@@ -108,8 +107,7 @@ class ViewGoals extends Component {
           </Grid>
           <Grid item xs={4}>
             <div style={{float: "right"}}>
-              <Button variant="text" onClick={this.handleComplete(goalId)}>Complete</Button>
-              <Button variant="text" onClick={this.handleEdit(goalId)}>Edit</Button>
+              <Button variant="text" onClick={this.handleIncomplete(goalId)}>Incomplete</Button>
               <Button variant="text" onClick={this.handleDelete(goalId)}>Delete</Button>
             </div>
           </Grid>
@@ -145,9 +143,9 @@ class ViewGoals extends Component {
   createChip = type => {
     switch (type) {
       case 'linguistic':
-        return <Chip style={{backgroundColor: "lightYellow", color: "darkYellow"}} label="Learning Language" />;
+        return <Chip style={{backgroundColor:"lightYellow", color: "darkYellow"}} label="Learning Language" />;
       case 'operational':
-        return <Chip style={{backgroundColor: "lightOrange", color: "darkOrange"}} label="Managing AAC Device" />;
+        return <Chip style={{backgroundColor:"lightOrange", color: "darkOrange"}} label="Managing AAC Device" />;
       case 'social':
         return <Chip style={{backgroundColor: "lightGreen", color: "darkGreen"}} label="Practicing Conversation" />;
       case 'strategic':
@@ -158,7 +156,7 @@ class ViewGoals extends Component {
   }
 
   default() {
-    return <div class="paragraph"><p><small>You have no current goals. Click + Add Goal button to create a new goal.</small></p></div>
+    return <div class="paragraph"><p><small>You have no completed goals.</small></p></div>
   }
 
   viewForm() {
@@ -179,10 +177,10 @@ class ViewGoals extends Component {
     this.setState({goalId: id})
   }
 
-  handleComplete = id => event => {
+  handleIncomplete = id => event => {
     const { userId } = this.context;
     event.stopPropagation();
-    axios.put(GOALS_PATH + "/" + parseInt(userId) + "/complete", {goal_id: id}, {headers: DEFAULT_HEADERS})
+    axios.put(GOALS_PATH + "/" + parseInt(userId) + "/incomplete", {goal_id: id}, {headers: DEFAULT_HEADERS})
     .then(res => {
       this.setState({ goals: this.state.goals.filter(goal => goal.id !== id) });
       if (this.state.goals.length == 0) 
@@ -215,4 +213,4 @@ class ViewGoals extends Component {
   }
 }
 
-export default withStyles(styles)(ViewGoals);
+export default withStyles(styles)(ViewCompletedGoals);

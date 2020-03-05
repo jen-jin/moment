@@ -46,7 +46,7 @@ class Sidebar extends Component {
           <div className={classes.logo}>
             <img src={logo} alt="Logo" />
           </div>
-          <Tabs orientation="vertical" value={this.props.location.pathname} onChange={this.handleChange} indicatorColor={"primary"}>
+          <Tabs orientation="vertical" value={'/'+this.props.location.pathname.split('/')[1]} onChange={this.handleChange}>
             {tabs.map((text) => (
               <Tab label={text} component={Link} to={"/" + text.toLowerCase()} value={"/" + text.toLowerCase()} />
             ))}

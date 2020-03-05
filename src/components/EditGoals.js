@@ -15,17 +15,48 @@ const styles = theme => ({
   }
 });
 
-class AddGoals extends Component {
+class EditGoals extends Component {
   static contextType = AuthContext;
   constructor(props) {
     super(props);
     this.state = {
       goal: "",
-      category: "",
+      goalType: "",
       tasks: [],
       isHidden: false
     };
     this.dismiss = this.dismiss.bind(this);
+  }
+
+  componentDidMount() {
+    const { userId } = this.context;
+
+    axios.get(GOALS_PATH + "/" + parseInt(userId), {headers: DEFAULT_HEADERS}).then(
+      response => {
+        if (response.data.status == SUCCESS && response.data.data.length != 0) {
+          var tempGoal = "";
+          var tempGoalType = "";
+          var tempTasks = [];
+          for (const data of response.data.data) {
+            if (data["goal"]["id"] == this.props.goalId)
+              tempGoal = data["goal"]["goal"];
+              tempGoalType = data["goal"]["category"];
+            if (data["subgoals"]["goal_id"] == this.props.goalId)
+              tempTasks.push(data["subgoals"]["subgoal"]);
+          }
+          this.setState({
+            goal: tempGoal,
+            goalType: tempGoalType,
+            tasks: tempTasks,
+          });
+        } else {
+          this.setState({ goalsExist: false });
+        }
+      },
+      error => {
+        console.log(error);
+      }
+    );
   }
 
   dismiss() {
@@ -57,35 +88,14 @@ class AddGoals extends Component {
   }
 
   submitHandler = e => {
-    e.preventDefault();
-
-    var goalFormData = new FormData();
-    goalFormData.append('user_id', parseInt(this.context.userId));
-    goalFormData.append('goal', this.state.goal);
-    goalFormData.append('category', this.state.category);
-    goalFormData.append('number_of_subgoals', this.state.tasks.length);
-    this.state.tasks.forEach(function(subgoal, index) {
-      goalFormData.append('subgoal'.concat(index+1), subgoal.des)
-    });
-    
-    axios({
-      method: 'post',
-      url: GOALS_PATH,
-      data: goalFormData,
-      headers: { DEFAULT_HEADERS, 'Content-Type': 'multipart/form-data' }
-    })
-    .then(() => 
-      console.log(goalFormData)
-      // redirect
-    )
-    .catch(error => {
-      console.log(error);
-    });
+    e.preventDefault()
+    console.log(this.state)
+    // axios.post(, this.state)
   }
 
   render() {
     const { classes } = this.props;
-    const { goal, category, tasks } = this.state;
+    const { goal, goalType, tasks, count } = this.state;
     return (
       <div className="addForm" style={{display: this.state.isHidden ? 'none' : '' }}>
         <form onSubmit={this.submitHandler}>
@@ -99,14 +109,14 @@ class AddGoals extends Component {
                     label="Enter your main goal"
                     variant="filled"
                     name="goal"
-                    value={goal}
+                    value={this.state.goal}
                     onChange={(value) => this.changeHandler(value)}
                   />
                 </Grid>
                 <Grid item xs={3}>
                   <FormControl className={ classes.formControl } variant="filled">
                     <InputLabel id="goal-type-label">Select goal type</InputLabel>
-                    <Select id="goal-type-select" name="category" value={category} onChange={this.changeHandler}>
+                    <Select id="goal-type-select" name="goalType" value={this.state.goalType} onChange={(value) => this.changeHandler(value)}>
                       <MenuItem value=""><em>None</em></MenuItem>
                       <MenuItem value="linguistic">Learning Language</MenuItem>
                       <MenuItem value="operational">Managing AAC Device</MenuItem>
@@ -145,4 +155,4 @@ class AddGoals extends Component {
   }
 }
 
-export default withStyles(styles)(AddGoals);
+export default withStyles(styles)(EditGoals);

@@ -1,18 +1,30 @@
 import React, { Component } from "react";
 import AddGoals from "./AddGoals";
 import ViewGoals from "./ViewGoals";
+import ViewCompletedGoals from "./ViewCompletedGoals";
 import Grid from "@material-ui/core/Grid";
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Button from '@material-ui/core/Button';
+import { Link } from "react-router-dom";
 
 class Goals extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: 0,
+      value: "/goals",
       addGoal: false
     };
+  }
+
+  componentDidMount() {
+    if(this.props.location.pathname == '/goals') {
+      this.setState({value: "/goals"})
+    } else {
+      if (this.props.location.pathname == '/goals/complete') {
+        this.setState({value: "/goals/complete"})
+      }
+    }
   }
 
   handleChange = (event, value) => {
@@ -29,6 +41,8 @@ class Goals extends Component {
 
   render() {
     var goalForm = <ViewGoals />;
+    if (this.state.value == "/goals/complete")
+      goalForm = <ViewCompletedGoals />;
     if (this.state.addGoal)
       goalForm = <AddGoals dismiss={ this.dismiss.bind(this) } />;
 
@@ -39,9 +53,9 @@ class Goals extends Component {
             <div className="header paddingTop30px">Setting Goals</div>
             <Grid container>
               <Grid item xs={8}>
-                <Tabs value={this.state.value} indicatorColor="primary" textColor="primary" onChange={this.handleChange}>
-                  <Tab label="Current Goals" />
-                  <Tab label="Completed Goals" />
+                <Tabs value={this.state.value} onChange={this.handleChange}>
+                  <Tab label="Current Goals" value="/goals" component={Link} to={"/goals"} />
+                  <Tab label="Completed Goals" value="/goals/complete" component={Link} to={"/goals/complete"} />
                 </Tabs>
               </Grid>
               <Grid item xs={4}>

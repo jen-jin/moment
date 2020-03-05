@@ -14,11 +14,24 @@ export default theme = createMuiTheme({
         padding: '0 30px',
         '&:hover': {
           backgroundColor: '#0e5b93',
-        }
+        },
+      },
+      text: {
+        color: '#1378c1'
       },
       label: {
-        textTransform: 'capitalize',
+        textTransform: 'capitalize'
       },
+    },
+    MuiTabs: {
+      indicator: {
+        backgroundColor: '#1378c1'
+      },
+    },
+    MuiCardActions: {
+      root: {
+        float: 'right'
+      }
     }
   }
 });
