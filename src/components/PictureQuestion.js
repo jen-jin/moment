@@ -23,7 +23,7 @@ class PictureQuestion extends Component {
       excited: moods.excited,
       happy: moods.happy,
       good: moods.good,
-      meh: moods.meh,
+      okay: moods.okay,
       worried: moods.worried,
       sad: moods.sad,
       stressed: moods.stressed,
@@ -50,9 +50,9 @@ class PictureQuestion extends Component {
           good: !this.state.good
         }, () => this.callBackMoodChanged());
         break
-      case "Meh":
+      case "Okay":
         this.setState({
-          meh: !this.state.meh
+          okay: !this.state.okay
         }, () => this.callBackMoodChanged());
         break
       case "Worried":
@@ -87,7 +87,7 @@ class PictureQuestion extends Component {
       { photo: excitedEmoji, title: "Excited", active: activeEmojis.excited },
       { photo: happyEmoji, title: "Happy", active: activeEmojis.happy },
       { photo: goodEmoji, title: "Good", active: activeEmojis.good },
-      { photo: mehEmoji, title: "Meh", active: activeEmojis.meh },
+      { photo: mehEmoji, title: "Okay", active: activeEmojis.okay },
       { photo: worriedEmoji, title: "Worried", active: activeEmojis.worried },
       { photo: sadEmoji, title: "Sad", active: activeEmojis.sad },
       { photo: stressedEmoji, title: "Stressed", active: activeEmojis.stressed },

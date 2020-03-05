@@ -116,9 +116,16 @@ body {
   width: 75px;
 }
 
-
 .buttonWidth100px {
   width: 100px;
+}
+
+.buttonHeight110px {
+  height: 110px;
+}
+
+.buttonWidth115px {
+  width: 115px;
 }
 
 .buttonWidth150px {
@@ -159,6 +166,10 @@ body {
 
 .marginBottom30px {
   margin-bottom: 30px;
+}
+
+.marginBottom10px {
+  margin-bottom: 10px;
 }
 
 .width300px {
