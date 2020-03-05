@@ -40,8 +40,7 @@ class Reflection extends Component {
     console.log("User ID: " + userId);
 
     axios
-      .get(REFLECTION_PATH + "/" + parseInt("14"), {
-        // Temporarily changing it to 14 until we have the APIs sorted out
+      .get(REFLECTION_PATH + "/" + parseInt(userId), {
         headers: DEFAULT_HEADERS
       })
       .then(
