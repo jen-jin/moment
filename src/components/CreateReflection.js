@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Prompt } from "react-router";
 import StandardQuestion from "./StandardQuestion";
 import PictureQuestion from "./PictureQuestion";
+import ScaleQuestion from "./ScaleQuestion";
 import DropDownChipQuestion from "./DropDownChipQuestion";
 import ChipQuestion from "./ChipQuestion";
 import TextField from "@material-ui/core/TextField";
@@ -11,10 +12,10 @@ import axios from "axios";
 import {
   DEFAULT_HEADERS,
   GOALS_PATH,
+  SUBGOALS_PATH,
   SUCCESS,
   DATE_OPTIONS,
   ACTIVITY_OPTIONS,
-  ACTIVITY_LOCATION_OPTIONS,
   DEFAULT_REFLECTION_TITLE,
   DEFAULT_TEXTBOX_PLACEHOLDER
 } from "../constants";
@@ -29,60 +30,64 @@ class CreateReflection extends Component {
     this.state = {
       step: 1,
       goals: [],
+      subgoals: [],
       moods: {
         excited: false,
         happy: false,
         good: false,
-        meh: false,
+        okay: false,
         worried: false,
         sad: false,
         stressed: false,
         angry: false
       },
+      communication: {
+        veryIneffectively: false,
+        ineffectively: false,
+        somewhatEffectively: false,
+        effectively: false,
+        veryEffectively: false
+      },
+      support: {
+        veryIneffectively: false,
+        ineffectively: false,
+        somewhatEffectively: false,
+        effectively: false,
+        veryEffectively: false
+      },      
       selectedGoals: [],
+      selectedGoalsID: [],
       networkFailGoals: "",
       selectedSubGoals: [],
       selectedActivities: [],
       additionalActivities: "",
-      selectedActivityLocations: [],
-      additionalActivityLocations: "",
-      activityCommunication: "",
-      intendedMessage: "",
-      communication: "",
       learningsGood: "",
       learningsBad: "",
+      additionalNotes: "",
       title: DEFAULT_REFLECTION_TITLE,
       date: new Date().toLocaleTimeString("en-US", DATE_OPTIONS),
-      completedReflection: false,
-      displayPrompt: false
+      completedReflection: false
     };
 
+    this.fetchSubGoals = this.fetchSubGoals.bind(this);
+    this.fetchSubGoalsHelper = this.fetchSubGoalsHelper.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.moveForward = this.moveForward.bind(this);
     this.moveBackwards = this.moveBackwards.bind(this);
     this.changedTitle = this.changedTitle.bind(this);
     this.handleMoodSelection = this.handleMoodSelection.bind(this);
+    this.handleCommunicationSelection = this.handleCommunicationSelection.bind(this);
+    this.handleSupportSelection = this.handleSupportSelection.bind(this);
     this.handleGoalSelection = this.handleGoalSelection.bind(this);
     this.handleActivitySelection = this.handleActivitySelection.bind(this);
     this.handleAdditionalActivities = this.handleAdditionalActivities.bind(
       this
     );
-    this.handleActivityLocationSelection = this.handleActivityLocationSelection.bind(
-      this
-    );
-    this.handleAdditionalActivityLocations = this.handleAdditionalActivityLocations.bind(
-      this
-    );
-    this.handleActivityCommunication = this.handleActivityCommunication.bind(
-      this
-    );
-    this.handleIntendedMessageCommunication = this.handleIntendedMessageCommunication.bind(
-      this
-    );
-    this.handleCommunication = this.handleCommunication.bind(this);
+    this.handleAdditionalNotes = this.handleAdditionalNotes.bind(this);
     this.handleGoodLearnings = this.handleGoodLearnings.bind(this);
     this.handleBadLearnings = this.handleBadLearnings.bind(this);
     this.handleNetworkFailGoals = this.handleNetworkFailGoals.bind(this);
+    this.goalsToSubgoals = this.goalsToSubgoals.bind(this);
   }
 
   // MARK: - Lifecycle
@@ -98,7 +103,7 @@ class CreateReflection extends Component {
       })
       .then(
         response => {
-          if (response.data.status == SUCCESS && response.data.data != []) {
+          if (response.data.status == SUCCESS) {
             this.setState({
               goals: response.data.data
             });
@@ -108,6 +113,35 @@ class CreateReflection extends Component {
           console.log(error);
         }
       );
+  }
+
+  // MARK: - Fetching subgoals
+
+  fetchSubGoalsHelper() {
+    this.state.selectedGoalsID.map(id => {
+      console.log("Fetching ID: " + id)
+      this.fetchSubGoals(id)
+    })    
+  }
+
+  async fetchSubGoals(goalID) {
+    await axios.get(SUBGOALS_PATH + "/" + goalID, {
+      headers: DEFAULT_HEADERS
+    })
+    .then(
+      response => { // Storing subgoals in corresponding goalID index
+        if (response.data.status == SUCCESS) {
+          console.log("Subgoals: " + response.data.data[0].subgoal)
+          // TODO: Need a solution to store subgoals corresponding to goal
+          // this.setState({
+          //   subgoals: update(this.state.subgoals, {goalID: response.data.data})
+          // }, console.log("Subgoals Test: " + this.state.subgoals[goalID]))          
+        }
+      },
+      error => {
+        console.log(error);
+      }
+    );
   }
 
   // MARK: - Reflection Changes
@@ -140,6 +174,22 @@ class CreateReflection extends Component {
     });
   }
 
+  // MARK: - Handling Communication Scale Question
+  async handleCommunicationSelection(responses) {
+    await this.setState({
+      // NOTE: Await is necessary here
+      communication: responses
+    });
+  }  
+  
+  // MARK: - Handling Support Scale Question
+  async handleSupportSelection(responses) {
+    await this.setState({
+      // NOTE: Await is necessary here
+      support: responses
+    });
+  }   
+
   // MARK: - Handling Goal Question
   async handleGoalSelection(newGoals) {
     await this.setState({
@@ -163,45 +213,6 @@ class CreateReflection extends Component {
     });
   }
 
-  // MARK: - Activity Location Selection
-  async handleActivityLocationSelection(newLocations) {
-    await this.setState({
-      // NOTE: Await is necessary here
-      selectedActivityLocations: newLocations
-    });
-  }
-
-  async handleAdditionalActivityLocations(additionalLocations) {
-    await this.setState({
-      // NOTE: Await is necessary here
-      additionalActivityLocations: additionalLocations
-    });
-  }
-
-  // MARK: - Communication During Activitiy
-  async handleActivityCommunication(communication) {
-    await this.setState({
-      // NOTE: Await is necessary here
-      activityCommunication: communication
-    });
-  }
-
-  // MARK: - Intended Message During Activity
-  async handleIntendedMessageCommunication(message) {
-    await this.setState({
-      // NOTE: Await is necessary here
-      intendedMessage: message
-    });
-  }
-
-  // MARK: - General Communication During Activity
-  async handleCommunication(message) {
-    await this.setState({
-      // NOTE: Await is necessary here
-      communication: message
-    });
-  }
-
   // MARK: - Good Learnings
   async handleGoodLearnings(learning) {
     await this.setState({
@@ -218,16 +229,50 @@ class CreateReflection extends Component {
     });
   }
 
+    // MARK: - Additional Notes
+    async handleAdditionalNotes(notes) {
+      await this.setState({
+        // NOTE: Await is necessary here
+        additionalNotes: notes
+      });
+    }
+
   async handleNetworkFailGoals(goals) {
     await this.setState({
       // NOTE: Await is necessary here
       networkFailGoals: goals
     });
   }
-  
+
+  // MARK: - Goals to Subgoals
+  async goalsToSubgoals() {
+    console.log("Matching selected goals");
+    await this.state.selectedGoals.map(goalTitle => {      
+      const selectedGoalInfo = this.state.goals.filter(goal => goal["goal"]["goal"] == goalTitle) // Find goal with the same title, limitation      
+      const selectedGoalID = selectedGoalInfo[0]["goal"]["id"] // Assuming only one match, limitation
+      
+      console.log("Selected Goal ID: " + selectedGoalID);
+      if (!this.state.selectedGoalsID.includes(selectedGoalID)) { // Update selected goal IDs
+        console.log("Does not have ID");
+        this.setState({
+          selectedGoalsID: this.state.selectedGoalsID.concat(selectedGoalID)
+        })
+      }      
+    })
+
+    await this.fetchSubGoalsHelper()
+    this.setState({ step: this.state.step + 1 }) 
+  }
+
   // MARK: - Navigating Sections
   moveForward() {
-    this.setState({ step: this.state.step + 1 });
+    // If step == 2, goals question, fetch subgoals
+    if (this.state.step == 2) {
+      console.log("Goals to subgoals");
+      this.goalsToSubgoals()
+    } else {
+      this.setState({ step: this.state.step + 1 });
+    }    
   }
 
   moveBackwards() {
@@ -242,19 +287,16 @@ class CreateReflection extends Component {
       date,
       completedReflection,
       moods,
+      communication,
+      support,
       selectedGoals,
       networkFailGoals,
       selectedSubGoals,
       selectedActivities,
       additionalActivities,
-      selectedActivityLocations,
-      additionalActivityLocations,
-      activityCommunication,
-      intendedMessage,
-      communication,
       learningsGood,
       learningsBad,
-      displayPrompt
+      additionalNotes
     } = this.state;
 
     const numSteps = 5;
@@ -265,10 +307,6 @@ class CreateReflection extends Component {
           when={!completedReflection}
           message="You have unsaved changes, are you sure you want to leave?"
         />
-        <Prompt
-          when={displayPrompt}
-          message="Are you sure you want to submit?"
-        />        
         <div className="createReflection">
           <Grid
             container
@@ -307,7 +345,7 @@ class CreateReflection extends Component {
 
               {step == 2 && goals.length > 0 && (
                 <DropDownChipQuestion
-                  question="2. Did you work on any of these goals today?"
+                  question="2. Did you work on any of these goals?"
                   helper="Choose as many as you like"
                   placeholder="Select goals"
                   content={goals}
@@ -318,9 +356,9 @@ class CreateReflection extends Component {
                 />
               )}
               {step == 2 &&
-              goals.length == 0 && ( // In the case of network failure
+              goals.length == 0 && ( // In the case of network failure or no goals available
                   <StandardQuestion
-                    question="2. What goals did you work on today?"
+                    question="2. What goals did you work on?"
                     placeholder="Type your answer here"
                     content={networkFailGoals}
                     onContentChange={this.handleNetworkFailGoals}
@@ -338,16 +376,14 @@ class CreateReflection extends Component {
               />
             )}             */}
 
-              {step == 3 && (
-                <div>Place holder for sub goals question</div>
-              )}
+              {step == 3 && <div>Place holder for sub goals question</div>}
 
               {step == 4 && (
                 <ChipQuestion
                   question={
                     selectedSubGoals.length == 0
-                      ? "4. What activities did you have with your child today?"
-                      : "4. What activity did you do with your child when you were working on the selected tasks?"
+                      ? "4. What activities did you have with your child?"
+                      : "4. While working on the tasks, what activities did you do with your child?"
                   }
                   helper="Choose as many as you like"
                   options={ACTIVITY_OPTIONS}
@@ -363,50 +399,27 @@ class CreateReflection extends Component {
                 />
               )}
               {step == 4 && (
-                <ChipQuestion
-                  question="5. Where did you have the activity today?"
-                  helper="Choose as many as you like"
-                  options={ACTIVITY_LOCATION_OPTIONS}
-                  selectedOptions={selectedActivityLocations}
-                  onSelectionChange={this.handleActivityLocationSelection}
+                <ScaleQuestion
+                  question="5. How effectively did your child communicate?"
+                  onEffectivenessChange={this.handleCommunicationSelection}
+                  effectiveness={communication}
                 />
               )}
               {step == 4 && (
-                <StandardQuestion
-                  placeholder="Additional Activity Locations"
-                  content={additionalActivityLocations}
-                  onContentChange={this.handleAdditionalActivityLocations}
+                <ScaleQuestion
+                  question="6. How effectively did you support your child's communication?"
+                  onEffectivenessChange={this.handleSupportSelection}
+                  effectiveness={support}
                 />
               )}
-              {step == 4 && (
-                <StandardQuestion
-                  question="6. How did your child communicate during the activity?"
-                  placeholder={DEFAULT_TEXTBOX_PLACEHOLDER}
-                  content={activityCommunication}
-                  onContentChange={this.handleActivityCommunication}
-                />
-              )}
-              {step == 4 && (
-                <StandardQuestion
-                  question="7. What was the intended message from your child?"
-                  placeholder={DEFAULT_TEXTBOX_PLACEHOLDER}
-                  content={intendedMessage}
-                  onContentChange={this.handleIntendedMessageCommunication}
-                />
-              )}
-              {step == 4 && (
-                <StandardQuestion
-                  question="8. How did you communicate with your child?"
-                  placeholder={DEFAULT_TEXTBOX_PLACEHOLDER}
-                  content={communication}
-                  onContentChange={this.handleCommunication}
-                />
-              )}
-
               {step == 5 && (
                 <StandardQuestion
-                  question="9. What went well during the activity today?"
-                  helper="Take a moment to reflect on the activity that went well, how do you know it went well and what you should keep doing in the next session?"
+                  question="7. What went well?"
+                  helper={
+                    selectedSubGoals.length == 0
+                      ? "Take a moment to reflect on aspects that went well during the activities. How do you know they went well and what you should keep doing?"
+                      : "Take a moment to reflect on aspects that went well when performing the tasks. How do you know they went well and what you should keep doing?"
+                  }
                   placeholder={DEFAULT_TEXTBOX_PLACEHOLDER}
                   content={learningsGood}
                   onContentChange={this.handleGoodLearnings}
@@ -414,11 +427,27 @@ class CreateReflection extends Component {
               )}
               {step == 5 && (
                 <StandardQuestion
-                  question="10. What didn't go well during the activity today?"
-                  helper="Take a moment and reflect on the time you ran into an obstacle during the activity. What was that obstacle? How did it occur? What are the possible actions you could do to prevent it from happening again in the future?"
+                  question="8. What didn't go well?"
+                  helper={
+                    selectedSubGoals.length == 0
+                      ? "Take a moment to reflect on aspects that didn’t go well during the activities. Why did they not go well and what can you do next time to improve them?"
+                      : "Take a moment to reflect on aspects that didn’t go well when performing the tasks. Why did they not go well and what can you do next time to improve them?"
+                  }
                   placeholder={DEFAULT_TEXTBOX_PLACEHOLDER}
                   content={learningsBad}
                   onContentChange={this.handleBadLearnings}
+                />
+              )}
+              {step == 5 && (
+                <StandardQuestion
+                  question={
+                    selectedSubGoals.length == 0
+                      ? "9. Write down any additional notes regarding today's activities"
+                      : "9. Write down any additional notes regarding today's tasks"
+                  }
+                  placeholder={DEFAULT_TEXTBOX_PLACEHOLDER}
+                  content={additionalNotes}
+                  onContentChange={this.handleAdditionalNotes}
                 />
               )}
               <Grid

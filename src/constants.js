@@ -2,6 +2,7 @@ const ROOT_API = "http://localhost:5000/api";
 
 export const AUTH_TOKEN = "auth-token";
 export const GOALS_PATH = ROOT_API + "/goals";
+export const SUBGOALS_PATH = ROOT_API + "/subgoals";
 export const REFLECTION_PATH = ROOT_API + "/reflections";
 export const RESOURCES_PATH = ROOT_API + "/resources";
 export const USERS_PATH = ROOT_API + "/users";
@@ -38,15 +39,4 @@ export const ACTIVITY_OPTIONS = [
   "Reading books",
   "Taking pictures",
   "Science experiment"  
-]
-
-export const ACTIVITY_LOCATION_OPTIONS = [
-  "Living room",
-  "Bedroom",
-  "Kitchen",
-  "Home",
-  "School",
-  "Playground",
-  "Yard",
-  "Gym"
 ]
