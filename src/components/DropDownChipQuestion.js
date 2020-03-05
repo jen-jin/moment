@@ -10,24 +10,27 @@ import MenuItem from "@material-ui/core/MenuItem";
 class DropDownChipQuestion extends Component {
   constructor(props) {
     super(props);
-    
+
     this.state = {
       selected: this.props.selected
-    }
+    };
 
     this.handleSelection = this.handleSelection.bind(this);
   }
 
   handleSelection(event) {
-    const item = event.target.value
+    const item = event.target.value;
 
-    this.setState({
-      selected: item
-    }, () => this.callBackSelectionChanged())
+    this.setState(
+      {
+        selected: item
+      },
+      () => this.callBackSelectionChanged()
+    );
   }
 
   async callBackSelectionChanged() {
-    await this.props.onSelectionChange(this.state.selected)
+    await this.props.onSelectionChange(this.state.selected);
   }
 
   render() {
@@ -44,6 +47,11 @@ class DropDownChipQuestion extends Component {
           <div className="helper paddingTop10px paddingBottom10px">
             {this.props.helper}
           </div>
+          {this.props.subheading !== null && (
+            <div className="helper marginTopNegative30px">
+              {this.props.subheading}
+            </div>
+          )}
         </Grid>
         <Grid item xs={12}>
           <FormControl className="drop-down-chip" style={{ width: 900 }}>
@@ -59,17 +67,15 @@ class DropDownChipQuestion extends Component {
               renderValue={selected => (
                 <div className="chips">
                   {selected.map(info => (
-                    <Chip
-                      key={info}
-                      label={info}
-                      className={"chip-" + info}
-                    />
+                    <Chip key={info} label={info} className={"chip-" + info} />
                   ))}
                 </div>
               )}
             >
               {content.map(info => (
-                <MenuItem value={key2 !== null ? info[key1][key2]: info[key1]}>{key2 !== null ? info[key1][key2]: info[key1]}</MenuItem>
+                <MenuItem value={key2 !== null ? info[key1][key2] : info[key1]}>
+                  {key2 !== null ? info[key1][key2] : info[key1]}
+                </MenuItem>
               ))}
             </Select>
           </FormControl>

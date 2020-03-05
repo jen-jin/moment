@@ -54,10 +54,11 @@ class CreateReflection extends Component {
         somewhatEffectively: false,
         effectively: false,
         veryEffectively: false
-      },      
+      },
       selectedGoals: [],
       selectedGoalsID: [],
       networkFailGoals: "",
+      networkFailSubGoals: "",
       selectedSubGoals: [],
       selectedActivities: [],
       additionalActivities: "",
@@ -66,6 +67,7 @@ class CreateReflection extends Component {
       additionalNotes: "",
       title: DEFAULT_REFLECTION_TITLE,
       date: new Date().toLocaleTimeString("en-US", DATE_OPTIONS),
+      previewStep: false,
       completedReflection: false
     };
 
@@ -76,9 +78,12 @@ class CreateReflection extends Component {
     this.moveBackwards = this.moveBackwards.bind(this);
     this.changedTitle = this.changedTitle.bind(this);
     this.handleMoodSelection = this.handleMoodSelection.bind(this);
-    this.handleCommunicationSelection = this.handleCommunicationSelection.bind(this);
+    this.handleCommunicationSelection = this.handleCommunicationSelection.bind(
+      this
+    );
     this.handleSupportSelection = this.handleSupportSelection.bind(this);
     this.handleGoalSelection = this.handleGoalSelection.bind(this);
+    this.handleSubGoalSelection = this.handleSubGoalSelection.bind(this);
     this.handleActivitySelection = this.handleActivitySelection.bind(this);
     this.handleAdditionalActivities = this.handleAdditionalActivities.bind(
       this
@@ -87,6 +92,7 @@ class CreateReflection extends Component {
     this.handleGoodLearnings = this.handleGoodLearnings.bind(this);
     this.handleBadLearnings = this.handleBadLearnings.bind(this);
     this.handleNetworkFailGoals = this.handleNetworkFailGoals.bind(this);
+    this.handleNetworkFailSubGoals = this.handleNetworkFailSubGoals.bind(this);
     this.goalsToSubgoals = this.goalsToSubgoals.bind(this);
   }
 
@@ -125,23 +131,32 @@ class CreateReflection extends Component {
   }
 
   async fetchSubGoals(goalID) {
-    await axios.get(SUBGOALS_PATH + "/" + goalID, {
-      headers: DEFAULT_HEADERS
-    })
-    .then(
-      response => { // Storing subgoals in corresponding goalID index
-        if (response.data.status == SUCCESS) {
-          console.log("Subgoals: " + response.data.data[0].subgoal)
-          // TODO: Need a solution to store subgoals corresponding to goal
-          // this.setState({
-          //   subgoals: update(this.state.subgoals, {goalID: response.data.data})
-          // }, console.log("Subgoals Test: " + this.state.subgoals[goalID]))          
+    await axios
+      .get(SUBGOALS_PATH + "/" + goalID, {
+        headers: DEFAULT_HEADERS
+      })
+      .then(
+        response => {
+          if (response.data.status == SUCCESS) {
+            console.log("Subgoals: " + response.data.data[0].subgoal);
+
+            // Checking if subgoals already exist before adding (same goalID)
+            if (
+              this.state.subgoals.filter(subgoal => subgoal.goal_id == goalID)
+                .length == 0
+            ) {
+              this.setState({
+                subgoals: this.state.subgoals.concat(response.data.data)
+              });
+            }
+
+            console.log("Subgoals Count: " + this.state.subgoals.length);
+          }
+        },
+        error => {
+          console.log(error);
         }
-      },
-      error => {
-        console.log(error);
-      }
-    );
+      );
   }
 
   // MARK: - Reflection Changes
@@ -198,6 +213,15 @@ class CreateReflection extends Component {
     });
   }
 
+  // MARK: - Handling Goal Question
+  async handleSubGoalSelection(newSubGoals) {
+    console.log("New Sub Goals: " + newSubGoals.length);
+    await this.setState({
+      // NOTE: Await is necessary here
+      selectedSubGoals: newSubGoals
+    });
+  }
+
   // MARK: - Activity Selection
   async handleActivitySelection(newActivities) {
     await this.setState({
@@ -229,14 +253,15 @@ class CreateReflection extends Component {
     });
   }
 
-    // MARK: - Additional Notes
-    async handleAdditionalNotes(notes) {
-      await this.setState({
-        // NOTE: Await is necessary here
-        additionalNotes: notes
-      });
-    }
+  // MARK: - Additional Notes
+  async handleAdditionalNotes(notes) {
+    await this.setState({
+      // NOTE: Await is necessary here
+      additionalNotes: notes
+    });
+  }
 
+  // MARK: - Network Fails
   async handleNetworkFailGoals(goals) {
     await this.setState({
       // NOTE: Await is necessary here
@@ -244,39 +269,59 @@ class CreateReflection extends Component {
     });
   }
 
+  async handleNetworkFailSubGoals(subgoals) {
+    await this.setState({
+      // NOTE: Await is necessary here
+      networkFailSubGoals: subgoals
+    });
+  }
+
   // MARK: - Goals to Subgoals
+  // TODO: Bug, should be updating selectedGoalIDs with selectedGoals
   async goalsToSubgoals() {
     console.log("Matching selected goals");
-    await this.state.selectedGoals.map(goalTitle => {      
-      const selectedGoalInfo = this.state.goals.filter(goal => goal["goal"]["goal"] == goalTitle) // Find goal with the same title, limitation      
-      const selectedGoalID = selectedGoalInfo[0]["goal"]["id"] // Assuming only one match, limitation
-      
+    await this.state.selectedGoals.map(goalTitle => {
+      const selectedGoalInfo = this.state.goals.filter(
+        goal => goal["goal"]["goal"] == goalTitle
+      ); // Find goal with the same title, limitation
+      const selectedGoalID = selectedGoalInfo[0]["goal"]["id"]; // Assuming only one match, limitation
+
       console.log("Selected Goal ID: " + selectedGoalID);
-      if (!this.state.selectedGoalsID.includes(selectedGoalID)) { // Update selected goal IDs
+      if (!this.state.selectedGoalsID.includes(selectedGoalID)) {
+        // Update selected goal IDs
         console.log("Does not have ID");
         this.setState({
           selectedGoalsID: this.state.selectedGoalsID.concat(selectedGoalID)
-        })
-      }      
-    })
+        });
+      }
+    });
 
-    await this.fetchSubGoalsHelper()
-    this.setState({ step: this.state.step + 1 }) 
+    await this.fetchSubGoalsHelper();
+    this.setState({ step: this.state.step + 1 });
   }
 
   // MARK: - Navigating Sections
-  moveForward() {
+  moveForward() {    
     // If step == 2, goals question, fetch subgoals
     if (this.state.step == 2) {
       console.log("Goals to subgoals");
-      this.goalsToSubgoals()
+      console.log("Current subgoals: " + this.state.subgoals.length);
+      this.goalsToSubgoals();
     } else {
-      this.setState({ step: this.state.step + 1 });
+      // If step == 5, next step is preview after going forward
+      this.setState({ 
+        step: this.state.step + 1,
+        previewStep: this.state.step == 5 
+      });      
     }    
   }
 
   moveBackwards() {
-    this.setState({ step: this.state.step - 1 });
+    // If step == 6, NOT preview anymore after going back    
+      this.setState({ 
+        step: this.state.step - 1,
+        previewStep: this.state.step == 6 ? !this.state.previewStep : false
+      });        
   }
 
   // MARK: - Render
@@ -284,22 +329,26 @@ class CreateReflection extends Component {
     const {
       step,
       goals,
+      subgoals,
       date,
       completedReflection,
       moods,
       communication,
       support,
       selectedGoals,
+      selectedGoalsID,
       networkFailGoals,
+      networkFailSubGoals,
       selectedSubGoals,
       selectedActivities,
       additionalActivities,
       learningsGood,
       learningsBad,
-      additionalNotes
+      additionalNotes,
+      previewStep
     } = this.state;
 
-    const numSteps = 5;
+    const numSteps = 6;
 
     return (
       <React.Fragment>
@@ -327,6 +376,11 @@ class CreateReflection extends Component {
               />
               <div className="helper paddingTop10px">{date}</div>
             </Grid>
+            {previewStep && (
+              <Grid item>
+                <div className="header paddingTop10px">Review</div>
+              </Grid>
+            )}
             <Grid item>
               <div className="helper paddingTop10px">
                 {step == 1 && "Let's get started! "}
@@ -336,26 +390,27 @@ class CreateReflection extends Component {
               </div>
             </Grid>
             <Grid item>
-              {step == 1 && (
+              {(step == 1 || previewStep) && (
                 <PictureQuestion
                   onMoodChange={this.handleMoodSelection}
                   moods={moods}
                 />
               )}
 
-              {step == 2 && goals.length > 0 && (
-                <DropDownChipQuestion
-                  question="2. Did you work on any of these goals?"
-                  helper="Choose as many as you like"
-                  placeholder="Select goals"
-                  content={goals}
-                  key1="goal"
-                  key2="goal"
-                  onSelectionChange={this.handleGoalSelection}
-                  selected={selectedGoals}
-                />
-              )}
-              {step == 2 &&
+              {(step == 2 || previewStep) && goals.length > 0 && (
+                  <DropDownChipQuestion
+                    question="2. Did you work on any of these goals?"
+                    helper="Choose as many as you like"
+                    placeholder="Select goals"
+                    subheading={null}
+                    content={goals}
+                    key1="goal"
+                    key2="goal"
+                    onSelectionChange={this.handleGoalSelection}
+                    selected={selectedGoals}
+                  />
+                )}
+              {(step == 2 || previewStep) &&
               goals.length == 0 && ( // In the case of network failure or no goals available
                   <StandardQuestion
                     question="2. What goals did you work on?"
@@ -364,21 +419,64 @@ class CreateReflection extends Component {
                     onContentChange={this.handleNetworkFailGoals}
                   />
                 )}
-              {/* {step == 2 && goals.length > 0 && ( // TODO: Once subgoals path is ready, finish question
-              <DropDownChipQuestion
-                question="3. Did you work on any of these tasks today?"
-                helper="Choose as many as you like"
-                placeholder="Select tasks"
-                content={goals}
-                key1="subgoal"
-                onSelection={this.handleGoalSelection}
-                onUnSelection={this.handleGoalUnSelection}
-              />
-            )}             */}
 
-              {step == 3 && <div>Place holder for sub goals question</div>}
+              {(step == 3 || previewStep) &&
+              goals.length > 0 &&
+              selectedGoalsID.length > 0 && ( // Need to keep the title separate, because has many dropdownchip questions
+                  <Grid item xs={12}>
+                    <div className="body bodyBold paddingTop30px">
+                      3. Did you work on any of these tasks?
+                    </div>
+                    <div className="helper paddingTop10px paddingBottom10px">
+                      Choose as many as you like
+                    </div>
+                  </Grid>
+                )}
+              {(step == 3 || previewStep) &&
+                goals.length > 0 &&
+                selectedGoalsID.length > 0 &&
+                selectedGoalsID.map(goalID => (
+                  // console.log("TESTING Filtered goals" + goals.filter(goal => goal["goal"]["id"] == goalID)[0]["goal"]["goal"])
+                  <DropDownChipQuestion
+                    subheading={
+                      goals.filter(goal => goal["goal"]["id"] == goalID)[0][
+                        "goal"
+                      ]["goal"]
+                    } // Breaking hazard, hack
+                    placeholder="Select tasks"
+                    content={subgoals.filter(
+                      subgoal => subgoal.goal_id == goalID
+                    )}
+                    key1="subgoal"
+                    key2={null}
+                    onSelectionChange={this.handleSubGoalSelection}
+                    selected={selectedSubGoals}
+                  />
+                ))}
+              {(step == 3 || previewStep) &&
+              goals.length > 0 &&
+              selectedGoalsID.length == 0 && ( // Case: No selected goals
+                  <Grid item xs={12}>
+                    <div className="body bodyBold paddingTop30px width900px">
+                      3. Did you work on any of these tasks?
+                    </div>
+                    <div className="helper paddingTop10px paddingBottom10px">
+                      No goals were chosen. To add goals, press Back. To skip,
+                      press Next.
+                    </div>
+                  </Grid>
+                )}
+              {(step == 3 || previewStep) &&
+              goals.length == 0 && ( // Case: Network Failture
+                  <StandardQuestion
+                    question="3. What tasks did you work on?"
+                    placeholder="Type your answer here"
+                    content={networkFailSubGoals}
+                    onContentChange={this.handleNetworkFailSubGoals}
+                  />
+                )}
 
-              {step == 4 && (
+              {(step == 4 || previewStep) && (
                 <ChipQuestion
                   question={
                     selectedSubGoals.length == 0
@@ -391,28 +489,28 @@ class CreateReflection extends Component {
                   onSelectionChange={this.handleActivitySelection}
                 />
               )}
-              {step == 4 && (
+              {(step == 4 || previewStep) && (
                 <StandardQuestion
                   placeholder="Additional Activities"
                   content={additionalActivities}
                   onContentChange={this.handleAdditionalActivities}
                 />
               )}
-              {step == 4 && (
+              {(step == 4 || previewStep) && (
                 <ScaleQuestion
                   question="5. How effectively did your child communicate?"
                   onEffectivenessChange={this.handleCommunicationSelection}
                   effectiveness={communication}
                 />
               )}
-              {step == 4 && (
+              {(step == 4 || previewStep) && (
                 <ScaleQuestion
                   question="6. How effectively did you support your child's communication?"
                   onEffectivenessChange={this.handleSupportSelection}
                   effectiveness={support}
                 />
               )}
-              {step == 5 && (
+              {(step == 5 || previewStep) && (
                 <StandardQuestion
                   question="7. What went well?"
                   helper={
@@ -425,7 +523,7 @@ class CreateReflection extends Component {
                   onContentChange={this.handleGoodLearnings}
                 />
               )}
-              {step == 5 && (
+              {(step == 5 || previewStep) && (
                 <StandardQuestion
                   question="8. What didn't go well?"
                   helper={
@@ -438,7 +536,7 @@ class CreateReflection extends Component {
                   onContentChange={this.handleBadLearnings}
                 />
               )}
-              {step == 5 && (
+              {(step == 5 || previewStep) && (
                 <StandardQuestion
                   question={
                     selectedSubGoals.length == 0
@@ -468,13 +566,23 @@ class CreateReflection extends Component {
                     </div>
                   </Grid>
                 )}
-                {step !== numSteps && (
+                {step < numSteps - 1 && (
                   <Grid item>
                     <div
                       className="button buttonWidth100px borderRadius25px marginTop30px"
                       onClick={this.moveForward}
                     >
                       Next
+                    </div>
+                  </Grid>
+                )}
+                {step == numSteps - 1 && (
+                  <Grid item>
+                    <div
+                      className="button buttonWidth100px borderRadius25px marginTop30px"
+                      onClick={this.moveForward}
+                    >
+                      Review
                     </div>
                   </Grid>
                 )}
