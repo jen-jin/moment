@@ -160,23 +160,21 @@ class CreateReflection extends Component {
   // MARK: - Submitting Reflection
   async postReflection() {
     await axios({
-      method: 'post',
+      method: "post",
       url: REFLECTION_PATH,
       data: {
-        "user_id": this.context.userId,
-        "title": this.state.title,
-        "reflection" : JSON.stringify(this.state) 
+        user_id: this.context.userId,
+        title: this.state.title,
+        reflection: JSON.stringify(this.state)
       },
       headers: { DEFAULT_HEADERS }
     })
-    .then(() =>
-      this.navigateToReflection()
-    )
-    .catch(error => { // TODO: Better error handling, such as when they try and submit without internet
-      console.log(error);
-    });
+      .then(() => this.navigateToReflection())
+      .catch(error => {
+        // TODO: Better error handling, such as when they try and submit without internet
+        console.log(error);
+      });
   }
-
 
   // MARK: - Reflection Changes
   changedTitle(event) {
@@ -191,7 +189,9 @@ class CreateReflection extends Component {
       {
         completedReflection: true,
         displayPrompt: true
-      }, () => this.postReflection());
+      },
+      () => this.postReflection()
+    );
   }
 
   async navigateToReflection() {
@@ -237,10 +237,9 @@ class CreateReflection extends Component {
           value: matchingGoal["goal"]["goal"]
         };
         const alreadyExists = this.state.selectedGoals.find(
-          existingGoal =>
-            existingGoal.id == selectedGoal.id
+          existingGoal => existingGoal.id == selectedGoal.id
         );
-        
+
         if (alreadyExists === undefined) {
           console.log("MADE IT THROUGH");
           this.setState({
@@ -459,7 +458,6 @@ class CreateReflection extends Component {
                     onContentChange={this.handleNetworkFailGoals}
                   />
                 )}
-
               {(step === 3 || previewStep) &&
               goals.length > 0 &&
               selectedGoals.length > 0 && ( // Need to keep the title separate, because has many dropdownchip questions
