@@ -4,7 +4,7 @@ export const AuthContext = createContext();
 
 class AuthContextProvider extends Component {
   state = {
-    userName: "Guest",
+    userName: "sam123",
     userId: "14"
   }
 

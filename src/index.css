@@ -14,6 +14,10 @@ body {
   font-size: 20px;
 }
 
+.bodyBold {
+  font-weight: 600;
+}
+
 /* Grid Layouts */
 .gridTwoColumns {
   display: grid;
@@ -122,10 +126,42 @@ body {
   text-align: center;
   padding: 2px 6px 3px;
   border-width: 2px;
-  border-style: outset;
+  border-style: solid;
   border-color: #1378C1;
-  cursor: pointer;
-  max-width: 100px;
+  cursor: pointer;  
+}
+
+.buttonOutlined {
+  font-family: 'Open Sans';
+  font-size: 15px;
+  color:  #1378C1;
+  background-color: #FAFAFA;
+  text-align: center;
+  padding: 2px 6px 3px;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #1378C1;
+  cursor: pointer;  
+}
+
+.buttonWidth75px {
+  width: 75px;
+}
+
+.buttonWidth100px {
+  width: 100px;
+}
+
+.buttonHeight110px {
+  height: 110px;
+}
+
+.buttonWidth115px {
+  width: 115px;
+}
+
+.buttonWidth150px {
+  width: 150px;
 }
 
 .borderRadius25px {
@@ -154,6 +190,34 @@ body {
 
 .marginLeft30px {
   margin-left: 30px;
+}
+
+.marginLeft10px {
+  margin-left: 10px;
+}
+
+.marginBottom30px {
+  margin-bottom: 30px;
+}
+
+.marginTopNegative30px {
+  margin-top: -30px;
+}
+
+.marginBottom10px {
+  margin-bottom: 10px;
+}
+
+.width300px {
+  width: 300px;
+}
+
+.width900px {
+  width: 900px;
+}
+
+.rightAlign {
+  float: right;
 }
 
 .card {

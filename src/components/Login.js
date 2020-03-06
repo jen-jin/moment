@@ -21,7 +21,7 @@ class Login extends Component {
 
   handleLogin() {
     this.setState({ login: !this.login });
-    this.context.changeUser(this.state.name, 14); // This is temp
+    // this.context.changeUser(this.state.name, 14); // Set this up properly later, defaulting to 14 for ALL
     this.props.history.push("/dashboard");
   }
 
@@ -82,7 +82,7 @@ class Login extends Component {
               />
               <div className="flex paddingTop30px paddingLeft150px">
                 <div
-                  className="button borderRadius25px"
+                  className="button buttonWidth100px borderRadius25px"
                   onClick={this.handleLogin}
                 >
                   {login ? "Log in" : "create account"}
