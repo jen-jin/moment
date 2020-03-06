@@ -13,6 +13,7 @@ import {
   DEFAULT_HEADERS,
   GOALS_PATH,
   SUBGOALS_PATH,
+  REFLECTION_PATH,
   SUCCESS,
   DATE_OPTIONS,
   ACTIVITY_OPTIONS,
@@ -56,7 +57,6 @@ class CreateReflection extends Component {
         veryEffectively: false
       },
       selectedGoals: [],
-      selectedGoalsID: [],
       networkFailGoals: "",
       networkFailSubGoals: "",
       selectedSubGoals: [],
@@ -122,16 +122,15 @@ class CreateReflection extends Component {
 
   // MARK: - Fetching subgoals
 
-  fetchSubGoalsHelper() {
-    this.state.selectedGoalsID.map(id => {
-      console.log("Fetching ID: " + id)
-      this.fetchSubGoals(id)
-    })    
+  async fetchSubGoalsHelper() {
+    await this.state.selectedGoals.map(goal => {
+      this.fetchSubGoals(goal);
+    });
   }
 
-  async fetchSubGoals(goalID) {
+  async fetchSubGoals(goal) {
     await axios
-      .get(SUBGOALS_PATH + "/" + goalID, {
+      .get(SUBGOALS_PATH + "/" + goal.id, {
         headers: DEFAULT_HEADERS
       })
       .then(
@@ -141,7 +140,7 @@ class CreateReflection extends Component {
 
             // Checking if subgoals already exist before adding (same goalID)
             if (
-              this.state.subgoals.filter(subgoal => subgoal.goal_id == goalID)
+              this.state.subgoals.filter(subgoal => subgoal.goal_id == goal.id)
                 .length == 0
             ) {
               this.setState({
@@ -158,6 +157,27 @@ class CreateReflection extends Component {
       );
   }
 
+  // MARK: - Submitting Reflection
+  async postReflection() {
+    await axios({
+      method: 'post',
+      url: REFLECTION_PATH,
+      data: {
+        "user_id": this.context.userId,
+        "title": this.state.title,
+        "reflection" : JSON.stringify(this.state) 
+      },
+      headers: { DEFAULT_HEADERS }
+    })
+    .then(() =>
+      this.navigateToReflection()
+    )
+    .catch(error => { // TODO: Better error handling, such as when they try and submit without internet
+      console.log(error);
+    });
+  }
+
+
   // MARK: - Reflection Changes
   changedTitle(event) {
     this.setState({
@@ -171,9 +191,7 @@ class CreateReflection extends Component {
       {
         completedReflection: true,
         displayPrompt: true
-      },
-      () => this.navigateToReflection()
-    );
+      }, () => this.postReflection());
   }
 
   async navigateToReflection() {
@@ -194,30 +212,70 @@ class CreateReflection extends Component {
       // NOTE: Await is necessary here
       communication: responses
     });
-  }  
-  
+  }
+
   // MARK: - Handling Support Scale Question
   async handleSupportSelection(responses) {
     await this.setState({
       // NOTE: Await is necessary here
       support: responses
     });
-  }   
+  }
 
   // MARK: - Handling Goal Question
+  // TODO: - Fix bug of unselecting, need to remove from list
   async handleGoalSelection(newGoals) {
-    await this.setState({
-      // NOTE: Await is necessary here
-      selectedGoals: newGoals
+    // TODO: Issue with deleting goal maybe
+    await newGoals.map(title => {
+      const matchingGoal = this.state.goals.find(
+        goal => goal["goal"]["goal"] == title
+      );
+
+      if (matchingGoal !== undefined) {
+        const selectedGoal = {
+          id: matchingGoal["goal"]["id"],
+          value: matchingGoal["goal"]["goal"]
+        };
+        const alreadyExists = this.state.selectedGoals.find(
+          existingGoal =>
+            existingGoal.id == selectedGoal.id
+        );
+        
+        if (alreadyExists === undefined) {
+          console.log("MADE IT THROUGH");
+          this.setState({
+            selectedGoals: [...this.state.selectedGoals].concat(selectedGoal)
+          });
+        }
+      }
     });
   }
 
   // MARK: - Handling Goal Question
+  // TODO: - Fix bug of unselecting, need to remove from list
   async handleSubGoalSelection(newSubGoals) {
-    console.log("New Sub Goals: " + newSubGoals.length);
-    await this.setState({
-      // NOTE: Await is necessary here
-      selectedSubGoals: newSubGoals
+    await newSubGoals.map(title => {
+      const selectedSubGoal = this.state.subgoals.find(
+        subgoal => subgoal.subgoal == title
+      );
+
+      if (selectedSubGoal !== undefined) {
+        const alreadyExists = this.state.selectedSubGoals.find(
+          existingSubGoal => existingSubGoal.id == selectedSubGoal.id
+        );
+
+        if (alreadyExists === undefined) {
+          console.log("MADE IT THROUGH SUBGOAL");
+          this.setState({
+            selectedSubGoals: [...this.state.selectedSubGoals].concat(
+              selectedSubGoal
+            )
+          });
+          console.log(
+            "Now Selected Sub Goal Count: " + this.state.selectedSubGoals.length
+          );
+        }
+      }
     });
   }
 
@@ -276,51 +334,31 @@ class CreateReflection extends Component {
   }
 
   // MARK: - Goals to Subgoals
-  // TODO: Bug, should be updating selectedGoalIDs with selectedGoals
   async goalsToSubgoals() {
-    console.log("Matching selected goals");
-    await this.state.selectedGoals.map(goalTitle => {
-      const selectedGoalInfo = this.state.goals.filter(
-        goal => goal["goal"]["goal"] == goalTitle
-      ); // Find goal with the same title, limitation
-      const selectedGoalID = selectedGoalInfo[0]["goal"]["id"]; // Assuming only one match, limitation
-
-      console.log("Selected Goal ID: " + selectedGoalID);
-      if (!this.state.selectedGoalsID.includes(selectedGoalID)) {
-        // Update selected goal IDs
-        console.log("Does not have ID");
-        this.setState({
-          selectedGoalsID: this.state.selectedGoalsID.concat(selectedGoalID)
-        });
-      }
-    });
-
     await this.fetchSubGoalsHelper();
     this.setState({ step: this.state.step + 1 });
   }
 
   // MARK: - Navigating Sections
-  moveForward() {    
+  moveForward() {
     // If step == 2, goals question, fetch subgoals
     if (this.state.step == 2) {
-      console.log("Goals to subgoals");
-      console.log("Current subgoals: " + this.state.subgoals.length);
       this.goalsToSubgoals();
     } else {
       // If step == 5, next step is preview after going forward
-      this.setState({ 
+      this.setState({
         step: this.state.step + 1,
-        previewStep: this.state.step == 5 
-      });      
-    }    
+        previewStep: this.state.step == 5
+      });
+    }
   }
 
   moveBackwards() {
-    // If step == 6, NOT preview anymore after going back    
-      this.setState({ 
-        step: this.state.step - 1,
-        previewStep: this.state.step == 6 ? !this.state.previewStep : false
-      });        
+    // If step == 6, NOT preview anymore after going back
+    this.setState({
+      step: this.state.step - 1,
+      previewStep: this.state.step == 6 ? !this.state.previewStep : false
+    });
   }
 
   // MARK: - Render
@@ -335,7 +373,6 @@ class CreateReflection extends Component {
       communication,
       support,
       selectedGoals,
-      selectedGoalsID,
       networkFailGoals,
       networkFailSubGoals,
       selectedSubGoals,
@@ -382,34 +419,38 @@ class CreateReflection extends Component {
             )}
             <Grid item>
               <div className="helper paddingTop10px">
-                {step == 1 && "Let's get started! "}
+                {step === 1 && "Let's get started! "}
                 {step < numSteps && step > 1 && "Keep going! "}
                 {step == numSteps && "You're almost there! "}
                 You're on section {step} of {numSteps}.
               </div>
             </Grid>
             <Grid item>
-              {(step == 1 || previewStep) && (
+              {(step === 1 || previewStep) && (
                 <PictureQuestion
                   onMoodChange={this.handleMoodSelection}
                   moods={moods}
                 />
               )}
 
-              {(step == 2 || previewStep) && goals.length > 0 && (
-                  <DropDownChipQuestion
-                    question="2. Did you work on any of these goals?"
-                    helper="Choose as many as you like"
-                    placeholder="Select goals"
-                    subheading={null}
-                    content={goals}
-                    key1="goal"
-                    key2="goal"
-                    onSelectionChange={this.handleGoalSelection}
-                    selected={selectedGoals}
-                  />
-                )}
-              {(step == 2 || previewStep) &&
+              {(step === 2 || previewStep) && goals.length > 0 && (
+                <DropDownChipQuestion
+                  question="2. Did you work on any of these goals?"
+                  helper="Choose as many as you like"
+                  placeholder="Select goals"
+                  subheading={null}
+                  content={goals}
+                  key1="goal"
+                  key2="goal"
+                  onSelectionChange={this.handleGoalSelection}
+                  selected={
+                    selectedGoals.length == 0
+                      ? selectedGoals
+                      : selectedGoals.map(goal => goal.value)
+                  }
+                />
+              )}
+              {(step === 2 || previewStep) &&
               goals.length == 0 && ( // In the case of network failure or no goals available
                   <StandardQuestion
                     question="2. What goals did you work on?"
@@ -419,9 +460,9 @@ class CreateReflection extends Component {
                   />
                 )}
 
-              {(step == 3 || previewStep) &&
+              {(step === 3 || previewStep) &&
               goals.length > 0 &&
-              selectedGoalsID.length > 0 && ( // Need to keep the title separate, because has many dropdownchip questions
+              selectedGoals.length > 0 && ( // Need to keep the title separate, because has many dropdownchip questions
                   <Grid item xs={12}>
                     <div className="body bodyBold paddingTop30px">
                       3. Did you work on any of these tasks?
@@ -431,30 +472,35 @@ class CreateReflection extends Component {
                     </div>
                   </Grid>
                 )}
-              {(step == 3 || previewStep) &&
+              {(step === 3 || previewStep) &&
                 goals.length > 0 &&
-                selectedGoalsID.length > 0 &&
-                selectedGoalsID.map(goalID => (
+                selectedGoals.length > 0 &&
+                selectedGoals.map((
+                  goal // REFACTOR HERE
+                ) => (
+                  // console.log("Selected Goals: " + goal)
                   // console.log("TESTING Filtered goals" + goals.filter(goal => goal["goal"]["id"] == goalID)[0]["goal"]["goal"])
                   <DropDownChipQuestion
-                    subheading={
-                      goals.filter(goal => goal["goal"]["id"] == goalID)[0][
-                        "goal"
-                      ]["goal"]
-                    } // Breaking hazard, hack
+                    subheading={goal.value}
                     placeholder="Select tasks"
                     content={subgoals.filter(
-                      subgoal => subgoal.goal_id == goalID
+                      subgoal => subgoal.goal_id == goal.id
                     )}
                     key1="subgoal"
                     key2={null}
                     onSelectionChange={this.handleSubGoalSelection}
-                    selected={selectedSubGoals}
+                    selected={
+                      selectedSubGoals.length == 0
+                        ? selectedSubGoals
+                        : selectedSubGoals
+                            .filter(subGoal => subGoal.goal_id == goal.id)
+                            .map(subGoalInfo => subGoalInfo.subgoal)
+                    }
                   />
                 ))}
               {(step == 3 || previewStep) &&
               goals.length > 0 &&
-              selectedGoalsID.length == 0 && ( // Case: No selected goals
+              selectedGoals.length == 0 && ( // Case: No selected goals
                   <Grid item xs={12}>
                     <div className="body bodyBold paddingTop30px width900px">
                       3. Did you work on any of these tasks?

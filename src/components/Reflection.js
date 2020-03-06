@@ -70,10 +70,18 @@ class Reflection extends Component {
     })
   }
   
-  async createTableData() {
+  async createTableData() { // TODO: Bug where only 1 row shows
+    console.log("Number of reflections " + this.state.reflections.length)
     await this.state.reflections.map(reflection => {
+      // Create Reflection Data
+      const title = reflection.title;
+      const dateCreated = reflection.date_created;
+      const lastModified = reflection.last_modified == null ? dateCreated : reflection.last_modified;
+      const actions = "View Delete";
+      
+      const data = { title, dateCreated, lastModified, actions };
       this.setState({
-        rows: this.state.rows.concat(this.createReflectionData(reflection))
+        rows: [...this.state.rows].concat(data)
       })
     })
   }
@@ -93,6 +101,8 @@ class Reflection extends Component {
 
   render() {
     const { reflections, page, rowsPerPage, rows } = this.state;
+
+    console.log("Rows count: " + rows.length);
     
     const columns = [
       { id: "title", label: "Name", minWidth: 170 },
