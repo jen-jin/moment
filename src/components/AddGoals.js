@@ -75,8 +75,7 @@ class AddGoals extends Component {
       headers: { DEFAULT_HEADERS, 'Content-Type': 'multipart/form-data' }
     })
     .then(() => 
-      console.log(goalFormData)
-      // redirect
+      this.props.onAddEnd()
     )
     .catch(error => {
       console.log(error);

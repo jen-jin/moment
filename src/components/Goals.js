@@ -39,12 +39,16 @@ class Goals extends Component {
     this.setState({ addGoal: false });
   }
 
+  handleOnAddEnd = () => {
+    this.setState({ addGoal: false });
+  }
+
   render() {
     var goalForm = <ViewGoals />;
     if (this.state.value == "/goals/complete")
       goalForm = <ViewCompletedGoals />;
     if (this.state.addGoal)
-      goalForm = <AddGoals dismiss={ this.dismiss.bind(this) } />;
+      goalForm = <AddGoals dismiss={ this.dismiss.bind(this) } onAddEnd={this.handleOnAddEnd} />;
 
     return (      
       <div className="goalsPage">
