@@ -89,7 +89,7 @@ class Reflection extends Component {
   }
 
   createDateFormat(date) {
-    return new Date(date).toLocaleString([], DATE_OPTIONS);
+    return new Date(date).toLocaleTimeString("en-US", DATE_OPTIONS);
   }
 
   createReflectionData(reflection) {
