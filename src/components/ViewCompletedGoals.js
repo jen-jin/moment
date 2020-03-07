@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
-import { DEFAULT_HEADERS, GOALS_PATH, SUCCESS } from "../constants";
+import { DEFAULT_HEADERS, GOALS_PATH, SUCCESS, SUBGOALS_PATH } from "../constants";
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
@@ -106,6 +106,25 @@ class ViewCompletedGoals extends Component {
         data.push({...item})
     });
     this.setState({ data: data });
+    this.sendStatus(data);
+  }
+
+  sendStatus = data => {
+    var subgoals = [];
+    data.map((item) => {
+      item.subgoals.map((s) => {
+        subgoals.push({subgoal_id: s.id, status: s.status})
+      })
+    })
+    axios({
+      method: 'put',
+      url: SUBGOALS_PATH,
+      data: {subgoals: subgoals},
+      headers: { DEFAULT_HEADERS, 'Content-Type': 'application/json' }
+    })
+    .catch(error => {
+      console.log(error);
+    });
   }
 
   handleIncomplete = id => event => {
@@ -189,7 +208,7 @@ class ViewCompletedGoals extends Component {
                 goalId = item.goal.id
                 goalType = item.goal.category
               })}
-                <NewExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                <NewExpansionPanelSummary expandIcon={this.taskExist(goalId) ? <ExpandMoreIcon /> : null}>
                   <Grid item xs={2}>
                     <div className={ classes.chip }>
                       { this.createChip(goalType) }
@@ -216,7 +235,7 @@ class ViewCompletedGoals extends Component {
                     <FormControlLabel
                       className={classes.text}
                       onChange={this.handleStatusChange(i, index)}
-                      control={<Checkbox color="primary" />}
+                      control={<StyledCheckbox color="primary" />}
                       checked={s.status == "complete" ? true : false}
                       label={s.subgoal} />
                   </ExpansionPanelDetails>
