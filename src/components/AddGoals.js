@@ -75,8 +75,7 @@ class AddGoals extends Component {
       headers: { DEFAULT_HEADERS, 'Content-Type': 'multipart/form-data' }
     })
     .then(() => 
-      console.log(goalFormData)
-      // redirect
+      this.props.onAddEnd()
     )
     .catch(error => {
       console.log(error);
@@ -93,7 +92,7 @@ class AddGoals extends Component {
             <CardContent>
               <Grid container>
                 <Grid item xs={8}>
-                  <TextField
+                  <TextField required
                     className={ classes.textfield }
                     id="main-goal"
                     label="Enter your main goal"
@@ -127,7 +126,7 @@ class AddGoals extends Component {
                       </IconButton>
                     </div>
                     <div>
-                      <TextField className={ classes.textfield } id="task" label="Enter your task" name="task" value={task.des} onChange={this.handleTaskDesChange(idx)} />
+                      <TextField autoFocus className={ classes.textfield } id="task" label="Enter your task" name="task" value={task.des} onChange={this.handleTaskDesChange(idx)} />
                     </div>
                   </div>
                 </div>
