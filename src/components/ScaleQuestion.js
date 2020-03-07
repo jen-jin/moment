@@ -26,7 +26,11 @@ class ScaleQuestion extends Component {
       case "Very ineffectively":
         this.setState(
           {
-            veryIneffectively: !this.state.veryIneffectively
+            veryIneffectively: !this.state.veryIneffectively,
+            ineffectively: false,
+            somewhatEffectively: false,
+            effectively: false,
+            veryEffectively: false
           },
           () => this.callBackEffectivenessChanged()
         );
@@ -34,7 +38,11 @@ class ScaleQuestion extends Component {
       case "Ineffectively":
         this.setState(
           {
-            ineffectively: !this.state.ineffectively
+            ineffectively: !this.state.ineffectively,
+            veryIneffectively: false,
+            somewhatEffectively: false,
+            effectively: false,
+            veryEffectively: false
           },
           () => this.callBackEffectivenessChanged()
         );
@@ -42,7 +50,12 @@ class ScaleQuestion extends Component {
       case "Somewhat effectively":
         this.setState(
           {
-            somewhatEffectively: !this.state.somewhatEffectively
+            somewhatEffectively: !this.state.somewhatEffectively,
+            ineffectively: false,
+            veryIneffectively: false,
+            effectively: false,
+            veryEffectively: false            
+            
           },
           () => this.callBackEffectivenessChanged()
         );
@@ -50,7 +63,11 @@ class ScaleQuestion extends Component {
       case "Effectively":
         this.setState(
           {
-            effectively: !this.state.effectively
+            effectively: !this.state.effectively,
+            somewhatEffectively: false,
+            ineffectively: false,
+            veryIneffectively: false,
+            veryEffectively: false                  
           },
           () => this.callBackEffectivenessChanged()
         );
@@ -58,7 +75,11 @@ class ScaleQuestion extends Component {
       case "Very Effectively":
         this.setState(
           {
-            veryEffectively: !this.state.veryEffectively
+            veryEffectively: !this.state.veryEffectively,
+            effectively: false,
+            somewhatEffectively: false,
+            ineffectively: false,
+            veryIneffectively: false          
           },
           () => this.callBackEffectivenessChanged()
         );
@@ -72,11 +93,23 @@ class ScaleQuestion extends Component {
   render() {
     const responses = this.state;
     const scaleArray = [
-      { value: "1", title: "Very ineffectively", active: responses.veryIneffectively },
+      {
+        value: "1",
+        title: "Very ineffectively",
+        active: responses.veryIneffectively
+      },
       { value: "2", title: "Ineffectively", active: responses.ineffectively },
-      { value: "3", title: "Somewhat effectively", active: responses.somewhatEffectively },
+      {
+        value: "3",
+        title: "Somewhat effectively",
+        active: responses.somewhatEffectively
+      },
       { value: "4", title: "Effectively", active: responses.effectively },
-      { value: "5", title: "Very Effectively", active: responses.veryEffectively }
+      {
+        value: "5",
+        title: "Very Effectively",
+        active: responses.veryEffectively
+      }
     ];
 
     const effectiveScale = scaleArray.map(scale => {
@@ -98,7 +131,7 @@ class ScaleQuestion extends Component {
               value="testing"
             >
               <CardContent>
-              <div className="display paddingBottom10px">{scale.value}</div>
+                <div className="display paddingBottom10px">{scale.value}</div>
                 <div className="helper">{scale.title}</div>
               </CardContent>
             </CardActionArea>
@@ -110,7 +143,9 @@ class ScaleQuestion extends Component {
     return (
       <div className="paddingTop30px">
         <Grid item>
-          <div className="body bodyBold paddingBottom10px">{this.props.question}</div>
+          <div className="body bodyBold paddingBottom10px">
+            {this.props.question}
+          </div>
         </Grid>
         <Grid item>
           <Grid
@@ -120,7 +155,7 @@ class ScaleQuestion extends Component {
             direction="row"
             className="paddingTop10px"
             alignContent="center"
-            justify="center"
+            justify="start"
           >
             {effectiveScale}
           </Grid>

@@ -238,6 +238,10 @@ body {
   height:70vh;
 }
 
+.pointer {
+  cursor: pointer;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;

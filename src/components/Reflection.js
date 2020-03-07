@@ -10,7 +10,12 @@ import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
-import { REFLECTION_PATH, DEFAULT_HEADERS, SUCCESS } from "../constants";
+import {
+  REFLECTION_PATH,
+  DEFAULT_HEADERS,
+  SUCCESS,
+  DATE_OPTIONS
+} from "../constants";
 
 class Reflection extends Component {
   static contextType = AuthContext;
@@ -22,7 +27,7 @@ class Reflection extends Component {
       reflections: [],
       page: 0,
       rows: [],
-      rowsPerPage: 10,
+      rowsPerPage: 10
     };
 
     this.createReflection = this.createReflection.bind(this);
@@ -30,6 +35,7 @@ class Reflection extends Component {
     this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this);
     this.createTableData = this.createTableData.bind(this);
     this.createReflectionData = this.createReflectionData.bind(this);
+    this.createDateFormat = this.createDateFormat.bind(this);
   }
 
   // MARK: - Lifecycle
@@ -46,9 +52,12 @@ class Reflection extends Component {
       .then(
         response => {
           if (response.data.status == SUCCESS) {
-            this.setState({
-              reflections: response.data.data
-            }, () => this.createTableData());
+            this.setState(
+              {
+                reflections: response.data.data
+              },
+              () => this.createTableData()
+            );
           }
         },
         error => {
@@ -67,30 +76,43 @@ class Reflection extends Component {
     this.setState({
       rowsPerPage: +event.target.value,
       page: 0
-    })
+    });
   }
-  
-  async createTableData() { // TODO: Bug where only 1 row shows
-    console.log("Number of reflections " + this.state.reflections.length)
+
+  async createTableData() {
     await this.state.reflections.map(reflection => {
-      // Create Reflection Data
-      const title = reflection.title;
-      const dateCreated = reflection.date_created;
-      const lastModified = reflection.last_modified == null ? dateCreated : reflection.last_modified;
-      const actions = "View Delete";
-      
-      const data = { title, dateCreated, lastModified, actions };
-      this.setState({
-        rows: [...this.state.rows].concat(data)
-      })
-    })
+      const data = this.createReflectionData(reflection);
+      this.setState(prevState => ({
+        rows: [...prevState.rows].concat(data)
+      }));
+    });
+  }
+
+  createDateFormat(date) {
+    return new Date(date).toLocaleString([], DATE_OPTIONS);
   }
 
   createReflectionData(reflection) {
     const title = reflection.title;
-    const dateCreated = reflection.date_created;
-    const lastModified = reflection.last_modified;
-    const actions = "View Delete"
+    const dateCreated = this.createDateFormat(reflection.date_created);
+    const lastModified =
+      reflection.last_modified == null
+        ? dateCreated
+        : this.createDateFormat(reflection.last_modified);
+
+    const actions = (
+      <>
+        <span className="pointer" onClick={() => console.log("View")}>
+          View
+        </span>
+        <span
+          className="marginLeft10px pointer"
+          onClick={() => console.log("Delete")}
+        >
+          Delete
+        </span>
+      </>
+    );
 
     return { title, dateCreated, lastModified, actions };
   }
@@ -102,8 +124,6 @@ class Reflection extends Component {
   render() {
     const { reflections, page, rowsPerPage, rows } = this.state;
 
-    console.log("Rows count: " + rows.length);
-    
     const columns = [
       { id: "title", label: "Name", minWidth: 170 },
       {
@@ -125,7 +145,7 @@ class Reflection extends Component {
         align: "center"
       }
     ];
-    
+
     return (
       <div className="reflectionLog">
         <Grid
@@ -138,10 +158,12 @@ class Reflection extends Component {
           <Grid item xs={8}>
             <div className="header paddingTop30px">Reflection</div>
             <div className="helper paddingTop10px">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat.
+            <span className="bodyBold">
+              “Examining your thoughts is an important part of the practice of self-reflections” - Ryuho Okawa
+              </span>
+              <br />
+              Use this space to reflect on your progress in using alternative augmentative communication with your child. 
+              Explore the success, challenges, and improvements in your journey.
             </div>
             <div
               className="button buttonWidth150px borderRadius25px marginTop30px marginBottom30px rightAlign"
@@ -187,12 +209,15 @@ class Reflection extends Component {
                             >
                               {columns.map(column => {
                                 const value = row[column.id];
-                                console.log("Values: " + value)
                                 return (
                                   <TableCell
                                     key={column.id}
                                     align={column.align}
-                                    style={ column.id == "actions" ? { color: '#1378C1' } : { color: '#2A2A2A'}}
+                                    style={
+                                      column.id == "actions"
+                                        ? { color: "#1378C1" }
+                                        : { color: "#2A2A2A" }
+                                    }
                                   >
                                     {value}
                                   </TableCell>

@@ -65,6 +65,8 @@ class CreateReflection extends Component {
       learningsGood: "",
       learningsBad: "",
       additionalNotes: "",
+      communicationNotes: "",
+      supportNotes: "",
       title: DEFAULT_REFLECTION_TITLE,
       date: new Date().toLocaleTimeString("en-US", DATE_OPTIONS),
       previewStep: false,
@@ -89,6 +91,8 @@ class CreateReflection extends Component {
       this
     );
     this.handleAdditionalNotes = this.handleAdditionalNotes.bind(this);
+    this.handleCommunicationNotes = this.handleCommunicationNotes.bind(this);
+    this.handleSupportNotes = this.handleSupportNotes.bind(this);
     this.handleGoodLearnings = this.handleGoodLearnings.bind(this);
     this.handleBadLearnings = this.handleBadLearnings.bind(this);
     this.handleNetworkFailGoals = this.handleNetworkFailGoals.bind(this);
@@ -214,6 +218,13 @@ class CreateReflection extends Component {
     });
   }
 
+  async handleCommunicationNotes(notes) {
+    await this.setState({
+      // NOTE: Await is necessary here
+      communicationNotes: notes
+    });
+  }
+
   // MARK: - Handling Support Scale Question
   async handleSupportSelection(responses) {
     await this.setState({
@@ -222,10 +233,16 @@ class CreateReflection extends Component {
     });
   }
 
+  async handleSupportNotes(notes) {
+    await this.setState({
+      // NOTE: Await is necessary here
+      supportNotes: notes
+    });
+  }
+
   // MARK: - Handling Goal Question
   // TODO: - Fix bug of unselecting, need to remove from list
   async handleGoalSelection(newGoals) {
-    // TODO: Issue with deleting goal maybe
     await newGoals.map(title => {
       const matchingGoal = this.state.goals.find(
         goal => goal["goal"]["goal"] == title
@@ -380,6 +397,8 @@ class CreateReflection extends Component {
       learningsGood,
       learningsBad,
       additionalNotes,
+      communicationNotes,
+      supportNotes,
       previewStep
     } = this.state;
 
@@ -473,11 +492,7 @@ class CreateReflection extends Component {
               {(step === 3 || previewStep) &&
                 goals.length > 0 &&
                 selectedGoals.length > 0 &&
-                selectedGoals.map((
-                  goal // REFACTOR HERE
-                ) => (
-                  // console.log("Selected Goals: " + goal)
-                  // console.log("TESTING Filtered goals" + goals.filter(goal => goal["goal"]["id"] == goalID)[0]["goal"]["goal"])
+                selectedGoals.map(goal => (
                   <DropDownChipQuestion
                     subheading={goal.value}
                     placeholder="Select tasks"
@@ -541,16 +556,30 @@ class CreateReflection extends Component {
               )}
               {(step == 4 || previewStep) && (
                 <ScaleQuestion
-                  question="5. How effectively did your child communicate?"
+                  question="5. Overall, how effectively did your child communicate?"
                   onEffectivenessChange={this.handleCommunicationSelection}
                   effectiveness={communication}
                 />
               )}
               {(step == 4 || previewStep) && (
+                <StandardQuestion
+                  placeholder="Additional Comments"
+                  content={communicationNotes}
+                  onContentChange={this.handleCommunicationNotes}
+                />
+              )}
+              {(step == 4 || previewStep) && (
                 <ScaleQuestion
-                  question="6. How effectively did you support your child's communication?"
+                  question="6. Overall, how effectively did you support your child's communication?"
                   onEffectivenessChange={this.handleSupportSelection}
                   effectiveness={support}
+                />
+              )}
+              {(step == 4 || previewStep) && (
+                <StandardQuestion
+                  placeholder="Additional Comments"
+                  content={supportNotes}
+                  onContentChange={this.handleSupportNotes}
                 />
               )}
               {(step == 5 || previewStep) && (

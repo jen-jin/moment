@@ -15,6 +15,8 @@ export const SUCCESS = "success";
 
 export const DATE_OPTIONS = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute:'2-digit'};
 
+export const DATE_OPTIONS_2 = { year: 'numeric', month: 'short', day: 'numeric' };
+
 export const DEFAULT_REFLECTION_TITLE = "Untitled Reflection";
 
 export const DEFAULT_TEXTBOX_PLACEHOLDER = "Type your answer here";
