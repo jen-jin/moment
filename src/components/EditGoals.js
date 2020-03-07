@@ -131,7 +131,8 @@ class EditGoals extends Component {
       },
       subgoals: subgoal
     }
-    console.log(data)
+    
+    console.log(this.state.data)
     axios({
       method: 'put',
       url: GOALS_PATH,
@@ -139,7 +140,7 @@ class EditGoals extends Component {
       headers: { DEFAULT_HEADERS, 'Content-Type': 'application/json' }
     })
     .then(() => 
-      this.props.onEditEnd()
+      this.props.onEditEnd(goalId, this.state.data)
     )
     .catch(error => {
       console.log(error);

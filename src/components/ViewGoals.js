@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
-import { DEFAULT_HEADERS, GOALS_PATH, SUCCESS } from "../constants";
+import { DEFAULT_HEADERS, GOALS_PATH, SUCCESS, SUBGOALS_PATH } from "../constants";
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
@@ -112,6 +112,25 @@ class ViewGoals extends Component {
         data.push({...item})
     });
     this.setState({ data: data });
+    this.sendStatus(data);
+  }
+
+  sendStatus = data => {
+    var subgoals = [];
+    data.map((item) => {
+      item.subgoals.map((s) => {
+        subgoals.push({subgoal_id: s.id, status: s.status})
+      })
+    })
+    axios({
+      method: 'put',
+      url: SUBGOALS_PATH,
+      data: {subgoals: subgoals},
+      headers: { DEFAULT_HEADERS, 'Content-Type': 'application/json' }
+    })
+    .catch(error => {
+      console.log(error);
+    });
   }
 
   handleComplete = id => event => {
@@ -183,8 +202,25 @@ class ViewGoals extends Component {
     this.setState({ edit: false });
   }
 
-  handleOnEditEnd = () => {
-    this.setState({ edit: false });
+  onTitleChange(id, title) {
+    var data = [...this.state.data];
+    var index = data.findIndex(obj => obj.id === id);
+    data[index].title = title;
+    this.setState({data});
+ }
+
+  handleOnEditEnd = (id, data) => {
+    var goalId = ""
+    var newData = this.state.data.map(el => {
+      {Object.keys(el.goal).map(() => {
+        goalId = el.goal.id
+      })}
+      if(goalId === id)
+        return Object.assign({}, el, data)
+      return el
+    });
+    this.setState({data: newData})
+    this.setState({edit: false})
   }
 
   editForm() {
@@ -197,7 +233,7 @@ class ViewGoals extends Component {
   
   createPanel() {
     const { classes } = this.props;
-    const { data, edit } = this.state;
+    const { data } = this.state;
     let date, goal, goalId, goalType = "";
     this.sortData(data);
     return (
@@ -256,8 +292,7 @@ class ViewGoals extends Component {
   }
 
   render() {
-    const goalsExist = this.state.goalsExist;
-    const edit = this.state.edit;
+    const { goalsExist, edit } = this.state;
     var form;
     if (edit) {
       form = this.editForm();
