@@ -92,7 +92,7 @@ class AddGoals extends Component {
             <CardContent>
               <Grid container>
                 <Grid item xs={8}>
-                  <TextField
+                  <TextField required
                     className={ classes.textfield }
                     id="main-goal"
                     label="Enter your main goal"
@@ -126,7 +126,7 @@ class AddGoals extends Component {
                       </IconButton>
                     </div>
                     <div>
-                      <TextField className={ classes.textfield } id="task" label="Enter your task" name="task" value={task.des} onChange={this.handleTaskDesChange(idx)} />
+                      <TextField autoFocus className={ classes.textfield } id="task" label="Enter your task" name="task" value={task.des} onChange={this.handleTaskDesChange(idx)} />
                     </div>
                   </div>
                 </div>

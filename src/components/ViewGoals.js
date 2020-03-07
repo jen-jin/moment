@@ -33,6 +33,15 @@ const NewExpansionPanelSummary = withStyles({
   }
 })(ExpansionPanelSummary);
 
+const StyledCheckbox = withStyles(theme => ({
+  root: { 
+    '&$checked': {
+      color: '#1378C1',
+    },
+  },
+  checked: {},
+}))(Checkbox);
+
 const options = { year: 'numeric', month: 'short', day: 'numeric' };
 
 class ViewGoals extends Component {
@@ -41,13 +50,10 @@ class ViewGoals extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      goals: {},
-      tasks: [],
-      checked: false,
+      data: [],
       goalsExist: true,
-      isEdit: false,
-      goalId: null,
-      status: false
+      edit: false,
+      goalId: null
     };
   }
 
@@ -56,16 +62,7 @@ class ViewGoals extends Component {
     axios.get(GOALS_PATH + "/" + parseInt(userId) + "/incomplete", {headers: DEFAULT_HEADERS}).then(
       response => {
         if (response.data.status == SUCCESS && response.data.data.length != 0) {
-          var tempGoals = [];
-          var tempTasks = [];
-          for (const data of response.data.data) {
-            tempGoals.push(data["goal"]);
-            tempTasks.push(data["subgoals"]);
-          }
-          this.setState({
-            goals: tempGoals,
-            tasks: tempTasks
-          });
+          this.setState({data: response.data.data});
         } else {
           this.setState({ goalsExist: false });
         }
@@ -74,72 +71,6 @@ class ViewGoals extends Component {
         console.log(error);
       }
     );
-  }
-
-  createPanel() {
-    const { classes } = this.props
-    const { goals, tasks } = this.state;
-    let panel =[]
-
-    for (let i = 0; i < goals.length; i++){
-      let summary = []
-      let details = []
-      let date, goal, goalId, goalType = ""
-      Object.entries(goals[i]).map(() => {
-        date = new Date(goals[i]["timestamp"])
-        goal = goals[i]["goal"]
-        goalId = goals[i]["id"]
-        goalType = goals[i]["category"]
-      })
-      summary.push(
-        <NewExpansionPanelSummary expandIcon={tasks[i].length ? <ExpandMoreIcon /> : null}>
-          <Grid item xs={2}>
-            <div className={ classes.chip }>
-              { this.createChip(goalType) }
-            </div>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography className={ classes.text } variant="h6">
-              { goal }
-            </Typography>
-            <Typography className={ classes.text } variant="subtitle1">
-              Created on { date.toLocaleString([], options) }
-            </Typography>
-          </Grid>
-          <Grid item xs={4}>
-            <div style={{float: "right"}}>
-              <Button variant="text" onClick={this.handleComplete(goalId)}>Complete</Button>
-              <Button variant="text" onClick={this.handleEdit(goalId)}>Edit</Button>
-              <Button variant="text" onClick={this.handleDelete(goalId)}>Delete</Button>
-            </div>
-          </Grid>
-        </NewExpansionPanelSummary>
-      )
-      for (let j = 0; j < tasks[i].length; j++){
-        // status = tasks[i][j]["status"] == "complete" ? true : false
-        let task = ""
-        Object.entries(tasks[i][j]).map(() => {
-          task = tasks[i][j]["subgoal"]
-        })
-        details.push(
-          <ExpansionPanelDetails>
-            <FormControlLabel
-              className={classes.text}
-              onChange={this.handleStatusChange}
-              control={<Checkbox color="primary" />}
-              checked={this.state.status}
-              label={task}
-            />
-          </ExpansionPanelDetails>
-        )
-      }
-      panel.push(
-        <ExpansionPanel className={ classes.panel }>
-          { summary }{ details }
-        </ExpansionPanel>
-      )
-    }
-    return panel
   }
 
   createChip = type => {
@@ -161,32 +92,44 @@ class ViewGoals extends Component {
     return <div class="paragraph"><p><small>You have no current goals. Click + Add Goal button to create a new goal.</small></p></div>
   }
 
-  viewForm() {
-    return this.state.goalsExist ? this.createPanel() : this.default();
-  }
-
   editForm(event) {
     return <EditGoals goalId={this.state.goalId} />
   }
 
-  handleStatusChange = () => {
-    this.setState({status: !this.state.status});
-  }
-
-  handleEdit = id => event => {
-    event.stopPropagation()
-    this.setState({isEdit: true})
-    this.setState({goalId: id})
+  handleStatusChange = (i, index) => event => {
+    var data = [];
+    this.state.data.map((item, indexx) => {
+      var subgoal = [];
+      item.subgoals.map((s, ii) => {
+        if (i === ii)
+          subgoal.push({...s, status: event.target.checked ? "complete" : "incomplete"})
+        else
+          subgoal.push({...s})
+      });
+      if (index === indexx)
+        data.push({...item, subgoals: subgoal})
+      else
+        data.push({...item})
+    });
+    this.setState({ data: data });
   }
 
   handleComplete = id => event => {
     const { userId } = this.context;
+    var goalId = "";
+    var data = [];
     event.stopPropagation();
     axios.put(GOALS_PATH + "/" + parseInt(userId) + "/complete", {goal_id: id}, {headers: DEFAULT_HEADERS})
-    .then(res => {
-      this.setState({ goals: this.state.goals.filter(goal => goal.id !== id) });
-      if (this.state.goals.length == 0) 
-        this.setState({ goalsExist: false });
+    .then(() => {
+      this.state.data.map((item) => {
+        {Object.keys(item.goal).map(() => {
+          goalId = item.goal.id
+        })}
+        if (goalId !== id)
+          data.push({...item})
+      })
+      this.setState({ data: data })
+      if (this.state.data.length === 0) this.setState({ goalsExist: false})
     })
     .catch(error => {
       console.log(error);
@@ -195,21 +138,138 @@ class ViewGoals extends Component {
 
   handleDelete = id => event => {
     event.stopPropagation();
-    axios.delete(GOALS_PATH, {goal_id: id}, {headers: DEFAULT_HEADERS})
-    .then(res => {
-      this.setState({ goals: this.state.goals.filter(goal => goal.id !== id) });
-      if (this.state.goals.length == 0) 
-        this.setState({ goalsExist: false });
+    var goalId = "";
+    var data = [];
+    axios({
+      method: 'delete',
+      url: GOALS_PATH,
+      data: {goal_id: id},
+      headers: {DEFAULT_HEADERS, 'Content-Type': 'application/json'}
+    })
+    .then(() => {
+      this.state.data.map((item) => {
+        {Object.keys(item.goal).map(() => {
+          goalId = item.goal.id
+        })}
+        if (goalId !== id)
+          data.push({...item})
+      })
+      this.setState({ data: data })
+      if (this.state.data.length === 0) this.setState({ goalsExist: false})
     })
     .catch(error => {
       console.log(error);
     });
   }
 
-  render() {
+  taskExist = id => {
+    let taskExist = false;
+    this.state.data.map((item) => {
+      item.subgoals.map((task) => {
+        if (task.goal_id === id)
+          taskExist = true;
+      })
+    })
+    return taskExist;
+  }
+
+  handleEdit = id => event => {
+    event.stopPropagation();
+    this.setState({edit: true})
+    this.setState({goalId: id})
+  }
+
+  dismiss() {
+    this.setState({ edit: false });
+  }
+
+  handleOnEditEnd = () => {
+    this.setState({ edit: false });
+  }
+
+  editForm() {
+    return <EditGoals goalId = {this.state.goalId} dismiss={this.dismiss.bind(this)} onEditEnd={this.handleOnEditEnd} />;
+  }
+
+  sortData = data => {
+    data.sort((a, b) => b.goal.timestamp.localeCompare(a.goal.timestamp));
+  }
+  
+  createPanel() {
+    const { classes } = this.props;
+    const { data, edit } = this.state;
+    let date, goal, goalId, goalType = "";
+    this.sortData(data);
     return (
       <div>
-        {(!this.state.isEdit) ? this.viewForm() : this.editForm()}
+      {
+        data.map((item, index) => {
+          return (
+            <div key={index}>
+            <ExpansionPanel>
+              {Object.keys(item.goal).map(() => {
+                date = new Date(item.goal.timestamp)
+                goal = item.goal.goal
+                goalId = item.goal.id
+                goalType = item.goal.category
+              })}
+                <NewExpansionPanelSummary expandIcon={this.taskExist(goalId) ? <ExpandMoreIcon /> : null}>
+                  <Grid item xs={2}>
+                    <div className={ classes.chip }>
+                      { this.createChip(goalType) }
+                    </div>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography className={ classes.text } variant="h6">
+                      { goal }
+                    </Typography>
+                    <Typography className={ classes.text } variant="subtitle1">
+                      Created on { date.toLocaleString([], options) }
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <div style={{float: "right"}}>
+                      <Button variant="text" onClick={this.handleComplete(goalId)}>Complete</Button>
+                      <Button variant="text" onClick={this.handleEdit(goalId)}>Edit</Button>
+                      <Button variant="text" onClick={this.handleDelete(goalId)}>Delete</Button>
+                    </div>
+                  </Grid>
+                </NewExpansionPanelSummary>
+              {item.subgoals.map((s, i) => 
+                <div key={i}>
+                  <ExpansionPanelDetails>
+                    <FormControlLabel
+                      className={classes.text}
+                      onChange={this.handleStatusChange(i, index)}
+                      control={<StyledCheckbox />}
+                      checked={s.status == "complete" ? true : false}
+                      label={s.subgoal} />
+                  </ExpansionPanelDetails>
+                </div>
+              )}
+            </ExpansionPanel>
+            </div>
+          )
+        })
+      }
+      </div>);
+  }
+
+  render() {
+    const goalsExist = this.state.goalsExist;
+    const edit = this.state.edit;
+    var form;
+    if (edit) {
+      form = this.editForm();
+    } else {
+      if (goalsExist)
+        form = this.createPanel();
+      else
+        form = this.default();
+    }
+    return (
+      <div>
+        {form}
       </div>
     );
   }

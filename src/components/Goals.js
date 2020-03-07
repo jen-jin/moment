@@ -41,6 +41,7 @@ class Goals extends Component {
 
   handleOnAddEnd = () => {
     this.setState({ addGoal: false });
+    this.setState({value: "/goals"});
   }
 
   render() {

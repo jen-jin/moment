@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import logo from "../img/logo.svg";
 import { withRouter } from "react-router";
 
-const drawerWidth = 220;
+const drawerWidth = 200;
 
 const styles = theme => ({
   root: {
