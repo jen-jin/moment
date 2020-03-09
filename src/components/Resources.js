@@ -6,7 +6,7 @@ import InputBase from "@material-ui/core/InputBase";
 import Paper from "@material-ui/core/Paper";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
-import { DEFAULT_HEADERS, RESOURCES_PATH, SUCCESS } from "../constants";
+import { DEFAULT_HEADERS, RESOURCES_PATH, SUCCESS, SEARCH_PATH, RESOURCES_PATH_2 } from "../constants";
 
 class Resources extends Component {
   static contextType = AuthContext;
@@ -25,11 +25,12 @@ class Resources extends Component {
     };
 
     this.searchUpdated = this.searchUpdated.bind(this);
+    this.searchAPI = this.searchAPI.bind(this);
   }
 
-  componentDidMount() {
+  componentDidMount() { // TODO: may need to move code somewhere else cause of searching
     // const { userId } = this.context; // Will need this when they favourite resources
-    axios.get(RESOURCES_PATH, { headers: DEFAULT_HEADERS }).then(
+    axios.get(RESOURCES_PATH_2, { headers: DEFAULT_HEADERS }).then(
       response => {
         if (response.data.status == SUCCESS && response.data.data != []) {
           this.setState({
@@ -55,9 +56,12 @@ class Resources extends Component {
   sendToSearch() {
     // TODO: Call API with search term, below is just a mock
     console.log("API CALL - Search Term: " + this.state.searchTerm);
+
+    this.searchAPI(this.state.searchTerm)
+    
     this.setState({
       isSearching: true
-    });
+    });    
 
     setTimeout(() => {
       this.setState({
@@ -67,8 +71,8 @@ class Resources extends Component {
   }
 
   searchUpdated(event) {
-    const searchTerm = event.target.value;
-
+    const searchTerm = event.target.value;    
+    
     // Only call API when the user is done typing, wait 1s
     if (this.state.typingTimeout) {
       clearTimeout(this.state.typingTimeout);
@@ -83,8 +87,38 @@ class Resources extends Component {
     });
   }
 
+  async searchAPI(searchTerm) {
+    // Trim, Remove Special Characters, Replace Space with +
+    const processedSearchTerm = searchTerm.trim().replace(/[^a-zA-Z ]/g, "").replace(/\s+/g, '+');
+    console.log("Search Term: " + processedSearchTerm)
+    const params = processedSearchTerm != "" ? "/" + processedSearchTerm : ""
+    
+    axios.get(SEARCH_PATH + params, { headers: DEFAULT_HEADERS }).then(
+      response => {
+        if (response.data.status == SUCCESS && response.data.data != []) {
+
+          this.setState({
+            isLoaded: true,
+            resources: response.data.data
+          });
+        } else {
+          this.setState({ // TODO: This hides the search bar in my logic
+            isLoaded: true,
+            error: "No resources found."
+          });
+        }
+      },
+      error => {
+        this.setState({
+          isLoaded: true,
+          error: error
+        });
+      }
+    );    
+  }
+
   render() {
-    const { resources, isLoaded, error, searchTerm, isSearching } = this.state;
+    const { resources, isLoaded, error, isSearching } = this.state;
     return (
       <div className="resourcesPage">
         <Grid
@@ -133,7 +167,7 @@ class Resources extends Component {
                 </Paper>
               </Grid>
               {isSearching && <div className="body">Searching...</div>}
-              {!isSearching &&
+              {!isSearching && // TODO: No resources text if resources empty
                 resources.map(link => <Resource key={link.id} link={link} />)}
             </Grid>
           )}

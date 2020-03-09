@@ -39,7 +39,7 @@ class Resource extends Component {
               />
               <CardContent>
                 <Typography gutterBottom variant="h5" component="h2">
-                  {this.props.link.id + " Title"}
+                  {this.props.link.title}
                 </Typography>
                 <Typography variant="body2" color="textSecondary" component="p">
                   Category: {this.props.link.category ?? "none"}

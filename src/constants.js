@@ -5,6 +5,8 @@ export const GOALS_PATH = ROOT_API + "/goals";
 export const SUBGOALS_PATH = ROOT_API + "/subgoals";
 export const REFLECTION_PATH = ROOT_API + "/reflections";
 export const RESOURCES_PATH = ROOT_API + "/resources";
+export const RESOURCES_PATH_2 = ROOT_API + "/resource2";
+export const SEARCH_PATH = RESOURCES_PATH;
 export const USERS_PATH = ROOT_API + "/users";
 export const DEFAULT_HEADERS = {
   "Content-Type": "application/json",
