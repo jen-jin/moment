@@ -33,19 +33,26 @@ class Reflection extends Component {
     this.createReflection = this.createReflection.bind(this);
     this.handleChangePage = this.handleChangePage.bind(this);
     this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this);
+    this.fetchReflections = this.fetchReflections.bind(this);
     this.createTableData = this.createTableData.bind(this);
     this.createReflectionData = this.createReflectionData.bind(this);
     this.createDateFormat = this.createDateFormat.bind(this);
+    this.delete = this.delete.bind(this);
+    this.view = this.view.bind(this);
   }
 
   // MARK: - Lifecycle
 
   componentDidMount() {
+    this.fetchReflections();
+  }
+
+  async fetchReflections() {
     const { userId } = this.context;
 
     console.log("User ID: " + userId);
 
-    axios
+    await axios
       .get(REFLECTION_PATH + "/" + parseInt(userId), {
         headers: DEFAULT_HEADERS
       })
@@ -92,9 +99,40 @@ class Reflection extends Component {
     return new Date(date).toLocaleTimeString("en-US", DATE_OPTIONS);
   }
 
+  delete(reflectionID) {
+    axios
+      .delete(REFLECTION_PATH, {
+        headers: DEFAULT_HEADERS,
+        data: {
+          reflection_id: reflectionID
+        }
+      })
+      .then(
+        response => {
+          if (response.data.status == SUCCESS) {
+            this.setState(
+              {
+                // Clear all rows before fetching again
+                rows: []
+              },
+              () => this.fetchReflections()
+            );
+          }
+        },
+        error => {
+          console.log(error);
+        }
+      );
+  }
+
+  view() {
+    console.log("View");
+  }
+
   createReflectionData(reflection) {
     const title = reflection.title;
     const dateCreated = this.createDateFormat(reflection.date_created);
+    const reflectionID = reflection.id;
     const lastModified =
       reflection.last_modified == null
         ? dateCreated
@@ -102,12 +140,12 @@ class Reflection extends Component {
 
     const actions = (
       <>
-        <span className="pointer" onClick={() => console.log("View")}>
+        <span className="pointer" onClick={() => this.view()}>
           View
         </span>
         <span
           className="marginLeft10px pointer"
-          onClick={() => console.log("Delete")}
+          onClick={() => this.delete(reflectionID)}
         >
           Delete
         </span>
@@ -158,12 +196,14 @@ class Reflection extends Component {
           <Grid item xs={8}>
             <div className="header paddingTop30px">Reflection</div>
             <div className="helper paddingTop10px">
-            <span className="bodyBold">
-              “Examining your thoughts is an important part of the practice of self-reflections” - Ryuho Okawa
+              <span className="bodyBold">
+                “Examining your thoughts is an important part of the practice of
+                self-reflections” - Ryuho Okawa
               </span>
               <br />
-              Use this space to reflect on your progress in using alternative augmentative communication with your child. 
-              Explore the success, challenges, and improvements in your journey.
+              Use this space to reflect on your progress in using alternative
+              augmentative communication with your child. Explore the success,
+              challenges, and improvements in your journey.
             </div>
             <div
               className="button buttonWidth150px borderRadius25px marginTop30px marginBottom30px rightAlign"
