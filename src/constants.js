@@ -22,23 +22,23 @@ export const DEFAULT_REFLECTION_TITLE = "Untitled Reflection";
 export const DEFAULT_TEXTBOX_PLACEHOLDER = "Type your answer here";
 
 export const ACTIVITY_OPTIONS = [
-  "Playing music",
   "Blowing bubbles",
-  "Playing toys",
   "Colouring",
-  "Playing trampoline",
-  "Having snack",
-  "Playing blocks",
-  "Exercising",
-  "Hide and Seek",
-  "Running",
   "Cooking",
-  "Interacting with pets",
   "Dressing up",
+  "Exercising",
+  "Having snack",
+  "Hide and Seek",
+  "Interacting with pets",
+  "Playing blocks",
   "Playing games",
-  "Watching movies",
-  "Riding cars",
+  "Playing music",
+  "Playing toys",
+  "Playing trampoline",
   "Reading books",
+  "Riding cars",
+  "Running",
+  "Science experiment",
   "Taking pictures",
-  "Science experiment"  
+  "Watching movies"
 ]

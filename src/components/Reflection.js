@@ -39,6 +39,7 @@ class Reflection extends Component {
     this.createDateFormat = this.createDateFormat.bind(this);
     this.delete = this.delete.bind(this);
     this.view = this.view.bind(this);
+    this.convertUTCDateToLocalDate = this.convertUTCDateToLocalDate.bind(this);
   }
 
   // MARK: - Lifecycle
@@ -95,8 +96,8 @@ class Reflection extends Component {
     });
   }
 
-  createDateFormat(date) {
-    return new Date(date).toLocaleTimeString("en-US", DATE_OPTIONS);
+  createDateFormat(date) { // Timestamp from API is in UTC, must convert to local
+    return this.convertUTCDateToLocalDate(new Date(date)).toLocaleString("en-US", DATE_OPTIONS)
   }
 
   delete(reflectionID) {
@@ -127,6 +128,19 @@ class Reflection extends Component {
 
   view() {
     console.log("View");
+  }
+
+  convertUTCDateToLocalDate(date) {
+    var newDate = new Date(
+      date.getTime() + date.getTimezoneOffset() * 60 * 1000
+    );
+
+    var offset = date.getTimezoneOffset() / 60;
+    var hours = date.getHours();
+
+    newDate.setHours(hours - offset);
+
+    return newDate;
   }
 
   createReflectionData(reflection) {
