@@ -5,19 +5,15 @@ import Tabs from '@material-ui/core/Tabs';
 import { Link } from "react-router-dom";
 import logo from "../img/logo.svg";
 import { withRouter } from "react-router";
-
-const drawerWidth = 200;
+import { DRAWER_WIDTH } from "../constants";
 
 const styles = theme => ({
-  root: {
-    display: "flex"
-  },
   drawer: {
-    width: drawerWidth,
+    width: DRAWER_WIDTH,
     flexShrink: 0
   },
   drawerPaper: {
-    width: drawerWidth
+    width: DRAWER_WIDTH
   },
   logo: {
     display: "flex",
@@ -41,7 +37,6 @@ class Sidebar extends Component {
     const { classes } = this.props;
     const tabs = ["Dashboard", "Goals", "Reflection", "Resources"];
     return (
-      <div className={classes.root}>
         <Drawer className={classes.drawer} variant="permanent" anchor="left" classes={{paper: classes.drawerPaper,}}>
           <div className={classes.logo}>
             <img src={logo} alt="Logo" />
@@ -52,7 +47,6 @@ class Sidebar extends Component {
             ))}
           </Tabs>
         </Drawer>
-      </div>
     );
   }
 }
