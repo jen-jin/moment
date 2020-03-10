@@ -72,7 +72,9 @@ class CreateReflection extends Component {
       title: DEFAULT_REFLECTION_TITLE,
       date: new Date().toLocaleTimeString("en-US", DATE_OPTIONS),
       previewStep: false,
-      completedReflection: false
+      completedReflection: false,
+      errorFetchingGoals: null,
+      errorFetchingSubGoals: null
     };
 
     this.fetchSubGoals = this.fetchSubGoals.bind(this);
@@ -117,12 +119,17 @@ class CreateReflection extends Component {
         response => {
           if (response.data.status == SUCCESS) {
             this.setState({
-              goals: response.data.data
+              goals: response.data.data,
+              errorFetchingGoals: null
             });
           }
         },
         error => {
           console.log(error);
+          
+          this.setState({
+            errorFetchingGoals: error
+          })          
         }
       );
   }
@@ -154,13 +161,18 @@ class CreateReflection extends Component {
                 .length == 0
             ) {
               this.setState({
-                subgoals: this.state.subgoals.concat(response.data.data)
+                subgoals: this.state.subgoals.concat(response.data.data),
+                errorFetchingSubGoals: null
               });
             }
           }
         },
         error => {
           console.log(error);
+          
+          this.setState({
+            errorFetchingSubGoals: error
+          })          
         }
       );
   }
@@ -413,7 +425,9 @@ class CreateReflection extends Component {
       additionalNotes,
       communicationNotes,
       supportNotes,
-      previewStep
+      previewStep,
+      errorFetchingGoals,
+      errorFetchingSubGoals
     } = this.state;
 
     const numSteps = 6;
@@ -466,7 +480,7 @@ class CreateReflection extends Component {
                   />
                 )}
 
-                {(step === 2 || previewStep) && goals.length > 0 && (
+                {(step === 2 || previewStep) && errorFetchingGoals === null && (
                   <DropDownChipQuestion
                     question="2. Did you work on any of these goals?"
                     helper="Choose as many as you like"
@@ -484,7 +498,7 @@ class CreateReflection extends Component {
                   />
                 )}
                 {(step === 2 || previewStep) &&
-                goals.length == 0 && ( // In the case of network failure or no goals available
+                errorFetchingGoals !== null && ( // In the case of network failure or no goals available
                     <StandardQuestion
                       question="2. What goals did you work on?"
                       placeholder="Type your answer here"
@@ -493,7 +507,7 @@ class CreateReflection extends Component {
                     />
                   )}
                 {(step === 3 || previewStep) &&
-                goals.length > 0 &&
+                errorFetchingGoals === null &&
                 selectedGoals.length > 0 && ( // Need to keep the title separate, because has many dropdownchip questions
                     <Grid item xs={12}>
                       <div className="body bodyBold paddingTop30px">
@@ -505,7 +519,7 @@ class CreateReflection extends Component {
                     </Grid>
                   )}
                 {(step === 3 || previewStep) &&
-                  goals.length > 0 &&
+                  errorFetchingGoals === null &&
                   selectedGoals.length > 0 &&
                   selectedGoals.map(goal => (
                     <DropDownChipQuestion
@@ -527,7 +541,7 @@ class CreateReflection extends Component {
                     />
                   ))}
                 {(step == 3 || previewStep) &&
-                goals.length > 0 &&
+                errorFetchingGoals === null &&
                 selectedGoals.length == 0 && ( // Case: No selected goals
                     <Grid item xs={12}>
                       <div className="body bodyBold paddingTop30px width900px">
@@ -540,7 +554,7 @@ class CreateReflection extends Component {
                     </Grid>
                   )}
                 {(step == 3 || previewStep) &&
-                goals.length == 0 && ( // Case: Network Failture
+                (errorFetchingGoals || errorFetchingSubGoals) && ( // Case: Network Failture
                     <StandardQuestion
                       question="3. What tasks did you work on?"
                       placeholder="Type your answer here"

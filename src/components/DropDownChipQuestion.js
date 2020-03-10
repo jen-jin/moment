@@ -6,6 +6,7 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import Chip from "@material-ui/core/Chip";
 import MenuItem from "@material-ui/core/MenuItem";
+import Checkbox from "@material-ui/core/Checkbox";
 
 class DropDownChipQuestion extends Component {
   constructor(props) {
@@ -16,6 +17,7 @@ class DropDownChipQuestion extends Component {
     };
 
     this.handleSelection = this.handleSelection.bind(this);
+    this.determineChecked = this.determineChecked.bind(this);
   }
 
   handleSelection(event) {
@@ -33,12 +35,17 @@ class DropDownChipQuestion extends Component {
     await this.props.onSelectionChange(this.state.selected);
   }
 
+  determineChecked(info, key1, key2) {
+    const selectedItem = this.state.selected.find(title => title === (key2 !== null ? info[key1][key2] : info[key1]))
+    return (selectedItem !== undefined)
+  }
+
   render() {
     const content = this.props.content;
     const key1 = this.props.key1;
     const key2 = this.props.key2;
 
-    const selected = this.state.selected;
+    const { selected } = this.state;
 
     return (
       <div className="paddingTop30px">
@@ -55,13 +62,15 @@ class DropDownChipQuestion extends Component {
         </Grid>
         <Grid item xs={12}>
           <FormControl className="drop-down-chip" style={{ width: 900 }}>
-            {content.length == 0 && ( //TODO: Goals logic when there are no goals
+            {content.length == 0 && (
               <div className="helper darkGray paddingTop10px paddingBottom10px">
                 There are no{" "}
-                {key2 !== null ? "goals. To add a goal, please navigate to 'Goals'": "tasks associated with this goal"}
+                {key2 !== null
+                  ? "goals. To add a goal, please navigate to the 'Goals' tab."
+                  : "tasks associated with this goal"}
               </div>
             )}
-            
+
             {content.length > 0 && (
               <InputLabel id="demo-mutiple-chip-label">
                 {this.props.placeholder}
@@ -70,6 +79,13 @@ class DropDownChipQuestion extends Component {
             {content.length > 0 && (
               <Select
                 id="chip-type-select"
+                MenuProps={{
+                  getContentAnchorEl: null,
+                  anchorOrigin: {
+                    vertical: "bottom",
+                    horizontal: "left"
+                  }
+                }}
                 multiple
                 value={selected}
                 onChange={this.handleSelection}
@@ -90,6 +106,12 @@ class DropDownChipQuestion extends Component {
                   <MenuItem
                     value={key2 !== null ? info[key1][key2] : info[key1]}
                   >
+                    <Checkbox
+                      checked={this.determineChecked(info, key1, key2)}
+                      value="secondary"
+                      color="primary"
+                      inputProps={{ "aria-label": "secondary checkbox" }}
+                    />
                     {key2 !== null ? info[key1][key2] : info[key1]}
                   </MenuItem>
                 ))}
