@@ -13,6 +13,8 @@ export const DEFAULT_HEADERS = {
 };
 export const SUCCESS = "success";
 
+export const DRAWER_WIDTH = 250;
+
 export const DATE_OPTIONS = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute:'2-digit'};
 
 export const DATE_OPTIONS_2 = { year: 'numeric', month: 'short', day: 'numeric' };
