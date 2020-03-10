@@ -55,29 +55,46 @@ class DropDownChipQuestion extends Component {
         </Grid>
         <Grid item xs={12}>
           <FormControl className="drop-down-chip" style={{ width: 900 }}>
-            <InputLabel id="demo-mutiple-chip-label">
-              {this.props.placeholder}
-            </InputLabel>
-            <Select
-              id="chip-type-select"
-              multiple
-              value={selected}
-              onChange={this.handleSelection}
-              input={<Input id="select-multiple-chip" />}
-              renderValue={selected => (
-                <div className="chips">
-                  {selected.map(info => (
-                    <Chip key={info} label={info} className={"chip-" + info} />
-                  ))}
-                </div>
-              )}
-            >
-              {content.map(info => (
-                <MenuItem value={key2 !== null ? info[key1][key2] : info[key1]}>
-                  {key2 !== null ? info[key1][key2] : info[key1]}
-                </MenuItem>
-              ))}
-            </Select>
+            {content.length == 0 && ( //TODO: Goals logic when there are no goals
+              <div className="helper darkGray paddingTop10px paddingBottom10px">
+                There are no{" "}
+                {key2 !== null ? "goals. To add a goal, please navigate to 'Goals'": "tasks associated with this goal"}
+              </div>
+            )}
+            
+            {content.length > 0 && (
+              <InputLabel id="demo-mutiple-chip-label">
+                {this.props.placeholder}
+              </InputLabel>
+            )}
+            {content.length > 0 && (
+              <Select
+                id="chip-type-select"
+                multiple
+                value={selected}
+                onChange={this.handleSelection}
+                input={<Input id="select-multiple-chip" />}
+                renderValue={selected => (
+                  <div className="chips">
+                    {selected.map(info => (
+                      <Chip
+                        key={info}
+                        label={info}
+                        className={"chip-" + info}
+                      />
+                    ))}
+                  </div>
+                )}
+              >
+                {content.map(info => (
+                  <MenuItem
+                    value={key2 !== null ? info[key1][key2] : info[key1]}
+                  >
+                    {key2 !== null ? info[key1][key2] : info[key1]}
+                  </MenuItem>
+                ))}
+              </Select>
+            )}
           </FormControl>
         </Grid>
       </div>

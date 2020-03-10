@@ -147,7 +147,6 @@ class CreateReflection extends Component {
       .then(
         response => {
           if (response.data.status == SUCCESS) {
-            console.log("Subgoals: " + response.data.data[0].subgoal);
 
             // Checking if subgoals already exist before adding (same goalID)
             if (
@@ -158,8 +157,6 @@ class CreateReflection extends Component {
                 subgoals: this.state.subgoals.concat(response.data.data)
               });
             }
-
-            console.log("Subgoals Count: " + this.state.subgoals.length);
           }
         },
         error => {
@@ -195,7 +192,6 @@ class CreateReflection extends Component {
   }
 
   handleSubmit() {
-    // TODO: Call API
     this.setState(
       {
         completedReflection: true,
@@ -248,8 +244,13 @@ class CreateReflection extends Component {
   }
 
   // MARK: - Handling Goal Question
-  // TODO: - Fix bug of unselecting, need to remove from list
   async handleGoalSelection(newGoals) {
+
+    // Clear current goals
+    await this.setState({ // Await is necessary
+      selectedGoals: []
+    })    
+    
     await newGoals.map(title => {
       const matchingGoal = this.state.goals.find(
         goal => goal["goal"]["goal"] == title
@@ -265,18 +266,26 @@ class CreateReflection extends Component {
         );
 
         if (alreadyExists === undefined) {
-          console.log("MADE IT THROUGH");
           this.setState({
             selectedGoals: [...this.state.selectedGoals].concat(selectedGoal)
           });
+
+          // If it is the preview step, subgoals question should change with goals
+          if (this.state.previewStep) {
+            this.fetchSubGoalsHelper()
+          }
         }
       }
     });
   }
 
   // MARK: - Handling Goal Question
-  // TODO: - Fix bug of unselecting, need to remove from list
   async handleSubGoalSelection(newSubGoals) {
+    // Clear current subgoals
+    await this.setState({ // Await is necessary
+      selectedSubGoals: []
+    })
+
     await newSubGoals.map(title => {
       const selectedSubGoal = this.state.subgoals.find(
         subgoal => subgoal.subgoal == title
@@ -288,15 +297,11 @@ class CreateReflection extends Component {
         );
 
         if (alreadyExists === undefined) {
-          console.log("MADE IT THROUGH SUBGOAL");
           this.setState({
             selectedSubGoals: [...this.state.selectedSubGoals].concat(
               selectedSubGoal
             )
           });
-          console.log(
-            "Now Selected Sub Goal Count: " + this.state.selectedSubGoals.length
-          );
         }
       }
     });
