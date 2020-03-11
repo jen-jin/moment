@@ -1,12 +1,19 @@
 import React, { Component } from "react";
 import Resource from "./Resource";
 import Grid from "@material-ui/core/Grid";
-import Divider from "@material-ui/core/Divider";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
 import InputBase from "@material-ui/core/InputBase";
 import Paper from "@material-ui/core/Paper";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
-import { DEFAULT_HEADERS, RESOURCES_PATH, SUCCESS, SEARCH_PATH, RESOURCES_PATH_2 } from "../constants";
+import {
+  DEFAULT_HEADERS,
+  SUCCESS,
+  SEARCH_PATH,
+  RESOURCES_PATH_2,
+  BOOKMARKED_RESOURCES_PATH
+} from "../constants";
 
 class Resources extends Component {
   static contextType = AuthContext;
@@ -21,16 +28,24 @@ class Resources extends Component {
       searchTerm: "",
       typing: false,
       typingTimeout: 0,
-      isSearching: false
+      isSearching: false,
+      currentTab: "All Resources"
     };
 
+    this.fetchAllResources = this.fetchAllResources.bind(this);
     this.searchUpdated = this.searchUpdated.bind(this);
     this.searchAPI = this.searchAPI.bind(this);
+    this.procressSearchTerm = this.procressSearchTerm.bind(this);
+    this.handleTabChange = this.handleTabChange.bind(this);
   }
 
-  componentDidMount() { // TODO: may need to move code somewhere else cause of searching
+  componentDidMount() {
+    this.fetchAllResources();
+  }
+
+  async fetchAllResources() {
     // const { userId } = this.context; // Will need this when they favourite resources
-    axios.get(RESOURCES_PATH_2, { headers: DEFAULT_HEADERS }).then(
+    await axios.get(RESOURCES_PATH_2, { headers: DEFAULT_HEADERS }).then(
       response => {
         if (response.data.status == SUCCESS && response.data.data != []) {
           this.setState({
@@ -53,15 +68,64 @@ class Resources extends Component {
     );
   }
 
-  sendToSearch() {
-    // TODO: Call API with search term, below is just a mock
-    console.log("API CALL - Search Term: " + this.state.searchTerm);
+  async fetchBookmarkedResources() {
+    const { userId } = this.context;
 
-    this.searchAPI(this.state.searchTerm)
-    
+    await axios
+      .get(BOOKMARKED_RESOURCES_PATH + "/" + parseInt(userId), {
+        headers: DEFAULT_HEADERS
+      })
+      .then(
+        response => {
+          if (response.data.status == SUCCESS && response.data.data != []) {
+            this.setState({
+              isLoaded: true,
+              resources: response.data.data
+            });
+          } else {
+            this.setState({
+              isLoaded: true,
+              error: "No bookmarked resources found"
+            });
+          }
+        },
+        error => {
+          this.setState({
+            isLoaded: true,
+            error: error
+          });
+        }
+      );
+  }
+
+  async fetchResourcesHelper() {
+    const currentTab = this.state.currentTab;
+
+    if (currentTab === "Bookmarked Resources") {
+      await this.fetchBookmarkedResources();
+    } else {
+      await this.fetchAllResources();
+    }
+  }
+
+  async procressSearchTerm() {
+    // Trim, Remove Special Characters, Replace Space with +
+    const processedSearchTerm = this.state.searchTerm
+      .trim()
+      .replace(/[^a-zA-Z ]/g, "")
+      .replace(/\s+/g, "+");
+
+    await this.setState({
+      searchTerm: processedSearchTerm
+    });
+  }
+
+  sendToSearch() {
+    this.searchAPI();
+
     this.setState({
       isSearching: true
-    });    
+    });
 
     setTimeout(() => {
       this.setState({
@@ -71,8 +135,8 @@ class Resources extends Component {
   }
 
   searchUpdated(event) {
-    const searchTerm = event.target.value;    
-    
+    const searchTerm = event.target.value;
+
     // Only call API when the user is done typing, wait 1s
     if (this.state.typingTimeout) {
       clearTimeout(this.state.typingTimeout);
@@ -87,64 +151,78 @@ class Resources extends Component {
     });
   }
 
-  async searchAPI(searchTerm) {
-    // Trim, Remove Special Characters, Replace Space with +
-    const processedSearchTerm = searchTerm.trim().replace(/[^a-zA-Z ]/g, "").replace(/\s+/g, '+');
-    console.log("Search Term: " + processedSearchTerm)
-    const params = processedSearchTerm != "" ? "/" + processedSearchTerm : ""
-    
-    axios.get(SEARCH_PATH + params, { headers: DEFAULT_HEADERS }).then(
-      response => {
-        if (response.data.status == SUCCESS && response.data.data != []) {
+  async searchAPI() {
+    this.procressSearchTerm();
+    const params =
+      this.state.searchTerm != "" ? "/" + this.state.searchTerm : "";
+    console.log("Params:" + params);
 
-          this.setState({
-            isLoaded: true,
-            resources: response.data.data
-          });
-        } else {
-          this.setState({ // TODO: This hides the search bar in my logic
-            isLoaded: true,
-            error: "No resources found."
-          });
-        }
+    // TODO: Fix when backend is okay
+    // axios.get(SEARCH_PATH + params, { headers: DEFAULT_HEADERS }).then(
+    //   response => {
+    //     if (response.data.status == SUCCESS && response.data.data != []) {
+    //       this.setState({
+    //         isLoaded: true,
+    //         resources: response.data.data
+    //       });
+    //     } else {
+    //       this.setState({
+    //         // Note: This hides the search bar in my logic
+    //         isLoaded: true,
+    //         error: "No resources found."
+    //       });
+    //     }
+    //   },
+    //   error => {
+    //     this.setState({
+    //       isLoaded: true,
+    //       error: error
+    //     });
+    //   }
+    // );
+  }
+
+  handleTabChange(event, value) {
+    this.setState(
+      {
+        currentTab: value
       },
-      error => {
-        this.setState({
-          isLoaded: true,
-          error: error
-        });
-      }
-    );    
+      () => this.fetchResourcesHelper()
+    );
   }
 
   render() {
-    const { resources, isLoaded, error, isSearching } = this.state;
+    const { resources, isLoaded, error, isSearching, currentTab, searchTerm } = this.state;
     return (
       <div className="resourcesPage">
         <Grid
           container
           spacing={3}
           direction="column"
-          alignItems="center"
+          alignItems="flex-start"
           justify="center"
         >
-          <Grid item xs={8}>
-            <div className="header paddingTop30px">Exploring Resources</div>
+          <Grid item xs={12}>
+            <div className="header paddingTop60px">Exploring Resources</div>
             <div className="helper paddingTop10px paddingBottom10px">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat.
+              <span className="bodyBold">
+                "Life is a journey, not a destination" - Ralph Waldo Emerson
+              </span>
+              <br />
+              We are here to support your journey with credible resources for
+              your AAC related concerns. Search through our material and
+              bookmark ones you like!
             </div>
-            <Divider variant="middle" />
           </Grid>
+
           {error && <div className="body">Error: {error.message}</div>}
           {!isLoaded && <div className="body">Loading...</div>}
+
           {isLoaded && !error && (
             <Grid
               container
               item
-              xs={8}
+              xs={12}
               direction="row"
               className="paddingTop10px"
               alignContent="center"
@@ -154,7 +232,7 @@ class Resources extends Component {
                 <Paper component="form" className="searchBar">
                   <InputBase
                     className="searchInput"
-                    placeholder="Search..."
+                    placeholder="Search All Resources..."
                     fullWidth={true}
                     onChange={this.searchUpdated}
                     inputProps={{
@@ -166,9 +244,31 @@ class Resources extends Component {
                   />
                 </Paper>
               </Grid>
-              {isSearching && <div className="body">Searching...</div>}
-              {!isSearching && // TODO: No resources text if resources empty
-                resources.map(link => <Resource key={link.id} link={link} />)}
+              {!isSearching && (
+                <Grid container item xs={12} direction="row">
+                  <Grid item xs={8}>
+                    <Tabs value={currentTab} onChange={this.handleTabChange}>
+                      <Tab label="All Resources" value="All Resources" />
+                      <Tab
+                        label="Bookmarked Resources"
+                        value="Bookmarked Resources"
+                      />
+                    </Tabs>
+                  </Grid>
+                </Grid>
+              )}
+              <Grid
+                container
+                item
+                xs={12}
+                direction="row"
+                alignItems="center"
+                justify="space-evenly"
+              >
+                {isSearching && <div className="body">Searching...</div>}
+                {!isSearching && // TODO: No resources text if resources empty
+                  resources.map(link => <Resource key={link.id} link={link} />)}
+              </Grid>
             </Grid>
           )}
         </Grid>

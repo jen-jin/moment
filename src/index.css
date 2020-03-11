@@ -213,6 +213,16 @@ body {
   margin-bottom: 10px;
 }
 
+.cardImage {
+  max-height: 140px;
+  max-width: 345px;
+}
+
+.cardMediaSize {
+  height: 140px;
+  width: 345px;
+}
+
 .width300px {
   width: 300px;
 }
@@ -226,7 +236,12 @@ body {
 }
 
 .card {
-  max-width: 345px;
+  width: 345px;
+  height: 345px;
+}
+
+.cardContent {
+  height: 115px;
 }
 
 .searchBar {
