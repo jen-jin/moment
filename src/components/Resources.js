@@ -48,27 +48,31 @@ class Resources extends Component {
   // MARK: - Fetching Resources
   async fetchAllResources() {
     const { userId } = this.context; // Will need this when they favourite resources
-    await axios.get(RESOURCES_PATH_2 + "/" + parseInt(userId), { headers: DEFAULT_HEADERS }).then(
-      response => {
-        if (response.data.status == SUCCESS && response.data.data != []) {
+    await axios
+      .get(RESOURCES_PATH_2 + "/" + parseInt(userId), {
+        headers: DEFAULT_HEADERS
+      })
+      .then(
+        response => {
+          if (response.data.status == SUCCESS && response.data.data != []) {
+            this.setState({
+              isLoaded: true,
+              resources: response.data.data
+            });
+          } else {
+            this.setState({
+              isLoaded: true,
+              error: "No resources found."
+            });
+          }
+        },
+        error => {
           this.setState({
             isLoaded: true,
-            resources: response.data.data
-          });
-        } else {
-          this.setState({
-            isLoaded: true,
-            error: "No resources found."
+            error: error
           });
         }
-      },
-      error => {
-        this.setState({
-          isLoaded: true,
-          error: error
-        });
-      }
-    );
+      );
   }
 
   async fetchBookmarkedResources() {
@@ -157,12 +161,14 @@ class Resources extends Component {
 
   async searchAPI() {
     this.procressSearchTerm();
-    
+
     const { userId } = this.context;
-    const searchTermParam = this.state.searchTerm !== "" ? "/" + this.state.searchTerm : "";
+    const searchTermParam =
+      this.state.searchTerm !== "" ? "/" + this.state.searchTerm : "";
     const params = "/" + parseInt(userId) + searchTermParam;
 
-    const path = (searchTermParam !== "" ? SEARCH_PATH : RESOURCES_PATH_2) + params;
+    const path =
+      (searchTermParam !== "" ? SEARCH_PATH : RESOURCES_PATH_2) + params;
 
     axios.get(path, { headers: DEFAULT_HEADERS }).then(
       response => {
@@ -201,12 +207,19 @@ class Resources extends Component {
   async handleRefreshBookmarks() {
     if (this.state.currentTab === "Bookmarked Resources") {
       await this.fetchBookmarkedResources();
-    }     
+    }
   }
 
   // MARK: - Render
   render() {
-    const { resources, isLoaded, error, isSearching, currentTab, searchTerm } = this.state;
+    const {
+      resources,
+      isLoaded,
+      error,
+      isSearching,
+      currentTab,
+      searchTerm
+    } = this.state;
     return (
       <div className="resourcesPage">
         <Grid
@@ -218,14 +231,15 @@ class Resources extends Component {
         >
           <Grid item xs={12}>
             <div className="header paddingTop60px">Exploring Resources</div>
-            <div className="helper paddingTop10px paddingBottom10px">
-              <span className="bodyBold">
-                "Life is a journey, not a destination" - Ralph Waldo Emerson
-              </span>
-              <br />
+            <div className="helper">
               We are here to support your journey with credible resources for
               your AAC related concerns. Search through our material and
               bookmark ones you like!
+            </div>
+            <div className="helper paddingTop30px paddingBottom10px">
+              <span className="bodyBold">
+                "Life is a journey, not a destination" - Ralph Waldo Emerson
+              </span>
             </div>
           </Grid>
 
@@ -242,7 +256,7 @@ class Resources extends Component {
               alignContent="center"
               justify="space-evenly"
             >
-              <Grid item xs={12}>
+              <Grid item xs={12} style={{width: "100%"}}>
                 <Paper component="form" className="searchBar" elevation={3}>
                   <InputBase
                     className="searchInput"
@@ -280,13 +294,22 @@ class Resources extends Component {
                 justify="space-evenly"
               >
                 {isSearching && <div className="body">Searching...</div>}
-                {!isSearching && resources.length > 0 &&
-                  resources.map(link => <Resource key={link.id} link={link} tab={currentTab} onRefreshBookmarks={this.handleRefreshBookmarks}/>)}
+                {!isSearching &&
+                  resources.length > 0 &&
+                  resources.map(link => (
+                    <Resource
+                      key={link.id}
+                      link={link}
+                      tab={currentTab}
+                      onRefreshBookmarks={this.handleRefreshBookmarks}
+                    />
+                  ))}
                 {!isSearching && resources.length == 0 && (
-                <div className="helper paddingTop30px">
-                  You have no bookmarks. To create one, click the button "BOOKMARK" on resources in the "All Resources" tab.
-                </div>
-                )}                  
+                  <div className="helper paddingTop30px">
+                    You have no bookmarks. To create one, click the button
+                    "BOOKMARK" on resources in the "All Resources" tab.
+                  </div>
+                )}
               </Grid>
             </Grid>
           )}

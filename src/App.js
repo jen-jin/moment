@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import Dashboard from "./components/Dashboard";
 import Goals from "./components/Goals";
 import CreateReflection from "./components/CreateReflection";
 import Reflection from "./components/Reflection";
@@ -34,7 +33,6 @@ class App extends Component {
             <MuiThemeProvider theme={theme}>
               <SnackbarProvider maxSnack={1} anchorOrigin={{vertical: 'top', horizontal: 'right'}}>
                 <Switch>
-                  <NavRoute exact path="/dashboard" component={Dashboard} />
                   <NavRoute exact path="/goals" component={Goals} />
                   <NavRoute exact path="/goals/complete" component={Goals} />
                   <NavRoute exact path="/reflection" component={Reflection} />

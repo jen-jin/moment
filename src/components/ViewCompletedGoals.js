@@ -206,7 +206,7 @@ class ViewCompletedGoals extends Component {
                   goalId = item.goal.id
                   goalType = item.goal.category
                 })}
-                <NewExpansionPanelSummary expandIcon={this.taskExist(goalId) ? <ExpandMoreIcon /> : null}>
+                <NewExpansionPanelSummary expandIcon={this.taskExist(goalId) ? <ExpandMoreIcon /> : <div className="emptyGoalSpacing" />}>
                   <Grid container spacing={2}>
                     <Grid item>
                       { this.createChip(goalType) }

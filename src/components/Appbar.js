@@ -23,7 +23,7 @@ class Appbar extends Component {
     return (
       <AppBar className={classes.appbar} position="fixed" color="white">
         <Toolbar>
-          <NavLink className={classes.logout} color="primary" to="/">Logout</NavLink>
+          <NavLink className={classes.logout} to="/" style={{ color: "#1378C1"}}>Logout</NavLink>
         </Toolbar>
       </AppBar>
     );

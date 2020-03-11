@@ -12,10 +12,6 @@ class Header extends Component {
         <div className="flex flex-fixed black">
           {authToken && ( // Show sidebar nav only if logged in
             <div className="flex">
-              <Link to="/dashboard" className="ml1 no-underline black">
-                Dashboard
-              </Link>
-              <br />
               <Link to="/goals" className="ml1 no-underline black">
                 Goals
               </Link>

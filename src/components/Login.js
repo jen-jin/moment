@@ -22,7 +22,7 @@ class Login extends Component {
   handleLogin() {
     this.setState({ login: !this.login });
     // this.context.changeUser(this.state.name, 14); // Set this up properly later, defaulting to 14 for ALL
-    this.props.history.push("/dashboard");
+    this.props.history.push("/goals");
   }
 
   render() {

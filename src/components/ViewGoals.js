@@ -258,7 +258,7 @@ class ViewGoals extends Component {
                   goalType = item.goal.category
                 })}
                 {console.log(this.state.data)}
-                <NewExpansionPanelSummary expandIcon={this.taskExist(index) ? <ExpandMoreIcon /> : null}>
+                <NewExpansionPanelSummary expandIcon={this.taskExist(index) ? <ExpandMoreIcon /> : <div className="emptyGoalSpacing" />}>
                   <Grid container spacing={2}>
                     <Grid item>
                       { this.createChip(goalType) }
