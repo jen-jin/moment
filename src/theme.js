@@ -32,6 +32,28 @@ export default theme = createMuiTheme({
       root: {
         float: 'right'
       }
+    },
+    MuiFormLabel: {
+      root: {
+        '&$focused': {
+          color: '#1378c1',
+          borderBottomColor: '#1378c1'
+        }
+      }
+    },
+    MuiInput: {
+      underline: {
+        '&:after':{
+          borderBottom: '2px solid #1378c1'
+        }
+      }
+    },
+    MuiFilledInput: {
+      underline: {
+        '&:after':{
+          borderBottom: '2px solid #1378c1'
+        }
+      }
     }
   }
 });

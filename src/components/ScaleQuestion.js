@@ -155,7 +155,7 @@ class ScaleQuestion extends Component {
             direction="row"
             className="paddingTop10px"
             alignContent="center"
-            justify="start"
+            justify="flex-start"
           >
             {effectiveScale}
           </Grid>

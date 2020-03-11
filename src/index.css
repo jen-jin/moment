@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans');
 @import url('https://fonts.googleapis.com/css?family=Lora');
+@import url('https://cdn.rawgit.com/rikmms/progress-bar-4-axios/0a3acf92/dist/nprogress.css');
 
 .fullscreen {
   width: 100vw;
@@ -178,6 +179,10 @@ body {
 
 .paddingTop30px {
   padding-top: 30px;
+}
+
+.paddingTop60px {
+  padding-top: 60px;
 }
 
 .paddingLeft150px {

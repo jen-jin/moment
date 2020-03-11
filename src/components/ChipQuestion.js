@@ -17,21 +17,27 @@ class ChipQuestion extends Component {
   handleSelection(option) {
     if (!this.state.selectedChips.includes(option)) {
       // Adding Chip
-      this.setState({
-        selectedChips: this.state.selectedChips.concat(option)
-      }, () => this.callBackSelectionChanged());
+      this.setState(
+        {
+          selectedChips: this.state.selectedChips.concat(option)
+        },
+        () => this.callBackSelectionChanged()
+      );
     } else {
       // Removing Chip
       const newList = this.state.selectedChips.filter(i => i !== option);
 
-      this.setState({
-        selectedChips: newList
-      }, () => this.callBackSelectionChanged());
+      this.setState(
+        {
+          selectedChips: newList
+        },
+        () => this.callBackSelectionChanged()
+      );
     }
   }
 
   async callBackSelectionChanged() {
-    await this.props.onSelectionChange(this.state.selectedChips)
+    await this.props.onSelectionChange(this.state.selectedChips);
   }
 
   render() {
@@ -46,23 +52,27 @@ class ChipQuestion extends Component {
             {this.props.helper}
           </div>
         </Grid>
-        <Grid item xs={12} style={{ width: 850}}> 
-          {optionList.map(option => ( // Note: Decreased width to stop resizing of grid with chip selection
+        <Grid item xs={12} style={{ maxWidth: 850 }}>
+          {optionList.map((
+            option // Note: Decreased width to stop resizing of grid with chip selection
+          ) => (
             <Chip
               key={option}
               label={option}
               className={"chip-" + { option }}
               onClick={() => this.handleSelection(option)}
-              variant={selectedChips.includes(option) ? "default" : "outlined"}  // TODO: selectedChips.includes(option) is dumb
+              variant={selectedChips.includes(option) ? "default" : "outlined"} // TODO: selectedChips.includes(option) is dumb
               color="primary"
-              clickable     
-              style={{ 
-                  color: selectedChips.includes(option) ? '#FAFAFA' : '#1378C1' , 
-                  borderColor: '#1378C1',
-                  backgroundColor: selectedChips.includes(option) ? '#1378C1' : '#FAFAFA',
-                  marginBottom: 10,
-                  marginRight: 10
-                }}         
+              clickable
+              style={{
+                color: selectedChips.includes(option) ? "#FAFAFA" : "#1378C1",
+                borderColor: "#1378C1",
+                backgroundColor: selectedChips.includes(option)
+                  ? "#1378C1"
+                  : "#FAFAFA",
+                marginBottom: 10,
+                marginRight: 10
+              }}
             />
           ))}
         </Grid>
