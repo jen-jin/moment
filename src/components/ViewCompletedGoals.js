@@ -13,17 +13,11 @@ import Grid from "@material-ui/core/Grid";
 import Button from '@material-ui/core/Button';
 import Chip from '@material-ui/core/Chip';
 import { withStyles } from '@material-ui/core/styles';
-import EditGoals from "./EditGoals";
+import { withSnackbar } from 'notistack';
 
 const styles = theme => ({
   panel: {
-    paddingTop: 15
-  },
-  text: {
-    paddingLeft: 50
-  },
-  chip: {
-    paddingLeft: 20
+    paddingTop: 30
   }
 });
 
@@ -38,7 +32,8 @@ const StyledCheckbox = withStyles(theme => ({
 
 const NewExpansionPanelSummary = withStyles({
   expandIcon: {
-    order: -1
+    order: -1,
+    margin: 0
   }
 })(ExpansionPanelSummary);
 
@@ -53,6 +48,7 @@ class ViewCompletedGoals extends Component {
       data: [],
       goalsExist: true
     };
+    this.handleDelete = this.handleDelete.bind(this);
   }
 
   componentDidMount() {
@@ -107,6 +103,7 @@ class ViewCompletedGoals extends Component {
     });
     this.setState({ data: data });
     this.sendStatus(data);
+    { event.target.checked ? this.props.enqueueSnackbar('Successfully marked the task as complete', {variant: 'success'}) : this.props.enqueueSnackbar('Successfully marked the task as incomplete', {variant: 'success'}) }
   }
 
   sendStatus = data => {
@@ -143,14 +140,15 @@ class ViewCompletedGoals extends Component {
       })
       this.setState({ data: data })
       if (this.state.data.length === 0) this.setState({ goalsExist: false})
+      this.props.enqueueSnackbar('Successfully marked the goal as incomplete', {variant: 'success'});
     })
     .catch(error => {
       console.log(error);
     });
   }
 
-  handleDelete = id => event => {
-    event.stopPropagation();
+  handleDelete(id, e) {
+    e.stopPropagation();
     var goalId = "";
     var data = [];
     axios({
@@ -169,6 +167,7 @@ class ViewCompletedGoals extends Component {
       })
       this.setState({ data: data })
       if (this.state.data.length === 0) this.setState({ goalsExist: false})
+      this.props.enqueueSnackbar('Successfully deleted the goal', {variant: 'success'});
     })
     .catch(error => {
       console.log(error);
@@ -196,67 +195,68 @@ class ViewCompletedGoals extends Component {
     let date, goal, goalId, goalType = "";
     this.sortData(data);
     return (
-      <div>
-      {
-        data.map((item, index) => {
-          return (
-            <div key={index}>
-            <ExpansionPanel> 
-              {Object.keys(item.goal).map(() => {
-                date = new Date(item.goal.timestamp)
-                goal = item.goal.goal
-                goalId = item.goal.id
-                goalType = item.goal.category
-              })}
+      <div className={classes.panel}>
+      { 
+          data.map((item, index) => {
+            return (
+              <ExpansionPanel>
+                {Object.keys(item.goal).map(() => {
+                  date = new Date(item.goal.timestamp)
+                  goal = item.goal.goal
+                  goalId = item.goal.id
+                  goalType = item.goal.category
+                })}
                 <NewExpansionPanelSummary expandIcon={this.taskExist(goalId) ? <ExpandMoreIcon /> : null}>
-                  <Grid item xs={2}>
-                    <div className={ classes.chip }>
+                  <Grid container spacing={2}>
+                    <Grid item>
                       { this.createChip(goalType) }
-                    </div>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography className={ classes.text } variant="h6">
-                      { goal }
-                    </Typography>
-                    <Typography className={ classes.text } variant="subtitle1">
-                      Created on { date.toLocaleString([], options) }
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={4}>
-                    <div style={{float: "right"}}>
-                      <Button variant="text" onClick={this.handleIncomplete(goalId)}>Incomplete</Button>
-                      <Button variant="text" onClick={this.handleDelete(goalId)}>Delete</Button>
-                    </div>
+                    </Grid>
+                    <Grid item xs={12} sm container spacing={2}>
+                      <Grid item xs>
+                        <Typography variant="h6">
+                          { goal }
+                        </Typography>
+                        <Typography variant="subtitle1">
+                          Created on { date.toLocaleString([], options) }
+                        </Typography>
+                      </Grid>
+                      <Grid item>
+                        <Button variant="text" onClick={this.handleIncomplete(goalId)}>Incomplete</Button>
+                        <Button variant="text" onClick={(e) => {(window.confirm('Are you sure you want to delete this goal?')) ? this.handleDelete(item.goal.id, e) : e.stopPropagation()}}>Delete</Button>
+                      </Grid>
+                    </Grid>
                   </Grid>
                 </NewExpansionPanelSummary>
-              {item.subgoals.map((s, i) => 
-                <div key={i}>
-                  <ExpansionPanelDetails>
-                    <FormControlLabel
-                      className={classes.text}
-                      onChange={this.handleStatusChange(i, index)}
-                      control={<StyledCheckbox color="primary" />}
-                      checked={s.status == "complete" ? true : false}
-                      label={s.subgoal} />
-                  </ExpansionPanelDetails>
-                </div>
-              )}
-            </ExpansionPanel>
-            </div>
-          )
-        })
-      }
-      </div>);
+                <ExpansionPanelDetails>
+                  <div>
+                    {item.subgoals.map((s, i) => 
+                      <div key={i} style={{paddingLeft: 50}}>
+                        <FormControlLabel
+                          onChange={this.handleStatusChange(i, index)}
+                          control={<StyledCheckbox />}
+                          checked={s.status == "complete" ? true : false}
+                          label={s.subgoal}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
+            )
+          })
+        }
+      </div>
+    );
   }
 
   render() {
     const goalsExist = this.state.goalsExist;
     return (
-      <div>
+      <div style={{flexGrow: 1}}>
         {goalsExist ? this.createPanel() : this.default()}
       </div>
     );
   }
 }
 
-export default withStyles(styles)(ViewCompletedGoals);
+export default withStyles(styles)(withSnackbar(ViewCompletedGoals));

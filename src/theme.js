@@ -19,6 +19,13 @@ export default theme = createMuiTheme({
       text: {
         color: '#1378c1'
       },
+      outlined: {
+        color: '#1378c1',
+        borderRadius: 25,
+        border: '1px solid #1378c1',
+        height: 30,
+        padding: '0 30px'
+      },
       label: {
         textTransform: 'capitalize'
       },

@@ -37,16 +37,16 @@ class Sidebar extends Component {
     const { classes } = this.props;
     const tabs = ["Dashboard", "Goals", "Reflection", "Resources"];
     return (
-        <Drawer className={classes.drawer} variant="permanent" anchor="left" classes={{paper: classes.drawerPaper,}}>
-          <div className={classes.logo}>
-            <img src={logo} alt="Logo" />
-          </div>
-          <Tabs orientation="vertical" value={'/'+this.props.location.pathname.split('/')[1]} onChange={this.handleChange}>
-            {tabs.map((text) => (
-              <Tab label={text} component={Link} to={"/" + text.toLowerCase()} value={"/" + text.toLowerCase()} />
-            ))}
-          </Tabs>
-        </Drawer>
+      <Drawer className={classes.drawer} variant="permanent" anchor="left" classes={{paper: classes.drawerPaper,}}>
+        <div className={classes.logo}>
+          <img src={logo} alt="Logo" />
+        </div>
+        <Tabs orientation="vertical" value={'/'+this.props.location.pathname.split('/')[1]} onChange={this.handleChange}>
+          {tabs.map((text) => (
+            <Tab label={text} component={Link} to={"/" + text.toLowerCase()} value={"/" + text.toLowerCase()} />
+          ))}
+        </Tabs>
+      </Drawer>
     );
   }
 }

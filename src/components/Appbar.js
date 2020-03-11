@@ -21,7 +21,7 @@ class Appbar extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <AppBar className={classes.appbar} position="fixed" color="transparent">
+      <AppBar className={classes.appbar} position="fixed" color="white">
         <Toolbar>
           <NavLink className={classes.logout} color="primary" to="/">Logout</NavLink>
         </Toolbar>

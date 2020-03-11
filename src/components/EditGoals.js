@@ -2,17 +2,27 @@ import React, { Component } from "react";
 import { Grid, Card, CardActions, CardContent, Button, TextField, InputLabel, Select, MenuItem, FormControl, withStyles } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import HelpIcon from '@material-ui/icons/Help';
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { DEFAULT_HEADERS, GOALS_PATH, SUCCESS } from "../constants";
+import { withSnackbar } from 'notistack';
+import Popover from '@material-ui/core/Popover';
 
 const styles = theme => ({
   textfield: {
-    minWidth: 600
+    width: "100%"
   },
   formControl: {
-    minWidth: 300
-  }
+    width: "100%"
+  },
+  container: {
+    flexGrow: 1,
+    paddingTop: 30
+  },
+  helpText: {
+    margin: 10
+  },
 });
 
 class EditGoals extends Component {
@@ -21,7 +31,9 @@ class EditGoals extends Component {
     super(props);
     this.state = {
       data: {},
-      isHidden: false
+      isHidden: false,
+      disabled: false,
+      anchor: null
     };
     this.dismiss = this.dismiss.bind(this);
   }
@@ -53,19 +65,10 @@ class EditGoals extends Component {
     this.props.dismiss();
   }
 
-  handleTaskDesChange = idx => evt => {
-    const newTasks = this.state.tasks.map((task, sidx) => {
-      if (idx !== sidx) return task;
-      return { ...task, des: evt.target.value };
-    });
-    this.setState({ tasks: newTasks });
-  };
-
   handleAddTask = e => {
-    this.state.data.subgoals.push({subgoal: e.target.value})
-    var data = Object.assign({}, this.state.data)
-    this.setState({data: data})
-    console.log(this.state.data)
+    var subgoals = this.state.data.subgoals.concat([{ subgoal: "" }]);
+    var data = Object.assign(this.state.data, {subgoals: subgoals});
+    this.setState({data: data});
   };
 
   handleRemoveTask = idx => () => {
@@ -96,11 +99,11 @@ class EditGoals extends Component {
     this.setState({data: data})
   }
 
-  changeTask = des => e => {
+  changeTask = idx => e => {
     var data = {};
     var subgoal = [];
-    this.state.data.subgoals.map((task) => {
-      if (task.subgoal === des)
+    this.state.data.subgoals.map((task, index) => {
+      if (index === idx)
         subgoal.push({...task, subgoal: e.target.value})
       else
         subgoal.push({...task})
@@ -110,6 +113,7 @@ class EditGoals extends Component {
   }
 
   save = e => {
+    this.setState({disabled: true});
     e.preventDefault()
     var goalName, goalType, goalId = ""
     var subgoal = []
@@ -119,9 +123,9 @@ class EditGoals extends Component {
       goalId = this.state.data.goal.id
     })}
     this.state.data.subgoals.map((task) => {
-      subgoal.push({...task})
+      if (task.subgoal.length > 0)
+        subgoal.push({...task})
     })
-    subgoal = JSON.parse(JSON.stringify(subgoal).split('"id":').join('"subgoal_id":'))
     const data = {
       user_id: parseInt(this.context.userId),
       main_goal: {
@@ -131,17 +135,18 @@ class EditGoals extends Component {
       },
       subgoals: subgoal
     }
-    
-    console.log(this.state.data)
+    var newData = Object.assign(this.state.data, {subgoals: subgoal});
     axios({
       method: 'put',
       url: GOALS_PATH,
       data: data,
       headers: { DEFAULT_HEADERS, 'Content-Type': 'application/json' }
     })
-    .then(() => 
-      this.props.onEditEnd(goalId, this.state.data)
-    )
+    .then(() => {
+      this.setState({data: newData});
+      this.props.onEditEnd(goalId, this.state.data);
+      this.props.enqueueSnackbar('Successfully saved the goal', {variant: 'success'});
+    })
     .catch(error => {
       console.log(error);
     });
@@ -149,19 +154,21 @@ class EditGoals extends Component {
 
   createForm() {
     const { classes } = this.props;
-    const { data } = this.state;
+    const { data, anchor } = this.state;
+    const open = Boolean(anchor);
+    const id = open ? 'simple-popover' : undefined;
     let goal, goalType = "";
     return(
-      <div className="editForm">
+      <div className={ classes.container }>
         <Card>
           {Object.keys(data.goal).map(() => {
             goal = data.goal.goal
             goalType = data.goal.category
           })}
           <CardContent>
-            <Grid container>
+            <Grid container spacing={3}>
               <Grid item xs={8}>
-                <TextField required
+                <TextField required autoFocus
                   className={ classes.textfield }
                   id="main-goal"
                   label="Enter your main goal"
@@ -171,52 +178,102 @@ class EditGoals extends Component {
                   onChange={this.changeGoal}
                 />
               </Grid>
-              <Grid item xs={3}>
-                <FormControl className={ classes.formControl } variant="filled">
-                  <InputLabel id="goal-type-label">Select goal type</InputLabel>
-                  <Select id="goal-type-select" name="category" value={goalType} onChange={this.changeGoalType}>
-                    <MenuItem value=""><em>None</em></MenuItem>
-                    <MenuItem value="linguistic">Learning Language</MenuItem>
-                    <MenuItem value="operational">Managing AAC Device</MenuItem>
-                    <MenuItem value="social">Practicing Conversation</MenuItem>
-                    <MenuItem value="strategic">Enhancing Communication</MenuItem>
-                  </Select>
-                </FormControl>
+              <Grid item xs={12} sm container spacing={1}>
+                <Grid item xs>
+                  <FormControl className={ classes.formControl } variant="filled">
+                    <InputLabel id="goal-type-label">Select goal type</InputLabel>
+                    <Select id="goal-type-select" name="category" value={goalType} onChange={this.changeGoalType}>
+                      <MenuItem value=""><em>None</em></MenuItem>
+                      <MenuItem value="linguistic">Learning Language</MenuItem>
+                      <MenuItem value="operational">Managing AAC Device</MenuItem>
+                      <MenuItem value="social">Practicing Conversation</MenuItem>
+                      <MenuItem value="strategic">Enhancing Communication</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item>
+                  <IconButton onClick={this.handleClick}>
+                    <HelpIcon />
+                  </IconButton>
+                  <Popover
+                    id={id}
+                    open={open}
+                    anchorEl={anchor}
+                    onClose={this.handleClose}
+                    anchorOrigin={{
+                      vertical: 'bottom',
+                      horizontal: 'center',
+                    }}
+                    transformOrigin={{
+                      vertical: 'top',
+                      horizontal: 'center',
+                    }}
+                  >
+                    <div className={ classes.helpText }>
+                      <div style={{fontSize: 15, fontWeight: 600}}>Learning Language</div>
+                      <div style={{fontSize: 13, fontWeight: 100}}>Improving language use, Using appropriate grammar/syntax, Expanding vocabulary, etc.</div>
+                    </div>
+                    <div className={ classes.helpText }>
+                      <div style={{fontSize: 15, fontWeight: 600}}>Managing AAC Device</div>
+                      <div style={{fontSize: 13, fontWeight: 100}}>Turning AAC on/off, Navigating, Adding new words to AAC, Controlling volume, etc.</div>
+                    </div>
+                    <div className={ classes.helpText }>
+                      <div style={{fontSize: 15, fontWeight: 600}}>Practicing Conversation</div>
+                      <div style={{fontSize: 13, fontWeight: 100}}>Initiating/Maintaining/Terminating interactions, Expressing intent for communication, etc.</div>
+                    </div>
+                    <div className={ classes.helpText }>
+                      <div style={{fontSize: 15, fontWeight: 600}}>Enhancing Communication</div>
+                      <div style={{fontSize: 13, fontWeight: 100}}>Identifying communication breakdowns, Checking for partner reactions, etc.</div>
+                    </div>
+                  </Popover>
+                </Grid>
               </Grid>
             </Grid>
           </CardContent>
           <div>
             {data.subgoals.map((task, idx) => 
-              <div>
-                <div style={{ display: 'inline-flex' }}>
-                  <div> 
-                    <IconButton onClick={this.handleRemoveTask(idx)}>
-                      <CloseIcon />
-                    </IconButton>
-                  </div>
-                  <div>
-                    <TextField
-                      className={ classes.textfield } 
-                      id="task" 
-                      label="Enter your task" 
-                      name="task" 
-                      value={task.subgoal}
-                      onChange={this.changeTask(task.subgoal)} 
-                    />
-                  </div>
-                </div>
-              </div>
+              <Grid container spacing={3}>
+                <Grid item xs={8}>
+                  <Grid container>
+                    <Grid item xs>
+                      <IconButton style={{float: "right"}} onClick={this.handleRemoveTask(idx)}>
+                        <CloseIcon />
+                      </IconButton>
+                    </Grid>
+                    <Grid item xs={11}>
+                      <TextField autoFocus
+                        className={ classes.textfield } 
+                        id="task" 
+                        label="Enter your task" 
+                        name="task" 
+                        value={task.subgoal}
+                        onChange={this.changeTask(idx)} 
+                      />
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
             )}
-            <Button variant="text" onClick={this.handleAddTask}>+ Add Task</Button>
+            <Button style={{marginTop: 15}} variant="outlined" onClick={this.handleAddTask}>+ Add Task</Button>
           </div>
           <CardActions>
             <Button variant="text" onClick={this.dismiss}>Cancel</Button>
-            <Button variant="contained" onClick={this.save}>Save</Button>
+            <Button variant="contained" onClick={this.save} disabled={this.state.disabled}>
+              {this.state.disabled ? 'Saving...' : 'Save'}
+            </Button>
           </CardActions>
         </Card>
       </div>
     );
   }
+
+  handleClick = event => {
+    this.setState({anchor: event.currentTarget});
+  };
+
+  handleClose = () => {
+    this.setState({anchor: null});
+  };
 
   render() {
     const data = this.state.data;
@@ -231,4 +288,4 @@ class EditGoals extends Component {
   }
 }
 
-export default withStyles(styles)(EditGoals);
+export default withStyles(styles)(withSnackbar(EditGoals));
