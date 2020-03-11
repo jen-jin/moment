@@ -19,19 +19,29 @@ class Resource extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      is_bookmarked: this.props.link.is_bookmarked
+    }
     this.handleBookmark = this.handleBookmark.bind(this);
     this.openLink = this.openLink.bind(this);
   }
 
-  async handleBookmark() {
+  handleBookmark() {
+    this.setState(prevState => ({
+      is_bookmarked: !prevState.is_bookmarked
+    }), () => this.putBookmark())
+  }
+  
+  async putBookmark() {
+    console.log("Bookmark now? : " + this.state.is_bookmarked)
     const { userId } = this.context;
     await axios({
       method: "put",
       url: BOOKMARKED_RESOURCES_PATH,
       data: {
-        user_id: userId,
+        user_id: parseInt(userId),
         resource_id: this.props.link.id,
-        is_bookmarked: !this.props.link.is_bookmarked
+        is_bookmarked: this.state.is_bookmarked
       },
       headers: { DEFAULT_HEADERS }
     })
@@ -40,6 +50,7 @@ class Resource extends Component {
           console.log(response.data.message);
         } else {
           // Unable to process success
+          console.log(response.data.message);
         }
       })
       .catch(error => {
@@ -53,6 +64,7 @@ class Resource extends Component {
   }
 
   render() {
+    const { is_bookmarked } = this.state
     return (
       <div>
         <Grid item xs={4}>
@@ -81,11 +93,11 @@ class Resource extends Component {
                 style={{ color: "#1378C1" }}
               >
                 {/* All Resources AND is_bookmarked = false */}
-                {!this.props.link.is_bookmarked &&
+                {!is_bookmarked &&
                   this.props.currentTab === "All Resources" &&
                   "BOOKMARK"}
                 {/* Bookmarked Resources OR is_bookmarked = true */}
-                {(this.props.link.is_bookmarked ||
+                {(is_bookmarked ||
                   this.props.currentTab === "Bookmarked Resources") &&
                   "UNBOOKMARK"}
               </Button>
