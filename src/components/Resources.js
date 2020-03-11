@@ -37,6 +37,7 @@ class Resources extends Component {
     this.searchAPI = this.searchAPI.bind(this);
     this.procressSearchTerm = this.procressSearchTerm.bind(this);
     this.handleTabChange = this.handleTabChange.bind(this);
+    this.handleRefreshBookmarks = this.handleRefreshBookmarks.bind(this);
   }
 
   // MARK: - Lifecycle
@@ -197,6 +198,12 @@ class Resources extends Component {
     );
   }
 
+  async handleRefreshBookmarks() {
+    if (this.state.currentTab === "Bookmarked Resources") {
+      await this.fetchBookmarkedResources();
+    }     
+  }
+
   // MARK: - Render
   render() {
     const { resources, isLoaded, error, isSearching, currentTab, searchTerm } = this.state;
@@ -273,8 +280,13 @@ class Resources extends Component {
                 justify="space-evenly"
               >
                 {isSearching && <div className="body">Searching...</div>}
-                {!isSearching && // TODO: No resources text if resources empty
-                  resources.map(link => <Resource key={link.id} link={link} currentTab={currentTab}/>)}
+                {!isSearching && resources.length > 0 &&
+                  resources.map(link => <Resource key={link.id} link={link} tab={currentTab} onRefreshBookmarks={this.handleRefreshBookmarks}/>)}
+                {!isSearching && resources.length == 0 && (
+                <div className="helper paddingTop30px">
+                  You have no bookmarks. To create one, click the button "BOOKMARK" on resources in the "All Resources" tab.
+                </div>
+                )}                  
               </Grid>
             </Grid>
           )}

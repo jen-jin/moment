@@ -16,25 +16,31 @@ import {
 } from "../constants";
 
 class Resource extends Component {
+  static contextType = AuthContext;
+
   constructor(props) {
     super(props);
 
     this.state = {
       is_bookmarked: this.props.link.is_bookmarked
-    }
+    };
     this.handleBookmark = this.handleBookmark.bind(this);
     this.openLink = this.openLink.bind(this);
+    this.determineRefresh = this.determineRefresh.bind(this);
   }
 
   handleBookmark() {
-    this.setState(prevState => ({
-      is_bookmarked: !prevState.is_bookmarked
-    }), () => this.putBookmark())
+    this.setState(
+      prevState => ({
+        is_bookmarked: !prevState.is_bookmarked
+      }),
+      () => this.putBookmark()
+    );
   }
-  
+
   async putBookmark() {
-    console.log("Bookmark now? : " + this.state.is_bookmarked)
     const { userId } = this.context;
+
     await axios({
       method: "put",
       url: BOOKMARKED_RESOURCES_PATH,
@@ -48,14 +54,23 @@ class Resource extends Component {
       .then(response => {
         if (response.data.status === SUCCESS) {
           console.log(response.data.message);
+          this.determineRefresh();
         } else {
-          // Unable to process success
+          // TODO: Better error handling, such as when they unsuccessfullly bookmark
           console.log(response.data.message);
+
+          this.setState({
+            is_bookmarked: false
+          })
         }
       })
       .catch(error => {
-        // TODO: Better error handling, such as when they try and submit without internet
+        // TODO: Better error handling, such as when they try and bookmark without internet
         console.log(error);
+        
+        this.setState({
+          is_bookmarked: false
+        })
       });
   }
 
@@ -63,8 +78,14 @@ class Resource extends Component {
     window.open(this.props.link.link);
   }
 
+  determineRefresh() {
+    if (this.props.tab === "Bookmarked Resources") {
+      this.props.onRefreshBookmarks();
+    }
+  }
+
   render() {
-    const { is_bookmarked } = this.state
+    const { is_bookmarked } = this.state;
     return (
       <div>
         <Grid item xs={4}>
@@ -94,11 +115,10 @@ class Resource extends Component {
               >
                 {/* All Resources AND is_bookmarked = false */}
                 {!is_bookmarked &&
-                  this.props.currentTab === "All Resources" &&
+                  this.props.tab === "All Resources" &&
                   "BOOKMARK"}
                 {/* Bookmarked Resources OR is_bookmarked = true */}
-                {(is_bookmarked ||
-                  this.props.currentTab === "Bookmarked Resources") &&
+                {(is_bookmarked || this.props.tab === "Bookmarked Resources") &&
                   "UNBOOKMARK"}
               </Button>
               <Button
