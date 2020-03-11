@@ -35,11 +35,11 @@ class Sidebar extends Component {
 
   render() {
     const { classes } = this.props;
-    const tabs = ["Dashboard", "Goals", "Reflection", "Resources"];
+    const tabs = ["Goals", "Reflection", "Resources"];
     return (
-      <Drawer className={classes.drawer} variant="permanent" anchor="left" classes={{paper: classes.drawerPaper,}}>
+      <Drawer className={classes.drawer} variant="permanent" anchor="left" classes={{paper: classes.drawerPaper}}>
         <div className={classes.logo}>
-          <img src={logo} alt="Logo" />
+          <img src={logo} alt="Logo"/>
         </div>
         <Tabs orientation="vertical" value={'/'+this.props.location.pathname.split('/')[1]} onChange={this.handleChange}>
           {tabs.map((text) => (

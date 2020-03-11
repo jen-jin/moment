@@ -197,6 +197,10 @@ body {
   margin-left: 30px;
 }
 
+.emptyGoalSpacing {
+  margin-left: 25px;
+}
+
 .marginLeft10px {
   margin-left: 10px;
 }
@@ -245,7 +249,6 @@ body {
 }
 
 .searchBar {
-  width: 900px; /*TODO: This will need to be dynamic*/
   align-items: center;
   margin-bottom: 30px;
   padding-left: 10px;

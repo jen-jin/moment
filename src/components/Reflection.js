@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
@@ -8,6 +9,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
+import { withSnackbar } from "notistack";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import {
@@ -40,6 +42,7 @@ class Reflection extends Component {
     this.delete = this.delete.bind(this);
     this.view = this.view.bind(this);
     this.convertUTCDateToLocalDate = this.convertUTCDateToLocalDate.bind(this);
+    this.confirmDelete = this.confirmDelete.bind(this);
   }
 
   // MARK: - Lifecycle
@@ -104,6 +107,12 @@ class Reflection extends Component {
     );
   }
 
+  confirmDelete(reflectionID) {
+    if (window.confirm("Are you sure you want to delete this goal?")) {
+      this.delete(reflectionID);
+    }
+  }
+
   delete(reflectionID) {
     axios
       .delete(REFLECTION_PATH, {
@@ -123,6 +132,9 @@ class Reflection extends Component {
               () => this.fetchReflections()
             );
           }
+          this.props.enqueueSnackbar("Successfully deleted the reflection", {
+            variant: "success"
+          });
         },
         error => {
           console.log(error);
@@ -163,7 +175,7 @@ class Reflection extends Component {
         </span>
         <span
           className="marginLeft10px pointer"
-          onClick={() => this.delete(reflectionID)}
+          onClick={() => this.confirmDelete(reflectionID)}
         >
           Delete
         </span>
@@ -211,26 +223,28 @@ class Reflection extends Component {
           alignItems="center"
           justify="center"
         >
-          <Grid item xs={12}>
+          <Grid item xs={12} style={{ width: "100%" }}>
             <div className="header paddingTop60px">Reflection</div>
-            <div className="helper paddingTop10px">
+            <div className="helper">
+              Use this space to reflect on your progress in using AAC with your
+              child. Explore the success, challenges, and improvements in your
+              journey.
+            </div>
+            <div className="helper paddingTop30px paddingBottom10px">
               <span className="bodyBold">
                 “Examining your thoughts is an important part of the practice of
                 self-reflections” - Ryuho Okawa
               </span>
-              <br />
-              Use this space to reflect on your progress in using alternative
-              augmentative communication with your child. Explore the success,
-              challenges, and improvements in your journey.
             </div>
-            <div
-              className="button buttonWidth150px borderRadius25px marginTop30px marginBottom30px rightAlign"
+            <Button
+              className="button rightAlign"
+              variant="contained"
               onClick={this.createReflection}
             >
               + Add Reflection
-            </div>
+            </Button>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} style={{ width: "100%" }}>
             {reflections.length > 0 && (
               <Paper className="table">
                 <TableContainer
@@ -312,4 +326,4 @@ class Reflection extends Component {
   }
 }
 
-export default Reflection;
+export default withSnackbar(Reflection);

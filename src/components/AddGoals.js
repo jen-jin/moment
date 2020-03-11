@@ -197,7 +197,7 @@ class AddGoals extends Component {
                     </Grid>
                   </Grid>
                 )}
-                <Button style={{marginTop: 15}} variant="outlined" onClick={this.handleAddTask}>+ Add Task</Button>
+                <Button style={{marginTop: 15, marginLeft: 30}} variant="outlined" onClick={this.handleAddTask}>+ Add Task</Button>
               </div>
               <CardActions>
                 <Button variant="text" onClick={this.dismiss}>Cancel</Button>
