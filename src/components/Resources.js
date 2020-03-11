@@ -39,13 +39,15 @@ class Resources extends Component {
     this.handleTabChange = this.handleTabChange.bind(this);
   }
 
+  // MARK: - Lifecycle
   componentDidMount() {
     this.fetchAllResources();
   }
 
+  // MARK: - Fetching Resources
   async fetchAllResources() {
-    // const { userId } = this.context; // Will need this when they favourite resources
-    await axios.get(RESOURCES_PATH_2, { headers: DEFAULT_HEADERS }).then(
+    const { userId } = this.context; // Will need this when they favourite resources
+    await axios.get(RESOURCES_PATH_2 + "/" + parseInt(userId), { headers: DEFAULT_HEADERS }).then(
       response => {
         if (response.data.status == SUCCESS && response.data.data != []) {
           this.setState({
@@ -108,6 +110,7 @@ class Resources extends Component {
     }
   }
 
+  // MARK: - Searching for Resources
   async procressSearchTerm() {
     // Trim, Remove Special Characters, Replace Space with +
     const processedSearchTerm = this.state.searchTerm
@@ -153,35 +156,38 @@ class Resources extends Component {
 
   async searchAPI() {
     this.procressSearchTerm();
-    const params =
-      this.state.searchTerm != "" ? "/" + this.state.searchTerm : "";
-    console.log("Params:" + params);
+    
+    const { userId } = this.context;
+    const searchTermParam = this.state.searchTerm !== "" ? "/" + this.state.searchTerm : "";
+    const params = "/" + parseInt(userId) + searchTermParam;
 
-    // TODO: Fix when backend is okay
-    // axios.get(SEARCH_PATH + params, { headers: DEFAULT_HEADERS }).then(
-    //   response => {
-    //     if (response.data.status == SUCCESS && response.data.data != []) {
-    //       this.setState({
-    //         isLoaded: true,
-    //         resources: response.data.data
-    //       });
-    //     } else {
-    //       this.setState({
-    //         // Note: This hides the search bar in my logic
-    //         isLoaded: true,
-    //         error: "No resources found."
-    //       });
-    //     }
-    //   },
-    //   error => {
-    //     this.setState({
-    //       isLoaded: true,
-    //       error: error
-    //     });
-    //   }
-    // );
+    const path = (searchTermParam !== "" ? SEARCH_PATH : RESOURCES_PATH_2) + params;
+
+    axios.get(path, { headers: DEFAULT_HEADERS }).then(
+      response => {
+        if (response.data.status == SUCCESS && response.data.data != []) {
+          this.setState({
+            isLoaded: true,
+            resources: response.data.data
+          });
+        } else {
+          this.setState({
+            // Note: This hides the search bar in my logic
+            isLoaded: true,
+            error: "No resources found."
+          });
+        }
+      },
+      error => {
+        this.setState({
+          isLoaded: true,
+          error: error
+        });
+      }
+    );
   }
 
+  // MARK: - Tab Change
   handleTabChange(event, value) {
     this.setState(
       {
@@ -191,6 +197,7 @@ class Resources extends Component {
     );
   }
 
+  // MARK: - Render
   render() {
     const { resources, isLoaded, error, isSearching, currentTab, searchTerm } = this.state;
     return (
@@ -229,7 +236,7 @@ class Resources extends Component {
               justify="space-evenly"
             >
               <Grid item xs={12}>
-                <Paper component="form" className="searchBar">
+                <Paper component="form" className="searchBar" elevation={3}>
                   <InputBase
                     className="searchInput"
                     placeholder="Search All Resources..."
@@ -267,7 +274,7 @@ class Resources extends Component {
               >
                 {isSearching && <div className="body">Searching...</div>}
                 {!isSearching && // TODO: No resources text if resources empty
-                  resources.map(link => <Resource key={link.id} link={link} />)}
+                  resources.map(link => <Resource key={link.id} link={link} currentTab={currentTab}/>)}
               </Grid>
             </Grid>
           )}

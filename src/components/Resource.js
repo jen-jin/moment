@@ -7,18 +7,45 @@ import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import logo from "../img/logo.jpg"; // This is temp
+import { AuthContext } from "../context/AuthContext";
+import axios from "axios";
+import {
+  DEFAULT_HEADERS,
+  SUCCESS,
+  BOOKMARKED_RESOURCES_PATH
+} from "../constants";
 
 class Resource extends Component {
   constructor(props) {
     super(props);
 
-    this.favourite = this.favourite.bind(this);
+    this.handleBookmark = this.handleBookmark.bind(this);
     this.openLink = this.openLink.bind(this);
   }
 
-  favourite() {
-    // Handle favouriting resource
+  async handleBookmark() {
+    const { userId } = this.context;
+    await axios({
+      method: "put",
+      url: BOOKMARKED_RESOURCES_PATH,
+      data: {
+        user_id: userId,
+        resource_id: this.props.link.id,
+        is_bookmarked: !this.props.link.is_bookmarked
+      },
+      headers: { DEFAULT_HEADERS }
+    })
+      .then(response => {
+        if (response.data.status === SUCCESS) {
+          console.log(response.data.message);
+        } else {
+          // Unable to process success
+        }
+      })
+      .catch(error => {
+        // TODO: Better error handling, such as when they try and submit without internet
+        console.log(error);
+      });
   }
 
   openLink() {
@@ -31,8 +58,12 @@ class Resource extends Component {
         <Grid item xs={4}>
           <Card className="card marginTop30px" variant="outlined">
             <CardActionArea>
-              <CardMedia className="cardMediaSize" title="Image" onClick={this.openLink}>
-                <img src={this.props.link.img} className="cardImage"/>
+              <CardMedia
+                className="cardMediaSize"
+                title="Image"
+                onClick={this.openLink}
+              >
+                <img src={this.props.link.img} className="cardImage" />
               </CardMedia>
               <CardContent className="cardContent" onClick={this.openLink}>
                 <Typography gutterBottom variant="h5" component="h2">
@@ -44,10 +75,25 @@ class Resource extends Component {
               </CardContent>
             </CardActionArea>
             <CardActions>
-              <Button size="large" style={{ color: "#1378C1" }}>
-                BOOKMARK
+              <Button
+                size="large"
+                onClick={this.handleBookmark}
+                style={{ color: "#1378C1" }}
+              >
+                {/* All Resources AND is_bookmarked = false */}
+                {!this.props.link.is_bookmarked &&
+                  this.props.currentTab === "All Resources" &&
+                  "BOOKMARK"}
+                {/* Bookmarked Resources OR is_bookmarked = true */}
+                {(this.props.link.is_bookmarked ||
+                  this.props.currentTab === "Bookmarked Resources") &&
+                  "UNBOOKMARK"}
               </Button>
-              <Button size="large" onClick={this.openLink} style={{ color: "#1378C1" }}>
+              <Button
+                size="large"
+                onClick={this.openLink}
+                style={{ color: "#1378C1" }}
+              >
                 LEARN MORE
               </Button>
             </CardActions>
