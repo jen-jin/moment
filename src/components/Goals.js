@@ -56,7 +56,7 @@ class Goals extends Component {
 
     return (      
       <div className="goalsPage">
-        <div className="header paddingTop30px">Setting Goals</div>
+        <div className="header paddingTop60px">Setting Goals</div>
         <div className="helper paddingTop30px">
           <span className="bodyBold">
             “Our goals can only be reached through a vehicle of a plan, in which we must fervently believe, and upon which we must vigorously act. There is no other route to success.” - Pablo Picasso
