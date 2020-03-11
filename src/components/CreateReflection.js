@@ -447,7 +447,7 @@ class CreateReflection extends Component {
               justify="center"
             >
               <Grid item style={{ width: 950 }}>
-                <div className="paddingTop30px" />
+                <div className="paddingTop60px" />
                 <TextField
                   id="standard-basic"
                   placeholder={DEFAULT_REFLECTION_TITLE}

@@ -6,7 +6,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import { loadProgressBar } from 'axios-progress-bar';
+// import { loadProgressBar } from 'axios-progress-bar';
 
 
 // Don't need apollo anymore, but left in for help when doing authentication
@@ -39,7 +39,7 @@ ReactDOM.render(
     <App />
   </BrowserRouter>,
   document.getElementById('root'),
-  loadProgressBar()
+  // loadProgressBar()
 )
 
 // If you want your app to work offline and load faster, you can change

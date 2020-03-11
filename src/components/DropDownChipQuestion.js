@@ -36,8 +36,10 @@ class DropDownChipQuestion extends Component {
   }
 
   determineChecked(info, key1, key2) {
-    const selectedItem = this.state.selected.find(title => title === (key2 !== null ? info[key1][key2] : info[key1]))
-    return (selectedItem !== undefined)
+    const selectedItem = this.state.selected.find(
+      title => title === (key2 !== null ? info[key1][key2] : info[key1])
+    );
+    return selectedItem !== undefined;
   }
 
   render() {
@@ -108,9 +110,7 @@ class DropDownChipQuestion extends Component {
                   >
                     <Checkbox
                       checked={this.determineChecked(info, key1, key2)}
-                      value="secondary"
-                      color="primary"
-                      inputProps={{ "aria-label": "secondary checkbox" }}
+                      style={{ color: "#1378C1" }}
                     />
                     {key2 !== null ? info[key1][key2] : info[key1]}
                   </MenuItem>

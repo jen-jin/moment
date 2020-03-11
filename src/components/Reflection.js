@@ -96,8 +96,12 @@ class Reflection extends Component {
     });
   }
 
-  createDateFormat(date) { // Timestamp from API is in UTC, must convert to local
-    return this.convertUTCDateToLocalDate(new Date(date)).toLocaleString("en-US", DATE_OPTIONS)
+  createDateFormat(date) {
+    // Timestamp from API is in UTC, must convert to local
+    return this.convertUTCDateToLocalDate(new Date(date)).toLocaleString(
+      "en-US",
+      DATE_OPTIONS
+    );
   }
 
   delete(reflectionID) {
@@ -177,23 +181,23 @@ class Reflection extends Component {
     const { reflections, page, rowsPerPage, rows } = this.state;
 
     const columns = [
-      { id: "title", label: "Name", minWidth: 170 },
+      { id: "title", label: "Name", minWidth: 180 },
       {
         id: "dateCreated",
         label: "Date Created",
-        minWidth: 170,
+        minWidth: 180,
         align: "center"
       },
       {
         id: "lastModified",
         label: "Last Modified",
-        minWidth: 170,
+        minWidth: 180,
         align: "center"
       },
       {
         id: "actions",
         label: "Actions",
-        minWidth: 170,
+        minWidth: 180,
         align: "center"
       }
     ];
@@ -207,8 +211,8 @@ class Reflection extends Component {
           alignItems="center"
           justify="center"
         >
-          <Grid item xs={8}>
-            <div className="header paddingTop30px">Reflection</div>
+          <Grid item xs={12}>
+            <div className="header paddingTop60px">Reflection</div>
             <div className="helper paddingTop10px">
               <span className="bodyBold">
                 “Examining your thoughts is an important part of the practice of
@@ -226,7 +230,7 @@ class Reflection extends Component {
               + Add Reflection
             </div>
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xs={12}>
             {reflections.length > 0 && (
               <Paper className="table">
                 <TableContainer
