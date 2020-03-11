@@ -11,6 +11,7 @@ import Sidebar from "./components/Sidebar";
 import Appbar from "./components/Appbar";
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import theme from "./theme";
+import { SnackbarProvider } from 'notistack';
 
 const NavRoute = ({exact, path, component: Component}) => (
   <Route exact={exact} path={path} render={(props) => (
@@ -31,15 +32,17 @@ class App extends Component {
         <div className="App center">
           <div className="background-gray">
             <MuiThemeProvider theme={theme}>
-              <Switch>
-                <NavRoute exact path="/dashboard" component={Dashboard} />
-                <NavRoute exact path="/goals" component={Goals} />
-                <NavRoute exact path="/goals/complete" component={Goals} />
-                <NavRoute exact path="/reflection" component={Reflection} />
-                <NavRoute exact path="/reflection/createReflection" component={CreateReflection} />
-                <NavRoute exact path="/resources" component={Resources} />
-                <Route exact path="/" component={Login} />
-              </Switch>
+              <SnackbarProvider maxSnack={1} anchorOrigin={{vertical: 'top', horizontal: 'right'}}>
+                <Switch>
+                  <NavRoute exact path="/dashboard" component={Dashboard} />
+                  <NavRoute exact path="/goals" component={Goals} />
+                  <NavRoute exact path="/goals/complete" component={Goals} />
+                  <NavRoute exact path="/reflection" component={Reflection} />
+                  <NavRoute exact path="/reflection/createReflection" component={CreateReflection} />
+                  <NavRoute exact path="/resources" component={Resources} />
+                  <Route exact path="/" component={Login} />
+                </Switch>
+              </SnackbarProvider>
             </MuiThemeProvider>
           </div>
         </div>

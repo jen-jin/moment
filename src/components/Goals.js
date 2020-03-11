@@ -13,7 +13,8 @@ class Goals extends Component {
     super(props);
     this.state = {
       value: "/goals",
-      addGoal: false
+      addGoal: false,
+      expanded: false
     };
   }
 
@@ -29,6 +30,7 @@ class Goals extends Component {
 
   handleChange = (event, value) => {
     this.setState({ value });
+    this.setState({ expanded: false });
   }
 
   handleAdd = () => {
@@ -41,11 +43,12 @@ class Goals extends Component {
 
   handleOnAddEnd = () => {
     this.setState({ addGoal: false });
-    this.setState({value: "/goals"});
+    this.setState({ value: "/goals" });
+    this.setState({ expanded: true });
   }
 
   render() {
-    var goalForm = <ViewGoals />;
+    var goalForm = <ViewGoals expanded={this.state.expanded} />;
     if (this.state.value == "/goals/complete")
       goalForm = <ViewCompletedGoals />;
     if (this.state.addGoal)
@@ -53,26 +56,30 @@ class Goals extends Component {
 
     return (      
       <div className="goalsPage">
-        <Grid container direction="row" alignItems="center" justify="center">
+        <div className="header paddingTop30px">Setting Goals</div>
+        <div className="helper paddingTop30px">
+          <span className="bodyBold">
+            “Our goals can only be reached through a vehicle of a plan, in which we must fervently believe, and upon which we must vigorously act. There is no other route to success.” - Pablo Picasso
+          </span>
+          <br />
+          Use this space to set goals for you and your child. 
+          We highly recommend setting goals with your speech-langugage pathologist for the first time.
+        </div>
+        <Grid container style={{paddingTop: 30}}>
           <Grid item xs={8}>
-            <div className="header paddingTop30px">Setting Goals</div>
-            <Grid container>
-              <Grid item xs={8}>
-                <Tabs value={this.state.value} onChange={this.handleChange}>
-                  <Tab label="Current Goals" value="/goals" component={Link} to={"/goals"} />
-                  <Tab label="Completed Goals" value="/goals/complete" component={Link} to={"/goals/complete"} />
-                </Tabs>
-              </Grid>
-              <Grid item xs={4}>
-                <Button variant="contained" style={{float: "right"}} onClick={this.handleAdd}>
-                  + Add Goal
-                </Button>
-              </Grid>
-            </Grid>
-            <div>
-              { goalForm }
-            </div>
+            <Tabs value={this.state.value} onChange={this.handleChange}>
+              <Tab label="Current Goals" value="/goals" component={Link} to={"/goals"} />
+              <Tab label="Completed Goals" value="/goals/complete" component={Link} to={"/goals/complete"} />
+            </Tabs>
           </Grid>
+          <Grid item xs={4}>
+            <Button variant="contained" style={{float: "right"}} onClick={this.handleAdd}>
+              + Add Goal
+            </Button>
+          </Grid>
+        </Grid>
+        <Grid container style={{justifyContent: "center", alignItems: "center"}}>
+          { goalForm }
         </Grid>
       </div>
     );
