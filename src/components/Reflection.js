@@ -46,11 +46,11 @@ class Reflection extends Component {
   }
 
   // MARK: - Lifecycle
-
   componentDidMount() {
     this.fetchReflections();
   }
 
+  // MARK: - Fetching Reflections
   async fetchReflections() {
     const { userId } = this.context;
 
@@ -77,6 +77,7 @@ class Reflection extends Component {
       );
   }
 
+  // MARK: - Table Changes
   handleChangePage(event, newPage) {
     this.setState({
       page: newPage
@@ -90,6 +91,7 @@ class Reflection extends Component {
     });
   }
 
+  // MARK: - Creating Table
   async createTableData() {
     await this.state.reflections.map(reflection => {
       const data = this.createReflectionData(reflection);
@@ -107,6 +109,7 @@ class Reflection extends Component {
     );
   }
 
+  // MARK: - Delete Reflection
   confirmDelete(reflectionID) {
     if (window.confirm("Are you sure you want to delete this goal?")) {
       this.delete(reflectionID);
@@ -142,10 +145,12 @@ class Reflection extends Component {
       );
   }
 
-  view() {
-    console.log("View");
+  // MARK: - View Reflections
+  view(title, dateCreated, reflectionID, reflection) {
+    this.props.history.push("/reflection/viewReflection", [title, dateCreated, reflectionID, reflection]);
   }
 
+  // MARK: - Reflection Data Helpers
   convertUTCDateToLocalDate(date) {
     var newDate = new Date(
       date.getTime() + date.getTimezoneOffset() * 60 * 1000
@@ -170,7 +175,7 @@ class Reflection extends Component {
 
     const actions = (
       <>
-        <span className="pointer" onClick={() => this.view()}>
+        <span className="pointer" onClick={() => this.view(title, dateCreated, reflectionID, reflection.reflection)}>
           View
         </span>
         <span
@@ -189,6 +194,7 @@ class Reflection extends Component {
     this.props.history.push("/reflection/createReflection");
   }
 
+  // MARK: - Render
   render() {
     const { reflections, page, rowsPerPage, rows } = this.state;
 
@@ -244,7 +250,11 @@ class Reflection extends Component {
               + Add Reflection
             </Button>
           </Grid>
-          <Grid item xs={12} style={{ width: "100%" }}>
+          <Grid
+            item
+            xs={12}
+            style={{ width: reflections.length > 0 ? "100%" : "auto" }}
+          >
             {reflections.length > 0 && (
               <Paper className="table">
                 <TableContainer

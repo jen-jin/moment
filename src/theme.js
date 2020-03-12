@@ -4,6 +4,14 @@ let theme;
 
 export default theme = createMuiTheme({
   overrides: {
+    MuiLinearProgress: {
+      colorPrimary: {
+        backgroundColor: '#87B6CA80',
+      },
+      barColorPrimary: {
+        backgroundColor: '#1378C1',
+      }
+    },
     MuiButton: {
       contained: {
         backgroundColor: '#1378c1',

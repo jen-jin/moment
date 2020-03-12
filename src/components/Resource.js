@@ -7,6 +7,8 @@ import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
+import BookmarkIcon from "@material-ui/icons/Bookmark";
+import BookmarkBorderIcon from "@material-ui/icons/BookmarkBorder";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import {
@@ -61,16 +63,16 @@ class Resource extends Component {
 
           this.setState({
             is_bookmarked: false
-          })
+          });
         }
       })
       .catch(error => {
         // TODO: Better error handling, such as when they try and bookmark without internet
         console.log(error);
-        
+
         this.setState({
           is_bookmarked: false
-        })
+        });
       });
   }
 
@@ -81,7 +83,7 @@ class Resource extends Component {
   determineRefresh() {
     if (this.props.tab === "Bookmarked Resources") {
       this.props.onRefreshBookmarks();
-    }
+    }    
   }
 
   render() {
@@ -107,19 +109,21 @@ class Resource extends Component {
                 </Typography>
               </CardContent>
             </CardActionArea>
-            <CardActions>
+            <CardActions style={{width: "100%"}}>
               <Button
                 size="large"
                 onClick={this.handleBookmark}
                 style={{ color: "#1378C1" }}
               >
                 {/* All Resources AND is_bookmarked = false */}
-                {!is_bookmarked &&
-                  this.props.tab === "All Resources" &&
-                  "BOOKMARK"}
+                {!is_bookmarked && this.props.tab === "All Resources" && (
+                  <BookmarkBorderIcon />
+                )}
                 {/* Bookmarked Resources OR is_bookmarked = true */}
-                {(is_bookmarked || this.props.tab === "Bookmarked Resources") &&
-                  "UNBOOKMARK"}
+                {(is_bookmarked ||
+                  this.props.tab === "Bookmarked Resources") && (
+                  <BookmarkIcon />
+                )}
               </Button>
               <Button
                 size="large"

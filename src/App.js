@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Goals from "./components/Goals";
 import CreateReflection from "./components/CreateReflection";
+import ViewReflection from "./components/ViewReflection";
 import Reflection from "./components/Reflection";
 import Resources from "./components/Resources";
 import { Switch, Route } from "react-router-dom";
@@ -37,6 +38,7 @@ class App extends Component {
                   <NavRoute exact path="/goals/complete" component={Goals} />
                   <NavRoute exact path="/reflection" component={Reflection} />
                   <NavRoute exact path="/reflection/createReflection" component={CreateReflection} />
+                  <NavRoute exact path="/reflection/viewReflection" component={ViewReflection} />
                   <NavRoute exact path="/resources" component={Resources} />
                   <Route exact path="/" component={Login} />
                 </Switch>
