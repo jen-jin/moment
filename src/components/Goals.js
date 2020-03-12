@@ -92,11 +92,7 @@ class Goals extends Component {
             </Tabs>
           </Grid>
           <Grid item xs={4} style={{display: "flex", justifyContent: "flex-end", alignItems: "center"}}>
-            <Button
-              variant="contained"
-              style={{ float: "right" }}
-              onClick={this.handleAdd}
-            >
+            <Button variant="contained" onClick={this.handleAdd}>
               + Add Goal
             </Button>
           </Grid>
