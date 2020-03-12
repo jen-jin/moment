@@ -70,13 +70,13 @@ class ViewCompletedGoals extends Component {
   createChip = type => {
     switch (type) {
       case 'linguistic':
-        return <Chip style={{backgroundColor: "lightYellow", color: "darkYellow"}} label="Learning Language" />;
+        return <Chip style={{backgroundColor: "#FFF2D9", color: "#8F5D01"}} label="Learning Language" />;
       case 'operational':
-        return <Chip style={{backgroundColor: "lightOrange", color: "darkOrange"}} label="Managing AAC Device" />;
+        return <Chip style={{backgroundColor: "#F9E7E0", color: "#B64700"}} label="Managing AAC Device" />;
       case 'social':
-        return <Chip style={{backgroundColor: "lightGreen", color: "darkGreen"}} label="Practicing Conversation" />;
+        return <Chip style={{backgroundColor: "#CFE0E0", color: "#1E6464"}} label="Practicing Conversation" />;
       case 'strategic':
-        return <Chip style={{backgroundColor: "lightBlue", color: "darkBlue"}} label="Enhancing Communication" />;
+        return <Chip style={{backgroundColor: "#D1DFE4", color: "#12688C"}} label="Enhancing Communication" />;
       default:
         return null;
     }
