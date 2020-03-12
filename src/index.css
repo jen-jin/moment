@@ -65,38 +65,6 @@ body {
   color: #2FAF63;
 }
 
-.lightYellow {
-  color: #FDD68F;
-}
-
-.darkYellow {
-  color: #BA7901;
-}
-
-.lightOrange {
-  color: #FBB9A0;
-}
-
-.darkOrange {
-  color: #EB612D;
-}
-
-.lightGreen {
-  color: #A0D2D2;
-}
-
-.darkGreen {
-  color: #367C7C;
-}
-
-.lightBlue {
-  color: #87B6CA80;
-}
-
-.darkBlue {
-  color: #12688C;
-}
-
 .header {
   font-size: 24px;
   font-family: 'Open Sans';
