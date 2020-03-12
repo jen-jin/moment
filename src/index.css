@@ -231,6 +231,10 @@ body {
   width: 300px;
 }
 
+.width500px {
+  width: 500px;
+}
+
 .width900px {
   width: 900px;
 }

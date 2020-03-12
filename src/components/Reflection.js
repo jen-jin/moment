@@ -244,7 +244,7 @@ class Reflection extends Component {
               + Add Reflection
             </Button>
           </Grid>
-          <Grid item xs={12} style={{ width: "100%" }}>
+          <Grid item xs={12} style={{ width: reflections.length > 0 ? "100%" : "auto"}}>
             {reflections.length > 0 && (
               <Paper className="table">
                 <TableContainer

@@ -5,6 +5,7 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import InputBase from "@material-ui/core/InputBase";
 import Paper from "@material-ui/core/Paper";
+import LinearProgress from "@material-ui/core/LinearProgress";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import {
@@ -244,7 +245,7 @@ class Resources extends Component {
           </Grid>
 
           {error && <div className="body">Error: {error.message}</div>}
-          {!isLoaded && <div className="body">Loading...</div>}
+          {!isLoaded && <LinearProgress className="width500px" />}
 
           {isLoaded && !error && (
             <Grid
@@ -256,13 +257,19 @@ class Resources extends Component {
               alignContent="center"
               justify="space-evenly"
             >
-              <Grid item xs={12} style={{width: "100%"}}>
+              <Grid item xs={12} style={{ width: "100%" }}>
                 <Paper component="form" className="searchBar" elevation={3}>
                   <InputBase
                     className="searchInput"
                     placeholder="Search All Resources..."
                     fullWidth={true}
                     onChange={this.searchUpdated}
+                    onKeyPress={ev => {
+                      if (ev.key === "Enter") {
+                        ev.preventDefault();
+                        this.sendToSearch();
+                      }
+                    }}
                     inputProps={{
                       style: {
                         fontFamily: "Open Sans",
@@ -293,7 +300,7 @@ class Resources extends Component {
                 alignItems="center"
                 justify="space-evenly"
               >
-                {isSearching && <div className="body">Searching...</div>}
+                {isSearching && <LinearProgress className="width500px" />}
                 {!isSearching &&
                   resources.length > 0 &&
                   resources.map(link => (
