@@ -90,7 +90,7 @@ class AddGoals extends Component {
       headers: { DEFAULT_HEADERS, 'Content-Type': 'multipart/form-data' }
     })
     .then(() => {
-      this.props.onAddEnd();
+      this.props.onAddEnd(this.state.goal);
       this.props.enqueueSnackbar('Successfully saved the goal', {variant: 'success'});
     })
     .catch(error => {
