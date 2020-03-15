@@ -6,7 +6,7 @@ import Tab from "@material-ui/core/Tab";
 import InputBase from "@material-ui/core/InputBase";
 import Paper from "@material-ui/core/Paper";
 import LinearProgress from "@material-ui/core/LinearProgress";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
 import {
   DEFAULT_HEADERS,
@@ -14,7 +14,7 @@ import {
   SEARCH_PATH,
   RESOURCES_PATH_2,
   BOOKMARKED_RESOURCES_PATH
-} from "../constants";
+} from "../../constants";
 
 class Resources extends Component {
   static contextType = AuthContext;

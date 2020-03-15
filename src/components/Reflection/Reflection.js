@@ -10,14 +10,14 @@ import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import { withSnackbar } from "notistack";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
 import {
   REFLECTION_PATH,
   DEFAULT_HEADERS,
   SUCCESS,
   DATE_OPTIONS
-} from "../constants";
+} from "../../constants";
 
 class Reflection extends Component {
   static contextType = AuthContext;

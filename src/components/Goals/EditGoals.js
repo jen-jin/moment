@@ -4,8 +4,8 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import HelpIcon from '@material-ui/icons/Help';
 import axios from "axios";
-import { AuthContext } from "../context/AuthContext";
-import { DEFAULT_HEADERS, GOALS_PATH, SUCCESS } from "../constants";
+import { AuthContext } from "../../context/AuthContext";
+import { DEFAULT_HEADERS, GOALS_PATH, SUCCESS } from "../../constants";
 import { withSnackbar } from 'notistack';
 import Popover from '@material-ui/core/Popover';
 

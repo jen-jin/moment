@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import Goals from "./components/Goals";
-import CreateReflection from "./components/CreateReflection";
-import ViewReflection from "./components/ViewReflection";
-import Reflection from "./components/Reflection";
-import Resources from "./components/Resources";
+import Goals from "./components/Goals/Goals";
+import CreateReflection from "./components/Reflection/CreateReflection";
+import ViewReflection from "./components/Reflection/ViewReflection";
+import Reflection from "./components/Reflection/Reflection";
+import Resources from "./components/Resources/Resources";
 import { Switch, Route } from "react-router-dom";
 import Login from "./components/Login";
 import AuthContextProvider from "./context/AuthContext";

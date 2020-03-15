@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { AuthContext } from "../context/AuthContext";
-import { DEFAULT_HEADERS, GOALS_PATH, SUCCESS, SUBGOALS_PATH } from "../constants";
+import { AuthContext } from "../../context/AuthContext";
+import { DEFAULT_HEADERS, GOALS_PATH, SUCCESS, SUBGOALS_PATH } from "../../constants";
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';

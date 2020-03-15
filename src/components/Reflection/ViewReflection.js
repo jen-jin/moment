@@ -4,7 +4,7 @@ import Button from "@material-ui/core/Button";
 import CloseIcon from "@material-ui/icons/Close";
 import ReviewSelectQuestion from "./ReviewSelectQuestion";
 import ReviewTypedQuestion from "./ReviewTypedQuestion";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 
 class ViewReflection extends Component {
   static contextType = AuthContext;
