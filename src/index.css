@@ -19,6 +19,10 @@ body {
   font-weight: 600;
 }
 
+.underline {
+  text-decoration: underline;
+}
+
 /* Grid Layouts */
 .gridTwoColumns {
   display: grid;

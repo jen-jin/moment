@@ -293,11 +293,14 @@ class CreateReflection extends Component {
 
   // MARK: - Handling Goal Question
   async handleSubGoalSelection(newSubGoals) {
-    // Clear current subgoals
-    await this.setState({
-      // Await is necessary
-      selectedSubGoals: []
-    });
+    // Clearing subgoals first, if only one select
+    // Known bug, removal of subgoals if there exists multiple goals will not work
+    if (newSubGoals.length === 0 || this.state.selectedGoals.length === 1) {
+      await this.setState({
+        // Await is necessary
+        selectedSubGoals: []
+      });
+    }
 
     await newSubGoals.map(title => {
       const selectedSubGoal = this.state.subgoals.find(

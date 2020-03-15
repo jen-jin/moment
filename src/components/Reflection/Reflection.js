@@ -9,6 +9,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
+import LinearProgress from "@material-ui/core/LinearProgress";
 import { withSnackbar } from "notistack";
 import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
@@ -29,7 +30,9 @@ class Reflection extends Component {
       reflections: [],
       page: 0,
       rows: [],
-      rowsPerPage: 10
+      rowsPerPage: 10,
+      isLoaded: false,
+      error: null
     };
 
     this.createReflection = this.createReflection.bind(this);
@@ -65,7 +68,8 @@ class Reflection extends Component {
           if (response.data.status == SUCCESS) {
             this.setState(
               {
-                reflections: response.data.data
+                reflections: response.data.data,
+                isLoaded: true
               },
               () => this.createTableData()
             );
@@ -73,6 +77,11 @@ class Reflection extends Component {
         },
         error => {
           console.log(error);
+
+          this.setState({
+            isLoaded: true,
+            error: error
+          });
         }
       );
   }
@@ -147,7 +156,12 @@ class Reflection extends Component {
 
   // MARK: - View Reflections
   view(title, dateCreated, reflectionID, reflection) {
-    this.props.history.push("/reflection/viewReflection", [title, dateCreated, reflectionID, reflection]);
+    this.props.history.push("/reflection/viewReflection", [
+      title,
+      dateCreated,
+      reflectionID,
+      reflection
+    ]);
   }
 
   // MARK: - Reflection Data Helpers
@@ -175,7 +189,12 @@ class Reflection extends Component {
 
     const actions = (
       <>
-        <span className="pointer" onClick={() => this.view(title, dateCreated, reflectionID, reflection.reflection)}>
+        <span
+          className="pointer"
+          onClick={() =>
+            this.view(title, dateCreated, reflectionID, reflection.reflection)
+          }
+        >
           View
         </span>
         <span
@@ -196,7 +215,14 @@ class Reflection extends Component {
 
   // MARK: - Render
   render() {
-    const { reflections, page, rowsPerPage, rows } = this.state;
+    const {
+      reflections,
+      page,
+      rowsPerPage,
+      rows,
+      isLoaded,
+      error
+    } = this.state;
 
     const columns = [
       { id: "title", label: "Name", minWidth: 180 },
@@ -255,7 +281,7 @@ class Reflection extends Component {
             xs={12}
             style={{ width: reflections.length > 0 ? "100%" : "auto" }}
           >
-            {reflections.length > 0 && (
+            {reflections.length > 0 && isLoaded && !error && (
               <Paper className="table">
                 <TableContainer
                   className="table-container"
@@ -323,12 +349,15 @@ class Reflection extends Component {
               </Paper>
             )}
 
-            {reflections.length == 0 && (
+            {reflections.length == 0 && isLoaded && !error && (
               <div className="helper paddingTop30px">
                 You haven't created any reflections yet. Click the + Add
                 Reflection button to create a new reflection
               </div>
             )}
+            
+            {error && <div className="body">Error: {error.message}</div>}
+            {!isLoaded && <LinearProgress className="width500px" />}
           </Grid>
         </Grid>
       </div>

@@ -3,6 +3,7 @@ import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import CloseIcon from "@material-ui/icons/Close";
 import ReviewSelectQuestion from "./ReviewSelectQuestion";
+import ReviewSelectedSubGoalsQuestion from "./ReviewSelectedSubGoalsQuestion";
 import ReviewTypedQuestion from "./ReviewTypedQuestion";
 import { AuthContext } from "../../context/AuthContext";
 
@@ -23,6 +24,7 @@ class ViewReflection extends Component {
 
     this.createCards = this.createCards.bind(this);
     this.createGoals = this.createGoals.bind(this);
+    this.createGoalsForSubGoals = this.createGoalsForSubGoals.bind(this);
     this.createTasks = this.createTasks.bind(this);
     this.createChips = this.createChips.bind(this);
     this.closeReflection = this.closeReflection.bind(this);
@@ -49,11 +51,27 @@ class ViewReflection extends Component {
     return chosenGoals;
   }
 
+  createGoalsForSubGoals(goals) {
+    const chosenGoals = [];
+
+    goals.map(goal => {
+      chosenGoals.push({
+        id: goal.id,
+        value: goal.value
+      });
+    });
+
+    return chosenGoals;
+  }
+
   createTasks(tasks) {
     const chosenTasks = [];
 
     tasks.map(task => {
-      chosenTasks.push(task.subgoal);
+      chosenTasks.push({
+        goalID: task.goal_id,
+        value: task.subgoal
+      })
     });
 
     return chosenTasks;
@@ -77,10 +95,13 @@ class ViewReflection extends Component {
   // MARK: - Render
   render() {
     const { title, dateCreated, reflectionID, reflection } = this.state;
-    // console.log("Reflection Data", reflection)
+    
     const parsedReflection = JSON.parse(reflection);
     const moods = this.createCards(parsedReflection.moods);
     const goals = this.createGoals(parsedReflection.selectedGoals);
+    const goalsForSubGoals = this.createGoalsForSubGoals(parsedReflection.selectedGoals);
+    const networkFailGoals = parsedReflection.networkFailGoals;
+    const networkFailSubGoals = parsedReflection.networkFailSubGoals;
     const tasks = this.createTasks(parsedReflection.selectedSubGoals);
     const activities = this.createChips(parsedReflection.selectedActivities);
     const additionalActivities = parsedReflection.additionalActivities;
@@ -122,16 +143,19 @@ class ViewReflection extends Component {
               content={moods}
             />
           </Grid>
-          <Grid item>
+          <Grid item>            
             <ReviewSelectQuestion
               question="2. Did you work on any of these goals?"
               content={goals}
+              additional={networkFailGoals}
             />
           </Grid>
           <Grid item>
-            <ReviewSelectQuestion
+            <ReviewSelectedSubGoalsQuestion
               question="3. Did you work on any of these tasks?"
-              content={tasks}
+              goals={goalsForSubGoals}
+              subgoals={tasks}
+              additional={networkFailSubGoals}
             />
           </Grid>
           <Grid item>
