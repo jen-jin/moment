@@ -250,14 +250,13 @@ class ViewGoals extends Component {
         { 
           data.map((item, index) => {
             return (
-              <ExpansionPanel>
+              <ExpansionPanel defaultExpanded={item.goal.goal === this.props.expanded ? true : false}>
                 {Object.keys(item.goal).map(() => {
                   date = new Date(item.goal.timestamp)
                   goal = item.goal.goal
                   goalId = item.goal.id
                   goalType = item.goal.category
                 })}
-                {console.log(this.state.data)}
                 <NewExpansionPanelSummary expandIcon={this.taskExist(index) ? <ExpandMoreIcon /> : <div className="emptyGoalSpacing" />}>
                   <Grid container spacing={2}>
                     <Grid item>
@@ -287,8 +286,9 @@ class ViewGoals extends Component {
                         <FormControlLabel
                           onChange={this.handleStatusChange(i, index)}
                           control={<StyledCheckbox />}
-                          checked={s.status == "complete" ? true : false}
+                          checked={s.status === "complete" ? true : false}
                           label={s.subgoal}
+                          style={s.status === "complete" ? {textDecoration: "line-through"} : null}
                         />
                       </div>
                     )}

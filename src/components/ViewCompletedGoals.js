@@ -234,8 +234,9 @@ class ViewCompletedGoals extends Component {
                         <FormControlLabel
                           onChange={this.handleStatusChange(i, index)}
                           control={<StyledCheckbox />}
-                          checked={s.status == "complete" ? true : false}
+                          checked={s.status === "complete" ? true : false}
                           label={s.subgoal}
+                          style={s.status === "complete" ? {textDecoration: "line-through"} : null}
                         />
                       </div>
                     )}

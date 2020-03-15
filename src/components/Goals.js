@@ -14,6 +14,7 @@ class Goals extends Component {
     this.state = {
       value: "/goals",
       addGoal: false,
+      disabled: false,
       expanded: false
     };
   }
@@ -30,21 +31,23 @@ class Goals extends Component {
 
   handleChange = (event, value) => {
     this.setState({ value });
-    this.setState({ expanded: false });
   };
 
   handleAdd = () => {
     this.setState({ addGoal: true });
+    this.setState({ disabled: true });
   };
 
   dismiss() {
     this.setState({ addGoal: false });
+    this.setState({ disabled: false });
   }
 
-  handleOnAddEnd = () => {
+  handleOnAddEnd = goal => {
     this.setState({ addGoal: false });
+    this.setState({ disabled: false });
     this.setState({ value: "/goals" });
-    this.setState({ expanded: true });
+    this.setState({ expanded: goal });
   };
 
   render() {
@@ -64,7 +67,7 @@ class Goals extends Component {
         <div className="header paddingTop60px">Setting Goals</div>
         <div className="helper">
           Use this space to set goals for you and your child. We highly
-          recommend setting goals with your speech-langugage pathologist for the
+          recommend setting goals with your speech-language pathologist for the
           first time.
         </div>
         <div className="helper paddingTop30px ">
@@ -92,7 +95,7 @@ class Goals extends Component {
             </Tabs>
           </Grid>
           <Grid item xs={4} style={{display: "flex", justifyContent: "flex-end", alignItems: "center"}}>
-            <Button variant="contained" onClick={this.handleAdd}>
+            <Button variant="contained" onClick={this.handleAdd} disabled={this.state.disabled}>
               + Add Goal
             </Button>
           </Grid>
