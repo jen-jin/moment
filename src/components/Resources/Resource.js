@@ -9,13 +9,13 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import BookmarkIcon from "@material-ui/icons/Bookmark";
 import BookmarkBorderIcon from "@material-ui/icons/BookmarkBorder";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
 import {
   DEFAULT_HEADERS,
   SUCCESS,
   BOOKMARKED_RESOURCES_PATH
-} from "../constants";
+} from "../../constants";
 
 class Resource extends Component {
   static contextType = AuthContext;

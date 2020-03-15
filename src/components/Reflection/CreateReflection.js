@@ -7,7 +7,7 @@ import DropDownChipQuestion from "./DropDownChipQuestion";
 import ChipQuestion from "./ChipQuestion";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
 import {
   DEFAULT_HEADERS,
@@ -19,7 +19,7 @@ import {
   ACTIVITY_OPTIONS,
   DEFAULT_REFLECTION_TITLE,
   DEFAULT_TEXTBOX_PLACEHOLDER
-} from "../constants";
+} from "../../constants";
 
 class CreateReflection extends Component {
   static contextType = AuthContext;
