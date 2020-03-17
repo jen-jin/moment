@@ -217,7 +217,6 @@ class ViewGoals extends Component {
     });
     this.setState({data: newData})
     this.setState({edit: false})
-    console.log(this.state.data)
   }
 
   editForm() {

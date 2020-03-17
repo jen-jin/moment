@@ -124,7 +124,7 @@ class EditGoals extends Component {
     })}
     this.state.data.subgoals.map((task) => {
       if (task.subgoal.length > 0)
-        subgoal.push({...task})
+        subgoal.push({"subgoal_id": task.id || null, "subgoal": task.subgoal, "status": task.status || "incomplete"})
     })
     const data = {
       user_id: parseInt(this.context.userId),
